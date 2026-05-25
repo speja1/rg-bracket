@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roland-Garros 2026 — Bracket Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --clay:#B84030;--clay-d:#7a2318;--clay-l:#d4705a;--clay-p:#f5e4de;--clay-ghost:#fdf0ec;
+  --court:#1e5c21;--court-l:#267029;--court-pale:#e6f4e7;--court-mid:#4caf50;
+  --sand:#EDE0CC;--sand-l:#FAF5EE;--sand-d:#c4a87c;--sand-m:#e0d0b8;
+  --cream:#F8F2E8;--ink:#160c06;--ink-m:#5a3a2a;--ink-l:#9a7a6a;--gold:#9a7020;
+  --white:#ffffff;--r:12px;--r-sm:8px;
+  --sh:0 2px 12px rgba(22,12,6,.08);--sh-md:0 4px 24px rgba(22,12,6,.12);--sh-lg:0 8px 48px rgba(22,12,6,.18);
+  --ease:cubic-bezier(.25,.46,.45,.94);--spring:cubic-bezier(.34,1.56,.64,1);
+  --font-d:'Playfair Display',Georgia,serif;--font-b:'DM Sans',-apple-system,sans-serif;--font-m:'DM Mono','SF Mono',monospace;
+}
+body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:300;height:58px;background:var(--clay);
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hdr::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 8px,rgba(0,0,0,.05) 8px,rgba(0,0,0,.05) 9px)}
+.hdr-brand{position:relative}
+.hdr-eyebrow{font-size:8.5px;letter-spacing:3.5px;text-transform:uppercase;color:rgba(255,255,255,.45);font-weight:600;margin-bottom:1px}
+.hdr-title{font-family:var(--font-d);font-size:17px;font-weight:700;color:#fff;font-style:italic;line-height:1}
+.hdr-right{display:flex;align-items:center;gap:12px;position:relative}
+.user-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:24px;padding:6px 14px 6px 10px;font-size:12px;cursor:pointer;color:#fff;display:flex;align-items:center;gap:7px;font-weight:500;transition:.2s}
+.user-chip:hover{background:rgba(255,255,255,.22)}
+.user-avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.nav{position:fixed;top:58px;left:0;right:0;z-index:299;height:42px;background:var(--clay-d);border-bottom:1px solid rgba(0,0,0,.2);display:none;align-items:stretch}
+.nav.visible{display:flex}
+.nav-inner{display:flex;align-items:stretch;overflow-x:auto}
+.tab{padding:0 1.4rem;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;color:rgba(255,255,255,.4);border-bottom:2px solid transparent;transition:.18s;white-space:nowrap;display:flex;align-items:center}
+.tab.active{color:#fff;border-bottom-color:#fff}
+.tab:hover:not(.active){color:rgba(255,255,255,.7)}
+#root{margin-top:100px;min-height:calc(100vh - 100px)}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:12px}
+.spinner{width:36px;height:36px;border:3px solid var(--sand-d);border-top-color:var(--clay);border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-txt{font-size:13px;color:var(--ink-l)}
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(14px);background:var(--ink);color:#fff;padding:11px 24px;border-radius:50px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .3s var(--spring);z-index:9999;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* AUTH */
+.auth-wrap{min-height:calc(100vh - 100px);display:flex;align-items:center;justify-content:center;padding:2rem;background:radial-gradient(ellipse at 30% 20%,#f0e0d0 0%,var(--cream) 60%)}
+.auth-card{width:100%;max-width:420px;background:var(--white);border-radius:20px;overflow:hidden;box-shadow:var(--sh-lg)}
+.auth-hero{background:var(--clay);padding:2.5rem 2rem;position:relative;overflow:hidden}
+.auth-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(0,0,0,.04) 12px,rgba(0,0,0,.04) 13px)}
+.auth-inner{position:relative}
+.auth-label{font-size:8.5px;letter-spacing:3.5px;text-transform:uppercase;color:rgba(255,255,255,.45);font-weight:600;margin-bottom:10px}
+.auth-h{font-family:var(--font-d);font-size:38px;font-weight:900;color:#fff;line-height:1;margin-bottom:8px}
+.auth-h em{font-style:italic;opacity:.75}
+.auth-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.65}
+.auth-body{padding:2rem}
+.auth-note{font-size:13px;color:var(--ink-m);line-height:1.7;margin-bottom:1.5rem}
+.google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1.5px solid var(--sand-d);border-radius:var(--r-sm);background:var(--white);color:var(--ink);font-size:14px;font-weight:500;cursor:pointer;transition:.2s;margin-bottom:1rem}
+.google-btn:hover{background:var(--sand-l);border-color:var(--clay);transform:translateY(-1px);box-shadow:var(--sh)}
+.divider{display:flex;align-items:center;gap:12px;margin:.75rem 0;font-size:11px;color:var(--ink-l)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--sand-d)}
+.field{margin-bottom:.9rem}
+.field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-m);margin-bottom:5px}
+.field input{width:100%;padding:11px 12px;border:1.5px solid var(--sand-d);border-radius:var(--r-sm);font-size:14px;background:var(--sand-l);color:var(--ink);outline:none;font-family:var(--font-b);transition:.18s}
+.field input:focus{border-color:var(--clay);background:var(--white);box-shadow:0 0 0 3px rgba(184,64,48,.1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border:1.5px solid var(--sand-d);border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;background:var(--white);color:var(--ink);transition:.18s;white-space:nowrap;font-family:var(--font-b)}
+.btn:hover:not(:disabled){background:var(--sand-l);transform:translateY(-1px);box-shadow:var(--sh)}
+.btn.primary{background:var(--clay);color:#fff;border-color:var(--clay)}
+.btn.primary:hover:not(:disabled){background:var(--clay-d)}
+.btn.full{width:100%}
+.btn.sm{padding:7px 14px;font-size:11px}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--ink-m)}
+.btn.ghost:hover{background:var(--sand-l);border-color:var(--sand-d)}
+.admin-sep{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--sand)}
+/* BRACKET */
+.bkt-topbar{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1.5rem;background:var(--white);border-bottom:1px solid var(--sand);gap:1rem;flex-wrap:wrap;position:sticky;top:100px;z-index:190;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.bkt-user{font-family:var(--font-d);font-size:19px;font-weight:700;font-style:italic;color:var(--ink)}
+.bkt-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.score-pill{background:var(--clay-ghost);border:1px solid var(--clay-p);border-radius:20px;padding:4px 13px;font-size:11px;font-weight:700;color:var(--clay-d)}
+.score-pill.ok{background:var(--court-pale);border-color:#b4ddb4;color:var(--court)}
+.score-pill.grey{background:var(--sand);border-color:var(--sand-d);color:var(--ink-m)}
+.viewing-bar{padding:.5rem 1.5rem;background:var(--sand);border-bottom:2px solid var(--clay);font-size:12px;color:var(--ink-m);display:flex;align-items:center;gap:1rem}
+.legend-bar{display:flex;align-items:center;gap:1rem;padding:.45rem 1.5rem;background:var(--sand-l);border-bottom:1px solid var(--sand);flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-m)}
+.leg-sw{width:11px;height:11px;border-radius:2px;flex-shrink:0}
+.live-badge{background:#dcfce7;border:1px solid #86efac;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;color:#15803d;display:flex;align-items:center;gap:4px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#16a34a;animation:lp 1.5s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.2}}
+.sync-note{font-size:11px;color:var(--ink-l)}
+/* STEPPER */
+.stepper{display:flex;align-items:center;overflow-x:auto;padding:.55rem 1.5rem;background:var(--white);border-bottom:1px solid var(--sand);position:sticky;top:100px;z-index:191;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.step{display:flex;align-items:center;flex-shrink:0}
+.step-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:.3rem .85rem;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--ink-l);transition:.18s;font-family:var(--font-b)}
+.step-pip{width:22px;height:22px;border-radius:50%;background:var(--sand);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--ink-l);transition:.18s}
+.step-lbl{font-size:8.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}
+.step-btn.done{color:var(--court)}.step-btn.done .step-pip{background:var(--court);color:#fff}
+.step-btn.active{color:var(--clay);border-bottom-color:var(--clay)}.step-btn.active .step-pip{background:var(--clay);color:#fff}
+.step-arr{color:var(--sand-d);font-size:11px;padding:0 3px;flex-shrink:0}
+/* TWO COLUMNS */
+.bkt-viewport{overflow:hidden;position:relative}
+.bkt-screen{display:flex;width:100%;min-height:60vh}
+.col-wrap{flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--sand)}
+.col-wrap:last-child{border-right:none}
+.col-header{padding:.85rem 1.25rem .6rem;background:var(--sand-l);border-bottom:1px solid var(--sand)}
+.col-rnd-label{font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--clay);margin-bottom:3px}
+.col-rnd-title{font-family:var(--font-d);font-size:24px;font-weight:900;color:var(--ink);line-height:1}
+.col-rnd-meta{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap}
+.pts-badge{background:var(--clay);color:#fff;border-radius:12px;padding:2px 9px;font-size:9.5px;font-weight:700}
+.picks-note{font-size:11px;color:var(--ink-l)}
+.col-matches{flex:1;padding:.75rem;display:flex;flex-direction:column;gap:.6rem}
+/* RIGHT COLUMN — staggered, matches centered between feeders */
+.col-right{justify-content:space-around}
+/* GUTTER */
+.col-gutter{width:52px;flex-shrink:0;position:relative;background:linear-gradient(90deg,var(--sand-l),var(--sand-l));border-left:1px solid var(--sand-m);border-right:1px solid var(--sand-m)}
+.col-gutter svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+/* MATCH CARD */
+.mc{background:var(--white);border:1.5px solid var(--sand);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);transition:border-color .15s,box-shadow .15s;display:flex;flex-direction:column}
+.mc.picked{border-color:rgba(184,64,48,.35)}
+.mc.has-live{border-color:#fde68a}
+.mc-strip{padding:.4rem .8rem;background:var(--sand-l);border-bottom:1px solid var(--sand);display:flex;align-items:center;justify-content:space-between}
+.h2h-btn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--sand-d);color:var(--ink-l);background:var(--white);cursor:pointer;transition:.15s;text-decoration:none;flex-shrink:0}
+.h2h-btn:hover{background:var(--clay);border-color:var(--clay);color:#fff;transform:scale(1.1)}
+.mc-num{font-size:8px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--ink-l)}
+.mc-status{font-size:9px;font-weight:600;color:var(--ink-l)}
+.mc-status.live{color:#16a34a}.mc-status.done{color:var(--court)}
+.mc-players{display:flex;flex-direction:column}
+.mc-player{display:flex;align-items:center;gap:.55rem;padding:.65rem .8rem;cursor:pointer;transition:background .12s;user-select:none;min-height:44px}
+.mc-player:first-of-type{border-bottom:1px solid var(--sand)}
+.mc-player.tbd{cursor:default;opacity:.5}
+.mc-player.locked{cursor:default}
+.mc-player:hover:not(.locked):not(.tbd){background:var(--clay-ghost)}
+.mc-player.winner{background:var(--court);color:#fff}
+.mc-player.winner:first-of-type{border-bottom-color:var(--court-l)}
+.mc-player.winner:hover{background:var(--court-l)}
+.mc-player.my-pick{background:var(--clay-ghost);border-left:3px solid var(--clay)}
+.mc-player.correct{background:var(--court-pale);border-left:3px solid var(--court)}
+.mc-player.wrong{background:#fff1f1;border-left:3px solid #fca5a5}
+.mc-player.live-p{border-left:3px solid #f59e0b}
+.mc-seed{width:18px;font-size:8.5px;font-weight:700;color:var(--gold);text-align:center;flex-shrink:0}
+.mc-player.winner .mc-seed{color:rgba(255,255,255,.55)}
+.mc-name{flex:1;font-size:13.5px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-player.winner .mc-name{color:#fff;font-weight:700}
+.mc-player.my-pick .mc-name{color:var(--clay-d);font-weight:700}
+.mc-player.correct .mc-name{color:var(--court);font-weight:700}
+.mc-player.wrong .mc-name{color:#b91c1c;text-decoration:line-through}
+.mc-player.tbd .mc-name{font-style:italic;color:var(--ink-l)}
+.mc-score{font-family:var(--font-m);font-size:13px;font-weight:500;color:var(--ink-m);
+  letter-spacing:1px;white-space:nowrap;flex-shrink:0;width:68px;text-align:right;
+  display:flex;align-items:center;justify-content:flex-end;gap:5px}
+.mc-score-set{display:inline-block;width:16px;text-align:center}
+.mc-player.winner .mc-score{color:rgba(255,255,255,.85);font-weight:600}
+.mc-player.wrong .mc-score,.mc-player.correct .mc-score{color:inherit}
+/* Placeholder score so name column is same width even without scores */
+.mc-score-empty{width:68px;flex-shrink:0}
+.mc-icon{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.mc-icon.chk{background:var(--clay);color:#fff}.mc-icon.ok{background:var(--court);color:#fff}.mc-icon.x{background:#ef4444;color:#fff}
+.srv{width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;animation:sp 1.2s ease-in-out infinite}
+@keyframes sp{0%,100%{opacity:1}50%{opacity:.2}}
+.mc-time{padding:.4rem .8rem;background:var(--sand-l);border-top:1px solid var(--sand);font-size:10px;color:var(--ink-l);display:flex;align-items:center;gap:5px}
+.mc.bye .mc-player.winner{opacity:.82}
+.mc-bye-row{padding:.65rem .8rem;background:var(--sand-l);border-top:1px solid var(--sand);font-size:12px;font-style:italic;color:var(--ink-l);opacity:.45}
+/* Larger cards for later rounds */
+.col-lg .mc-name{font-size:15px}
+.col-lg .mc-player{padding:.8rem .9rem}
+.col-xl .mc-name{font-size:17px}
+.col-xl .mc-player{padding:1rem 1.1rem}
+/* BOTTOM NAV */
+.bkt-nav{position:sticky;bottom:0;z-index:200;background:var(--white);border-top:1px solid var(--sand);box-shadow:0 -4px 20px rgba(0,0,0,.06);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.nav-progress{display:flex;flex-direction:column;align-items:center;gap:5px}
+.nav-prog-text{font-size:11px;color:var(--ink-l)}
+.nav-prog-bar{width:160px;height:4px;background:var(--sand);border-radius:2px;overflow:hidden}
+.nav-prog-fill{height:100%;background:var(--clay);border-radius:2px;transition:width .4s}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:11px 22px;border:1.5px solid var(--sand-d);border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer;background:var(--white);color:var(--ink);transition:.18s;font-family:var(--font-b)}
+.nav-btn:hover:not(:disabled){background:var(--sand-l);transform:translateY(-1px);box-shadow:var(--sh)}
+.nav-btn:disabled{opacity:.35;cursor:default;transform:none}
+.nav-btn.primary{background:var(--clay);color:#fff;border-color:var(--clay);padding:12px 28px;font-size:14px}
+.nav-btn.primary:hover:not(:disabled){background:var(--clay-d)}
+.nav-btn-inner{display:flex;flex-direction:column;gap:1px}
+.nav-btn-sub{font-size:10px;opacity:.65;font-weight:400}
+/* LEADERBOARD */
+.lb-page{max-width:820px;margin:0 auto;padding:2rem}
+.lb-table{background:var(--white);border:1.5px solid var(--sand);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+
+.lb-exp{font-size:13px;color:var(--ink-l);text-align:right}
+.lb-win{font-size:13px;font-weight:700;color:var(--ink-m);text-align:right}
+.lb-win.hot{color:var(--court)}
+.lb-hdr{display:grid;grid-template-columns:50px 1fr 90px 70px 70px 70px 70px;padding:10px 16px;background:var(--sand);border-bottom:1px solid var(--sand-d);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--ink-l)}
+.lb-row{display:grid;grid-template-columns:50px 1fr 90px 70px 70px 70px 70px;padding:14px 16px;border-bottom:1px solid var(--sand);align-items:center;cursor:pointer;transition:background .12s;position:relative}
+.lb-row:last-child{border-bottom:none}
+.lb-row:hover{background:var(--sand-l)}
+.lb-row.me{background:var(--clay-ghost)}
+.lb-row.me::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--clay)}
+.lb-rank{font-size:13px;font-weight:800;color:var(--ink-l)}
+.lb-rank.medal{font-size:18px}
+.lb-name{font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;overflow:hidden}
+.lb-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.you-badge{font-size:9px;background:var(--clay-p);color:var(--clay-d);border:1px solid var(--clay-l);border-radius:10px;padding:1px 7px;font-weight:700;flex-shrink:0}
+.lb-corr{font-size:13px;color:var(--ink-l);text-align:right}
+.lb-pts{font-size:20px;font-weight:900;color:var(--clay);text-align:right;font-family:var(--font-d)}
+.lb-max{font-size:14px;font-weight:600;color:var(--ink-l);text-align:right}
+.lb-empty{padding:4rem 2rem;text-align:center;color:var(--ink-l);font-size:14px}
+/* HOW / ADMIN */
+.info-page{max-width:680px;margin:0 auto;padding:2rem}
+.card{background:var(--white);border:1.5px solid var(--sand);border-radius:var(--r);overflow:hidden;margin-bottom:1.5rem;box-shadow:var(--sh)}
+.card-hd{background:var(--sand-l);border-bottom:1px solid var(--sand);padding:1rem 1.25rem}
+.card-hd .lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--clay);margin-bottom:4px}
+.card-hd .ttl{font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--ink)}
+.card-bd{padding:1.25rem}
+.stbl{width:100%;border-collapse:collapse}
+.stbl th{padding:9px 12px;background:var(--sand-l);text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.8px;font-weight:700;color:var(--ink-l);border-bottom:1px solid var(--sand-d)}
+.stbl td{padding:11px 12px;border-bottom:1px solid var(--sand);font-size:13px}
+.stbl tr:last-child td{border-bottom:none}
+.stbl .pts{font-weight:900;color:var(--clay);text-align:right;font-family:var(--font-d);font-size:18px}
+
+/* H2H MODAL */
+.h2h-overlay{position:fixed;inset:0;background:rgba(22,12,6,.55);backdrop-filter:blur(4px);
+  z-index:1000;display:flex;align-items:center;justify-content:center;padding:1.5rem;
+  opacity:0;transition:opacity .25s ease;pointer-events:none}
+.h2h-overlay.open{opacity:1;pointer-events:all}
+.h2h-modal{background:var(--white);border-radius:20px;width:100%;max-width:560px;
+  max-height:85vh;overflow-y:auto;box-shadow:0 24px 80px rgba(22,12,6,.3);
+  transform:translateY(24px) scale(.97);transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  position:relative}
+.h2h-overlay.open .h2h-modal{transform:translateY(0) scale(1)}
+.h2h-modal-hdr{background:var(--clay);padding:1.5rem 1.5rem 1.25rem;border-radius:20px 20px 0 0;
+  position:relative}
+.h2h-modal-hdr::before{content:'';position:absolute;inset:0;border-radius:20px 20px 0 0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(0,0,0,.04) 12px,rgba(0,0,0,.04) 13px)}
+.h2h-close{position:absolute;top:1rem;right:1rem;width:30px;height:30px;
+  border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;
+  color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:.15s;z-index:1}
+.h2h-close:hover{background:rgba(255,255,255,.3)}
+.h2h-vs{display:flex;align-items:center;justify-content:center;gap:1rem;
+  position:relative;padding-top:.25rem}
+.h2h-player{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.h2h-player-name{font-family:var(--font-d);font-size:17px;font-weight:700;
+  color:#fff;text-align:center;line-height:1.15}
+.h2h-player-rank{font-size:10px;color:rgba(255,255,255,.55);font-weight:600;
+  letter-spacing:.5px;text-transform:uppercase}
+.h2h-vs-badge{font-family:var(--font-d);font-size:13px;font-style:italic;
+  color:rgba(255,255,255,.5);flex-shrink:0;padding:0 .5rem}
+/* Record summary bar */
+.h2h-record{display:flex;align-items:stretch;border-bottom:1px solid var(--sand);overflow:hidden}
+.h2h-record-side{flex:1;padding:.9rem 1rem;text-align:center;background:var(--sand-l)}
+.h2h-record-wins{font-family:var(--font-d);font-size:36px;font-weight:900;color:var(--ink);line-height:1}
+.h2h-record-side.winner .h2h-record-wins{color:var(--court)}
+.h2h-record-side.loser .h2h-record-wins{color:var(--ink-l)}
+.h2h-record-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--ink-l);margin-top:3px}
+.h2h-record-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:.5rem .75rem;background:var(--sand);border-left:1px solid var(--sand-d);
+  border-right:1px solid var(--sand-d)}
+.h2h-record-total{font-size:10px;color:var(--ink-l);font-weight:600;white-space:nowrap}
+.h2h-record-surface{font-size:10px;color:var(--clay);font-weight:700;margin-top:2px;
+  background:var(--clay-ghost);padding:2px 8px;border-radius:10px;white-space:nowrap}
+/* Splits */
+.h2h-splits{display:flex;gap:0;border-bottom:1px solid var(--sand)}
+.h2h-split{flex:1;padding:.6rem .75rem;text-align:center;border-right:1px solid var(--sand)}
+.h2h-split:last-child{border-right:none}
+.h2h-split-lbl{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-l);margin-bottom:3px}
+.h2h-split-val{font-size:14px;font-weight:700;color:var(--ink);font-family:var(--font-d)}
+/* Match history list */
+.h2h-matches{padding:.75rem 0}
+.h2h-match-hdr{padding:.3rem 1.25rem;font-size:8.5px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--ink-l);background:var(--sand-l);
+  border-top:1px solid var(--sand);border-bottom:1px solid var(--sand)}
+.h2h-match-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.25rem;
+  border-bottom:1px solid var(--sand);transition:background .12s}
+.h2h-match-row:last-child{border-bottom:none}
+.h2h-match-row:hover{background:var(--sand-l)}
+.h2h-match-date{font-size:10px;color:var(--ink-l);white-space:nowrap;width:44px;flex-shrink:0}
+.h2h-match-event{flex:1;min-width:0}
+.h2h-match-tourn{font-size:12px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h2h-match-round{font-size:10px;color:var(--ink-l)}
+.h2h-match-surface{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.h2h-match-score{font-family:var(--font-m);font-size:11px;color:var(--ink-m);
+  white-space:nowrap;flex-shrink:0;text-align:right}
+.h2h-match-winner{font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0;
+  padding:2px 8px;border-radius:10px;text-align:center}
+.h2h-match-winner.p1{background:var(--clay-ghost);color:var(--clay-d)}
+.h2h-match-winner.p2{background:var(--court-pale);color:var(--court)}
+/* Loading state */
+.h2h-loading{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:3rem 2rem;gap:1rem}
+.h2h-loading .spinner{width:32px;height:32px}
+.h2h-load-txt{font-size:13px;color:var(--ink-l)}
+/* Fact box */
+.h2h-fact{margin:.75rem 1.25rem;padding:.75rem 1rem;background:var(--sand-l);
+  border-radius:var(--r-sm);border-left:3px solid var(--clay);
+  font-size:12px;color:var(--ink-m);line-height:1.6;font-style:italic}
+/* Key stat row */
+.h2h-key-stat{display:flex;align-items:center;gap:.5rem;padding:.35rem 1.25rem;font-size:11px;color:var(--ink-m)}
+.h2h-key-stat strong{color:var(--ink);font-weight:600}
+
+.h2h-profiles{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--sand)}
+.h2h-profile-card{padding:.75rem 1rem;border-right:1px solid var(--sand)}
+.h2h-profile-card:last-child{border-right:none}
+.h2h-profile-name{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:.5rem;
+  display:flex;align-items:center;gap:5px}
+.h2h-profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px}
+.h2h-stat{display:flex;flex-direction:column;gap:1px}
+.h2h-stat-lbl{font-size:8.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-l)}
+.h2h-stat-val{font-size:12px;font-weight:600;color:var(--ink)}
+
+.mc-player.dead-pick{background:#fff1f1;border-left:3px solid #fca5a5;cursor:default;opacity:.85}
+.mc-player.dead-pick .mc-name{color:#b91c1c;text-decoration:line-through;font-size:12px}
+.mc-seed-inline{font-size:8.5px;font-weight:700;color:#b91c1c;background:#fee2e2;border-radius:3px;padding:1px 4px;margin-right:2px}
+
+.mc-odds{font-family:var(--font-m);font-size:11px;font-weight:600;padding:2px 7px;
+  border-radius:10px;flex-shrink:0;white-space:nowrap;cursor:default}
+.mc-odds.fav{background:#e8f4e8;color:var(--court);border:1px solid #b4ddb4}
+.mc-odds.dog{background:var(--sand);color:var(--ink-m);border:1px solid var(--sand-d)}
+.mc-player.winner .mc-odds{display:none}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-eyebrow">Grand Slam &nbsp;·&nbsp; Paris 2026</div>
+    <div class="hdr-title">Roland-Garros</div>
+  </div>
+  <div class="hdr-right"><div id="user-chip-wrap"></div></div>
+</div>
+<div class="nav" id="nav"><div class="nav-inner" id="tabs-inner"></div></div>
+<div id="root"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const FB_CONFIG = {
+  apiKey:            "AIzaSyAy8L1XOEVMVVzcnG_n3U51lFHCFfpTCVM",
+  authDomain:        "roland-garros-6b9f6.firebaseapp.com",
+  projectId:         "roland-garros-6b9f6",
+  storageBucket:     "roland-garros-6b9f6.firebasestorage.app",
+  messagingSenderId: "759359721219",
+  appId:             "1:759359721219:web:84fe9bf86ed695fda72336",
+};
+const TOURNAMENT_ID  = 'roland-garros-2026';
+const ADMIN_PASSWORD = 'clay2026';
+const ROUNDS    = ['R128','R64','R32','R16','QF','SF','F'];
+const RND_LABEL = {R128:'Round of 128',R64:'Round of 64',R32:'Round of 32',R16:'Round of 16',QF:'Quarter-Finals',SF:'Semi-Finals',F:'The Final'};
+const RND_SHORT = {R128:'R128',R64:'R64',R32:'R32',R16:'R16',QF:'QF',SF:'SF',F:'Final'};
+const RND_PTS   = {R128:1,R64:2,R32:4,R16:8,QF:16,SF:32,F:64};
+// Each screen shows [leftRoundIdx, rightRoundIdx]
+const SCREENS = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]];
+
+const ATP_R1 = [
+  // SECTION 1 — Sinner [1]
+  {id:'m01',p1:{n:'Sinner J.',s:1},              p2:{n:'Tabur C.',s:null},            bye:false},
+  {id:'m02',p1:{n:'Fearnley J.',s:null},         p2:{n:'Cerundolo J.',s:null},        bye:false},
+  {id:'m03',p1:{n:'Landaluce M.',s:null},        p2:{n:'Prado Angelo J.',s:null},     bye:false},
+  {id:'m04',p1:{n:'Moutet C.',s:30},             p2:{n:'Kopriva V.',s:null},          bye:false},
+  // SECTION 2 — Rinderknech [22] / Darderi [14]
+  {id:'m05',p1:{n:'Rinderknech A.',s:22},        p2:{n:'Rodionov J.',s:null},         bye:false},
+  {id:'m06',p1:{n:'Fucsovics M.',s:null},        p2:{n:'Berrettini M.',s:null},       bye:false},
+  {id:'m07',p1:{n:'Quinn E.',s:null},            p2:{n:'Comesana F.',s:null},         bye:false},
+  {id:'m08',p1:{n:'Darderi L.',s:14},            p2:{n:'Ofner S.',s:null},            bye:false},
+  // SECTION 3 — Bublik [9] / Tiafoe [19]
+  {id:'m09',p1:{n:'Bublik A.',s:9},              p2:{n:'Struff J.',s:null},           bye:false},
+  {id:'m10',p1:{n:'Shapovalov D.',s:null},       p2:{n:'Faria J.',s:null},            bye:false},
+  {id:'m11',p1:{n:'Munar J.',s:null},            p2:{n:'Hurkacz H.',s:null},          bye:false},
+  {id:'m12',p1:{n:'Tiafoe F.',s:19},             p2:{n:'Spizzirri E.',s:null},        bye:false},
+  // SECTION 4 — Griekspoor [29] / Shelton [5]
+  {id:'m13',p1:{n:'Griekspoor T.',s:29},         p2:{n:'Arnaldi M.',s:null},          bye:false},
+  {id:'m14',p1:{n:'Muller A.',s:null},           p2:{n:'Tsitsipas S.',s:null},        bye:false},
+  {id:'m15',p1:{n:'Vukic A.',s:null},            p2:{n:'Collignon R.',s:null},        bye:false},
+  {id:'m16',p1:{n:'Shelton B.',s:5},             p2:{n:'Merida D.',s:null},           bye:false},
+  // SECTION 5 — Auger-Aliassime [4] / Nakashima [31]
+  {id:'m17',p1:{n:'Auger-Aliassime F.',s:4},     p2:{n:'Altmaier D.',s:null},         bye:false},
+  {id:'m18',p1:{n:'Baez S.',s:null},             p2:{n:'Burruchaga R.',s:null},       bye:false},
+  {id:'m19',p1:{n:'Van Assche L.',s:null},       p2:{n:'Kypson P.',s:null},           bye:false},
+  {id:'m20',p1:{n:'Nakashima B.',s:31},          p2:{n:'Bautista Agut R.',s:null},    bye:false},
+  // SECTION 6 — Norrie [20] / Vacherot [16]
+  {id:'m21',p1:{n:'Norrie C.',s:20},             p2:{n:'Vallejo A.',s:null},          bye:false},
+  {id:'m22',p1:{n:'Cilic M.',s:null},            p2:{n:'Kouame M.',s:null},           bye:false},
+  {id:'m23',p1:{n:'Tabilo A.',s:null},           p2:{n:'Majchrzak K.',s:null},        bye:false},
+  {id:'m24',p1:{n:'Vacherot V.',s:16},           p2:{n:'Faurel T.',s:null},           bye:false},
+  // SECTION 7 — Cobolli [10] / Tien [18]
+  {id:'m25',p1:{n:'Cobolli F.',s:10},            p2:{n:'Pellegrino A.',s:null},       bye:false},
+  {id:'m26',p1:{n:'Wu Y.',s:null},               p2:{n:'Giron M.',s:null},            bye:false},
+  {id:'m27',p1:{n:'Zhang Z.',s:null},            p2:{n:'Diaz Acosta F.',s:null},      bye:false},
+  {id:'m28',p1:{n:'Tien L.',s:18},              p2:{n:'Garin C.',s:null},            bye:false},
+  // SECTION 8 — Cerundolo F [25] / Medvedev [6]
+  {id:'m29',p1:{n:'Cerundolo F.',s:25},          p2:{n:'Van de Zandschulp B.',s:null},bye:false},
+  {id:'m30',p1:{n:'Gaston H.',s:null},           p2:{n:'Monfils G.',s:null},          bye:false},
+  {id:'m31',p1:{n:'Popyrin A.',s:null},          p2:{n:'Svajda Z.',s:null},           bye:false},
+  {id:'m32',p1:{n:'Medvedev D.',s:6},            p2:{n:'Walton A.',s:null},           bye:false},
+  // SECTION 9 — De Minaur [8] / Mensik [26]
+  {id:'m33',p1:{n:'De Minaur A.',s:8},           p2:{n:'Samuel T.',s:null},           bye:false},
+  {id:'m34',p1:{n:'Blockx A.',s:null},           p2:{n:'Wong C.',s:null},             bye:false},
+  {id:'m35',p1:{n:'Navone M.',s:null},           p2:{n:'Brooksby J.',s:null},         bye:false},
+  {id:'m36',p1:{n:'Mensik J.',s:26},             p2:{n:'Droguet T.',s:null},          bye:false},
+  // SECTION 10 — Etcheverry [23] / Rublev [11]
+  {id:'m37',p1:{n:'Etcheverry T.',s:23},         p2:{n:'Borges N.',s:null},           bye:false},
+  {id:'m38',p1:{n:'Kecmanovic M.',s:null},       p2:{n:'Marozsan F.',s:null},         bye:false},
+  {id:'m39',p1:{n:'Ugo Carabelli C.',s:null},    p2:{n:'Nava E.',s:null},             bye:false},
+  {id:'m40',p1:{n:'Rublev A.',s:11},             p2:{n:'Buse I.',s:null},             bye:false},
+  // SECTION 11 — Ruud [15] / Paul [24]
+  {id:'m41',p1:{n:'Ruud C.',s:15},               p2:{n:'Safiullin R.',s:null},        bye:false},
+  {id:'m42',p1:{n:'Medjedovic H.',s:null},       p2:{n:'Hanfmann Y.',s:null},         bye:false},
+  {id:'m43',p1:{n:'Sonego L.',s:null},           p2:{n:'Herbert P.',s:null},          bye:false},
+  {id:'m44',p1:{n:'Paul T.',s:24},               p2:{n:'Hijikata R.',s:null},         bye:false},
+  // SECTION 12 — Fonseca [28] / Djokovic [3]
+  {id:'m45',p1:{n:'Fonseca J.',s:28},            p2:{n:'Pavlovic L.',s:null},         bye:false},
+  {id:'m46',p1:{n:'Prizmic D.',s:null},          p2:{n:'Zheng M.',s:null},            bye:false},
+  {id:'m47',p1:{n:'Royer V.',s:null},            p2:{n:'Dellien H.',s:null},          bye:false},
+  {id:'m48',p1:{n:'Mpetshi Perricard G.',s:null},p2:{n:'Djokovic N.',s:3},            bye:false},
+  // SECTION 13 — Fritz [7] / Jodar [27]
+  {id:'m49',p1:{n:'Fritz T.',s:7},               p2:{n:'Basavareddy N.',s:null},      bye:false},
+  {id:'m50',p1:{n:'Shevchenko A.',s:null},       p2:{n:'Michelsen A.',s:null},        bye:false},
+  {id:'m51',p1:{n:'Duckworth J.',s:null},        p2:{n:'Diallo G.',s:null},           bye:false},
+  {id:'m52',p1:{n:'Kovacevic A.',s:null},        p2:{n:'Jodar R.',s:27},              bye:false},
+  // SECTION 14 — Davidovich Fokina [21] / Lehecka [12]
+  {id:'m53',p1:{n:'Davidovich Fokina A.',s:21},  p2:{n:'Dzumhur D.',s:null},          bye:false},
+  {id:'m54',p1:{n:'Llamas Ruiz P.',s:null},      p2:{n:'Tirante T.',s:null},          bye:false},
+  {id:'m55',p1:{n:'Kokkinakis T.',s:null},       p2:{n:'Atmane T.',s:null},           bye:false},
+  {id:'m56',p1:{n:'Carreno Busta P.',s:null},    p2:{n:'Lehecka J.',s:12},            bye:false},
+  // SECTION 15 — Khachanov [13] / Fils [17]
+  {id:'m57',p1:{n:'Khachanov K.',s:13},          p2:{n:'Gea A.',s:null},              bye:false},
+  {id:'m58',p1:{n:'Jacquet K.',s:null},          p2:{n:'Trungelliti M.',s:null},      bye:false},
+  {id:'m59',p1:{n:'Opelka R.',s:null},           p2:{n:'Cina F.',s:null},             bye:false},
+  {id:'m60',p1:{n:'de Jong J.',s:null},           p2:{n:'Wawrinka S.',s:null},         bye:false},
+  // SECTION 16 — Humbert [32] / Zverev [2]
+  {id:'m61',p1:{n:'Humbert U.',s:32},            p2:{n:'Mannarino A.',s:null},        bye:false},
+  {id:'m62',p1:{n:'Halys Q.',s:null},            p2:{n:'Bellucci M.',s:null},         bye:false},
+  {id:'m63',p1:{n:'Machac T.',s:null},           p2:{n:'Bergs Z.',s:null},            bye:false},
+  {id:'m64',p1:{n:'Bonzi B.',s:null},            p2:{n:'Zverev A.',s:2},              bye:false},
+];
+
+const S={tab:'bracket',draw:'mens',user:null,uid:null,userName:null,bracketLocked:false,odds:{},simResults:{},
+  isAdmin:false,isGuest:false,viewingUid:null,viewingName:null,
+  locked:false,all:[],live:{},picks:{},rounds:[],screenIdx:0};
+
+let db=null,auth=null;
+function initFB(){try{firebase.initializeApp(FB_CONFIG);db=firebase.firestore();auth=firebase.auth();}catch(e){console.error(e);}}
+const fs={
+  get:(c,d)=>db&&db.collection(c).doc(d).get().then(x=>x.exists?x.data():null).catch(()=>null),
+  set:(c,d,v)=>db&&db.collection(c).doc(d).set(v,{merge:true}).catch(()=>{}),
+  all:(c)=>db&&db.collection(c).get().then(s=>s.docs.map(d=>({id:d.id,...d.data()}))).catch(()=>[]),
+};
+
+function buildDisplay(){
+  // Build seed lookup: name → seed number
+  const seedMap={};
+  ATP_R1.forEach(m=>{
+    if(m.p1?.s)seedMap[m.p1.n]=m.p1.s;
+    if(m.p2?.s)seedMap[m.p2.n]=m.p2.s;
+  });
+  S.rounds=buildTree(ATP_R1);
+  for(let p=0;p<12;p++){
+    S.rounds.forEach((rnd,ri)=>rnd.matches.forEach((m,mi)=>{
+      const byeW=m.p2?.n==='BYE'?m.p1?.n:m.p1?.n==='BYE'?m.p2?.n:null;
+      const w=byeW||S.live[m.id]?.winner;
+      if(!w||w==='BYE')return;
+      const nx=S.rounds[ri+1]?.matches[Math.floor(mi/2)];
+      if(nx){if(mi%2===0)nx.p1={n:w,s:seedMap[w]||null};else nx.p2={n:w,s:seedMap[w]||null};}
+    }));
+  }
+  // Use viewed user's picks if viewing someone else's bracket
+  const activePicks=S.viewingUid?(S.all.find(b=>b.id===S.viewingUid)?.picks||{}):S.picks;
+  for(let p=0;p<8;p++){
+    S.rounds.forEach((rnd,ri)=>rnd.matches.forEach((m,mi)=>{
+      const pick=activePicks[m.id];
+      if(!pick||S.live[m.id]?.winner)return;
+      const nx=S.rounds[ri+1]?.matches[Math.floor(mi/2)];
+      if(!nx||S.live[nx.id]?.winner)return;
+      if(mi%2===0){if(nx.p1.n==='TBD')nx.p1={n:pick,s:seedMap[pick]||null};}
+      else{if(nx.p2.n==='TBD')nx.p2={n:pick,s:seedMap[pick]||null};}
+    }));
+  }
+  // Pass 3: mark dead picks — user picked someone who lost, show in next round slot
+  S.rounds.forEach((rnd,ri)=>rnd.matches.forEach((m,mi)=>{
+    const pick=activePicks[m.id];
+    const winner=S.live[m.id]?.winner;
+    const completed=!!(S.live[m.id]?.completed||S.live[m.id]?.state==='post');
+    if(!pick||!completed||!winner||pick===winner)return; // only wrong picks
+    const nx=S.rounds[ri+1]?.matches[Math.floor(mi/2)];
+    if(!nx)return;
+    // Store dead pick alongside the real winner
+    if(mi%2===0)nx.deadPick1={n:pick,s:seedMap[pick]||null};
+    else nx.deadPick2={n:pick,s:seedMap[pick]||null};
+  }));
+}
+function buildTree(r1){
+  const rounds=[{key:ROUNDS[0],matches:r1.map(m=>({...m,p1:{...m.p1},p2:{...m.p2}}))}];
+  let prev=rounds[0].matches,ri=1;
+  while(prev.length>1){
+    const next=[];
+    for(let i=0;i<prev.length;i+=2){
+      const espnIdx=i*Math.pow(2,ri-1);
+      next.push({id:`g${ri}_${espnIdx}`,p1:{n:'TBD',s:null},p2:{n:'TBD',s:null}});
+    }
+    rounds.push({key:ROUNDS[ri]||`R${ri+1}`,matches:next});
+    prev=next;ri++;
+  }
+  return rounds;
+}
+function fmtSets(sets){
+  if(!sets?.length)return '';
+  const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const sup=n=>String(n).split('').map(d=>SUP[d]||d).join('');
+  return sets.map(({mine,opp,tb})=>{
+    const s=tb==null?String(mine):mine>opp?String(mine):`${mine}${sup(tb)}`;
+    return `<span class="mc-score-set">${s}</span>`;
+  }).join('');
+}
+function calcScore(picks){
+  // pts: points earned so far
+  // correct: correct picks out of played non-bye matches
+  // played: total non-bye matches that have completed
+  // total: total picks made (for reference)
+  // maxPossible: current pts + points from picks where player is still alive
+  let pts=0,correct=0,played=0,total=0,maxPossible=0;
+
+  // Build set of eliminated players (lost a completed non-bye match)
+  const eliminated=new Set();
+  S.rounds.forEach(rnd=>rnd.matches.forEach(m=>{
+    const lv=S.live[m.id];
+    const isBye=m.p2?.n==='BYE'||m.p1?.n==='BYE';
+    if(isBye)return;
+    if(lv?.completed&&lv?.winner){
+      // The loser is eliminated
+      const loser=lv.p1===lv.winner?lv.p2:lv.p1;
+      if(loser)eliminated.add(loser);
+    }
+  }));
+
+  S.rounds.forEach(rnd=>rnd.matches.forEach(m=>{
+    const lv=S.live[m.id];
+    const isBye=m.p2?.n==='BYE'||m.p1?.n==='BYE';
+    if(isBye)return; // never count byes
+
+    const pick=picks?.[m.id];
+    const winner=lv?.winner;
+    const completed=!!(lv?.completed||lv?.state==='post');
+    const pts_rnd=RND_PTS[rnd.key]||1;
+
+    // Count completed matches for the denominator
+    if(completed) played++;
+
+    if(pick){
+      total++;
+      if(winner&&pick===winner){
+        correct++;
+        pts+=pts_rnd;
+        maxPossible+=pts_rnd; // already scored
+      } else if(winner&&pick!==winner){
+        // wrong — pick is dead, no max possible from this
+      } else if(!completed){
+        // match not played yet — check if picked player is still alive
+        if(!eliminated.has(pick)){
+          maxPossible+=pts_rnd; // still possible
+        }
+        // if eliminated, this pick is dead — 0 added to max
+      }
+    }
+  }));
+
+  // pts already scored is the floor of maxPossible
+  maxPossible+=pts; // wait — pts is already counted above in the winner branch
+  // Actually need to restructure: maxPossible should be pts (earned) + potential (still alive picks)
+  // Let me recalculate cleanly:
+  let potential=0;
+  S.rounds.forEach(rnd=>rnd.matches.forEach(m=>{
+    const lv=S.live[m.id];
+    const isBye=m.p2?.n==='BYE'||m.p1?.n==='BYE';
+    if(isBye)return;
+    const pick=picks?.[m.id];
+    const winner=lv?.winner;
+    const completed=!!(lv?.completed||lv?.state==='post');
+    const pts_rnd=RND_PTS[rnd.key]||1;
+    if(pick&&!completed&&!winner){
+      if(!eliminated.has(pick)) potential+=pts_rnd;
+    }
+  }));
+
+  return{pts,correct,played,total,maxPossible:pts+potential};
+}
+function picksInRound(ri){
+  const rnd=S.rounds[ri];if(!rnd)return{done:0,total:0};
+  const pickable=rnd.matches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD'));
+  const done=pickable.filter(m=>S.picks[m.id]||S.live[m.id]?.winner).length;
+  return{done,total:pickable.length};
+}
+
+async function loadLive(){
+  const doc=await fs.get('meta',`live_${TOURNAMENT_ID}`);
+  if(!doc?.matches)return false;
+  try{
+    const data=JSON.parse(doc.matches);
+    const valid=Object.keys(data).filter(k=>/^(m\d+|g\d+_\d+)$/.test(k));
+    if(!valid.length)return false;
+    Object.assign(S.live,data);
+    if(doc.locked!==undefined)S.locked=doc.locked;
+    return true;
+  }catch{return false;}
+}
+async function syncFromServer(){return await loadLive();}
+
+async function loadOdds(){
+  try{
+    const doc=await fs.get('meta',`odds_${TOURNAMENT_ID}`);
+    if(doc?.data)S.odds=JSON.parse(doc.data);
+  }catch(e){S.odds={};}
+}
+
+function getOdds(p1name,p2name){
+  if(!p1name||!p2name||!S.odds)return null;
+  // Try both orderings of the key
+  function norm(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_]/g,'_');}
+  const k1=[p1name,p2name].sort().join('__').replace(/[^a-zA-Z0-9_]/g,'_');
+  const k2=[norm(p1name),norm(p2name)].sort().join('__');
+  const entry=S.odds[k1]||S.odds[k2];
+  if(!entry)return null;
+  // Figure out which player is p1 in our card vs p1 in the odds entry
+  function toks(s){return new Set(s.toLowerCase().replace(/[^a-z]/g,' ').split(/\s+/).filter(w=>w.length>1));}
+  function nm(a,b){const ta=toks(a),tb=toks(b);for(const t of ta)if(tb.has(t))return true;return false;}
+  const entryP1isOurP1=nm(entry.p1,p1name);
+  return{
+    p1_odds:entryP1isOurP1?entry.p1_odds:entry.p2_odds,
+    p2_odds:entryP1isOurP1?entry.p2_odds:entry.p1_odds,
+    p1_prob:entryP1isOurP1?entry.p1_prob:entry.p2_prob,
+    p2_prob:entryP1isOurP1?entry.p2_prob:entry.p1_prob,
+    book:entry.book,
+  };
+}
+
+async function loadPicks(){
+  if(!S.uid)return;
+  const fb=await fs.get('brackets',S.uid);
+  if(fb?.tournamentId===TOURNAMENT_ID){
+    S.picks=fb.picks||{};
+    S.bracketLocked=fb.bracketLocked||false;
+    return;
+  }
+  try{
+    const ls=JSON.parse(localStorage.getItem('rg_picks_'+S.uid)||'null');
+    if(ls?.tournamentId===TOURNAMENT_ID){
+      S.picks=ls.picks||{};
+      S.bracketLocked=ls.bracketLocked||false;
+    }
+  }catch{}
+}
+async function savePicks(quiet=false){
+  if(!S.uid)return;
+  const entry={name:S.userName,picks:S.picks,draw:S.draw,tournamentId:TOURNAMENT_ID,savedAt:Date.now(),uid:S.uid,bracketLocked:S.bracketLocked};
+  await fs.set('brackets',S.uid,entry);
+  try{localStorage.setItem('rg_picks_'+S.uid,JSON.stringify(entry));}catch{}
+  const i=S.all.findIndex(b=>b.id===S.uid);
+  if(i>=0)S.all[i]={id:S.uid,...entry};else S.all.push({id:S.uid,...entry});
+  if(!quiet)toast('Saved ✓');
+}
+let _st;function debounceSave(){
+  clearTimeout(_st);
+  _st=setTimeout(()=>{
+    savePicks(true);
+    S.simResults=runMonteCarloForAll();
+    // Update LB if visible
+    const lbRow=document.querySelector('.lb-row.me');
+    if(lbRow&&S.simResults[S.uid]){
+      const sr=S.simResults[S.uid];
+      const winEl=lbRow.querySelector('.lb-win-prob');
+      if(winEl)winEl.textContent=sr.winProb+'%';
+      const expEl=lbRow.querySelector('.lb-exp-score');
+      if(expEl)expEl.textContent=sr.expectedScore;
+    }
+  },1500);
+}
+
+function signInWithGoogle(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(()=>toast('Sign in failed'));}
+async function signOut(){
+  await auth.signOut();
+  Object.assign(S,{user:null,uid:null,userName:null,isGuest:false,picks:{},viewingUid:null,viewingName:null});
+  try{localStorage.removeItem('rg_guest');}catch{}
+  render();
+}
+function continueAsGuest(name){
+  if(!name?.trim()){toast('Please enter your name');return;}
+  S.isGuest=true;S.userName=name.trim();
+  S.uid='guest_'+S.userName.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now().toString(36);
+  try{localStorage.setItem('rg_guest',JSON.stringify({uid:S.uid,name:S.userName}));}catch{}
+  onReady();
+}
+function tryAdmin(){
+  const pw=document.getElementById('admin-pw')?.value;
+  if(pw===ADMIN_PASSWORD){S.isAdmin=true;S.isGuest=true;S.userName='Admin';S.uid='admin_user';
+    try{localStorage.setItem('rg_guest',JSON.stringify({uid:S.uid,name:'Admin'}));}catch{}
+    onReady();}else toast('Wrong password');
+}
+
+
+function runMonteCarloForAll(){
+  if(!S.all||S.all.length===0) return {};
+  const allPicks={};
+  S.all.filter(b=>b.tournamentId===TOURNAMENT_ID).forEach(b=>{
+    if(b.uid&&b.picks) allPicks[b.id||b.uid]=b.picks;
+  });
+  if(Object.keys(allPicks).length===0) return {};
+  return runMonteCarlo(S.rounds, allPicks, S.live, S.odds);
+}
+
+async function onReady(){
+  updateChip();showLoading('Loading bracket…');
+  await Promise.all([loadPicks(),fs.all('brackets').then(a=>{S.all=a;}),loadLive(),loadOdds()]);
+  buildDisplay();
+  // Run Monte Carlo simulation
+  S.simResults = runMonteCarloForAll();
+  showApp();
+  async function poll(){
+    const live=Object.values(S.live).some(m=>m.live);
+    if(live)await syncFromServer();else await loadLive();
+    buildDisplay();
+    S.simResults=runMonteCarloForAll();
+    if(S.tab==='bracket')renderBracket();
+    if(S.tab==='lb')renderLB();
+    setTimeout(poll,live?30000:3*60*1000);
+  }
+  setTimeout(poll,Object.values(S.live).some(m=>m.live)?30000:3*60*1000);
+  setInterval(async()=>{S.all=await fs.all('brackets')||[];if(S.tab==='lb')renderLB();},2*60*1000);
+}
+async function init(){
+  initFB();
+  auth.onAuthStateChanged(async u=>{
+    if(u){S.user=u;S.uid=u.uid;S.userName=u.displayName||u.email.split('@')[0];S.isGuest=false;S.isAdmin=false;await onReady();}
+    else{
+      try{const g=JSON.parse(localStorage.getItem('rg_guest')||'null');if(g?.uid&&g?.name){S.isGuest=true;S.uid=g.uid;S.userName=g.name;await onReady();return;}}catch{}
+      render();
+    }
+  });
+}
+function showLoading(msg){document.getElementById('nav').classList.remove('visible');document.getElementById('root').innerHTML=`<div class="loading"><div class="spinner"></div><div class="load-txt">${msg}</div></div>`;}
+function render(){if(!S.uid){renderAuth();return;}showApp();}
+function updateChip(){
+  const w=document.getElementById('user-chip-wrap');if(!w)return;
+  if(!S.uid){w.innerHTML='';return;}
+  const img=S.user?.photoURL?`<img src="${S.user.photoURL}" class="user-avatar" referrerpolicy="no-referrer">`:'';
+  w.innerHTML=`<div class="user-chip" onclick="showUserMenu()">${img}<span>${S.userName}${S.isGuest?' (guest)':''}</span></div>`;
+}
+function showUserMenu(){
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;top:68px;right:1.5rem;background:#fff;border:1.5px solid var(--sand-d);border-radius:12px;padding:.75rem;z-index:999;display:flex;flex-direction:column;gap:6px;box-shadow:var(--sh-lg)';
+  d.innerHTML=S.isGuest?`<button class="btn sm" onclick="signInWithGoogle()">Sign in with Google</button><button class="btn sm ghost" onclick="signOut()">Sign out</button>`:`<button class="btn sm ghost" onclick="signOut()">Sign out (${S.userName})</button>`;
+  document.body.appendChild(d);
+  setTimeout(()=>document.addEventListener('click',()=>d.remove(),{once:true}),100);
+}
+function showApp(){
+  document.getElementById('nav').classList.add('visible');
+  const tabs=['bracket','lb','how',...(S.isAdmin?['admin']:[])];
+  const labels=['My Bracket','Leaderboard','How to Score',...(S.isAdmin?['Admin']:[])];
+  document.getElementById('tabs-inner').innerHTML=tabs.map((t,i)=>`<div class="tab ${S.tab===t?'active':''}" id="tab-${t}" onclick="setTab('${t}')">${labels[i]}</div>`).join('');
+  renderTab();
+}
+function setTab(t){S.tab=t;document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${t}`));renderTab();}
+function renderTab(){if(S.tab==='bracket')renderBracket();else if(S.tab==='lb')renderLB();else if(S.tab==='how')renderHow();else if(S.tab==='admin')renderAdmin();}
+
+function renderAuth(){
+  document.getElementById('nav').classList.remove('visible');
+  document.getElementById('root').innerHTML=`
+  <div class="auth-wrap"><div class="auth-card">
+    <div class="auth-hero"><div class="auth-inner">
+      <div class="auth-label">Grand Slam &nbsp;·&nbsp; Stade Roland-Garros, Paris</div>
+      <div class="auth-h">Bracket<br><em>Challenge</em></div>
+      <div class="auth-sub">Pick every match. Score as results come in.</div>
+    </div></div>
+    <div class="auth-body">
+      <p class="auth-note">Sign in with Google to save across devices, or continue as a guest.</p>
+      <button class="google-btn" onclick="signInWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.31z"/></svg>
+        Continue with Google
+      </button>
+      <div class="divider">or</div>
+      <div class="field"><label>Your name</label>
+        <input id="guest-name" type="text" placeholder="e.g. Rafa Superfan" maxlength="28" onkeydown="if(event.key==='Enter')continueAsGuest(this.value)">
+      </div>
+      <button class="btn full primary" onclick="continueAsGuest(document.getElementById('guest-name').value)">Continue as guest →</button>
+      <div class="admin-sep">
+        <div class="field"><label>Admin password</label>
+          <div style="display:flex;gap:8px"><input id="admin-pw" type="password" placeholder="Password" style="flex:1"><button class="btn sm" onclick="tryAdmin()">Login</button></div>
+        </div>
+      </div>
+    </div>
+  </div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// BRACKET — TWO-COLUMN STAGGERED VIEW WITH SVG CONNECTORS
+// ═══════════════════════════════════════════════════════
+
+
+// ATP player IDs — sourced from actual atptour.com URLs
+// Format: [slug, id] where URL = /atp-head-2-head/{slug1}-vs-{slug2}/{id1}/{id2}
+const ATP_IDS = {
+  // Seeds (confirmed from ATP URLs)
+  'Sinner J.':             ['jannik-sinner','s0ag'],
+  'Zverev A.':             ['alexander-zverev','z355'],
+  'Djokovic N.':           ['novak-djokovic','d643'],
+  'Auger-Aliassime F.':    ['felix-auger-aliassime','a0e5'],
+  'Shelton B.':            ['ben-shelton','s0co'],
+  'De Minaur A.':          ['alex-de-minaur','d875'],
+  'Medvedev D.':           ['daniil-medvedev','m0sd'],
+  'Musetti L.':            ['lorenzo-musetti','m0lb'],
+  'Bublik A.':             ['alexander-bublik','b975'],
+  'Cobolli F.':            ['flavio-cobolli','c0hk'],
+  'Lehecka J.':            ['jiri-lehecka','l918'],
+  'Rublev A.':             ['andrey-rublev','r0ba'],
+  'Khachanov K.':          ['karen-khachanov','k0ea'],
+  'Vacherot V.':           ['valentin-vacherot','v0a3'],
+  'Fils A.':               ['arthur-fils','f0cr'],
+  'Paul T.':               ['tommy-paul','p0se'],
+  'Norrie C.':             ['cameron-norrie','n0ed'],
+  'Darderi L.':            ['luciano-darderi','d0de'],
+  'Tien L.':               ['learner-tien','t0da'],
+  'Tiafoe F.':             ['frances-tiafoe','t782'],
+  'Davidovich Fokina A.':  ['alejandro-davidovich-fokina','d0dg'],
+  'Rinderknech A.':        ['arthur-rinderknech','r0cp'],
+  'Ruud C.':               ['casper-ruud','r0ea'],
+  'Etcheverry T.':         ['tomas-martin-etcheverry','e0kg'],
+  'Cerundolo F.':          ['francisco-cerundolo','c0hj'],
+  'Mensik J.':             ['jakub-mensik','m0li'],
+  'Fonseca J.':            ['joao-fonseca','f0et'],
+  'Moutet C.':             ['corentin-moutet','m0al'],
+  'Griekspoor T.':         ['tallon-griekspoor','g0ej'],
+  'Nakashima B.':          ['brandon-nakashima','n0ek'],
+  'Humbert U.':            ['ugo-humbert','h836'],
+  'Jodar R.':              ['rafael-jodar','j0lh'],
+  // R128 players (confirmed from ATP URLs)
+  'Ofner S.':              ['sebastian-ofner','o513'],
+  'Michelsen A.':          ['alex-michelsen','m0qi'],
+  'Popyrin A.':            ['alexei-popyrin','p0sg'],
+  'Berrettini M.':         ['matteo-berrettini','b977'],
+  'Sonego L.':             ['lorenzo-sonego','s0bm'],
+  'Buse I.':               ['ignacio-buse','b0dh'],
+  'Nardi L.':              ['luca-nardi','n0fe'],
+  'Pellegrino A.':         ['andrea-pellegrino','p0sl'],
+  'Hijikata R.':           ['rinky-hijikata','h0bh'],
+  'Kecmanovic M.':         ['miomir-kecmanovic','k0ej'],
+  'Barrios Vera T.':       ['tomas-barrios-vera','bs86'],
+  'Cerundolo J.':          ['juan-manuel-cerundolo','c0hi'],
+  'Bautista Agut R.':      ['roberto-bautista-agut','b548'],
+  'Maestrelli F.':         ['francesco-maestrelli','m0lk'],
+  'Basilashvili N.':       ['nikoloz-basilashvili','b549'],
+  'Merida D.':             ['daniel-merida-aguilar','m0ll'],
+  'Shapovalov D.':         ['denis-shapovalov','s0ag2'],
+  'Navone M.':             ['mariano-navone','n0ef'],
+  'Medjedovic H.':         ['hamad-medjedovic','m0lm'],
+  'Royer V.':              ['valentin-royer','r0dh'],
+  'Burruchaga R.':         ['roman-andres-burruchaga','b0cb'],
+  'Bellucci M.':           ['mattia-bellucci','b0cc'],
+  'Giron M.':              ['marcos-giron','g0dd'],
+  'Cilic M.':              ['marin-cilic','c977'],
+  'Bergs Z.':              ['zizou-bergs','b0cd'],
+  'Atmane T.':             ['terence-atmane','a0f3'],
+  'Tirante T.':            ['thiago-agustin-tirante','t0ce'],
+  'Prizmic D.':{rank:190,age:20,height:"6'2\"",weight:'172lbs',ytd:'2-3',hand:'Right',bh:'Two-Handed',country:'CRO'},
+  'Landaluce M.':{rank:148,age:23,height:"6'2\"",weight:'170lbs',ytd:'3-4',hand:'Right',bh:'Two-Handed',country:'ESP'},
+  'Kovacevic A.':{rank:135,age:26,height:"6'3\"",weight:'185lbs',ytd:'4-5',hand:'Right',bh:'Two-Handed',country:'USA'},
+  'Cadenasso G.':          ['gianluca-cadenasso','c0ln'],
+  'Quinn E.':              ['ethan-quinn','q0aa'],
+  'Llamas Ruiz P.':        ['pablo-llamas-ruiz','l0lh'],
+  'Tsitsipas S.':          ['stefanos-tsitsipas','t782'],
+  'Machac T.':             ['tomas-machac','m0lf'],
+  'Fearnley J.':           ['jacob-fearnley','f0es'],
+  'Mpetshi Perricard G.':  ['giovanni-mpetshi-perricard','m0ln'],
+  'Carreno Busta P.':      ['pablo-carreno-busta','c548'],
+  'Tabilo A.':             ['alejandro-tabilo','t0cf'],
+  'Trungelliti M.':        ['marco-trungelliti','t0cg'],
+  'Svajda Z.':             ['zachary-svajda','s0cp'],
+  'Struff J.':             ['jan-lennard-struff','s0bh'],
+  'Comesana F.':           ['francisco-comesana','c0lo'],
+  'Ugo Carabelli C.':      ['camilo-ugo-carabelli','u0aa'],
+  'Shevchenko A.':         ['alexander-shevchenko','s0cq'],
+  'Muller A.':             ['alexandre-muller','m0la'],
+  'Van de Zandschulp B.':  ['botic-van-de-zandschulp','v0a4'],
+  'Marozsan F.':           ['fabian-marozsan','m0le'],
+  'Kopriva V.':            ['vit-kopriva','k0ek'],
+  'Fucsovics M.':          ['marton-fucsovics','f0cn'],
+  'Virtanen O.':           ['otto-virtanen','v0a5'],
+  'Arnaldi M.':            ['matteo-arnaldi','a0f4'],
+  'Munar J.':              ['jaume-munar','m0ld'],
+  'de Jong J.':            ['jesper-de-jong','d0df'],
+  'Borges N.':             ['nuno-borges','b0ce'],
+  'Dzumhur D.':            ['damir-dzumhur','d0di'],
+  'Mannarino A.':          ['adrian-mannarino','m0ac'],
+  'Brooksby J.':           ['jenson-brooksby','b0cf'],
+  'Baez S.':               ['sebastian-baez','b0cg'],
+  'Vukic A.':              ['aleksandar-vukic','v0a6'],
+  'Garin C.':              ['cristian-garin','g0de'],
+  'Hurkacz H.':            ['hubert-hurkacz','h836'],
+  'Hanfmann Y.':           ['yannick-hanfmann','h0bj'],
+  'Cina F.':               ['federico-cina','c0lp'],
+  'Blockx A.':             ['alexander-blockx','b0ch'],
+  'Zhang Z.':              ['zhizhen-zhang','z0ab'],
+  'Altmaier D.':           ['daniel-altmaier','a0f5'],
+};
+
+function h2hUrl(p1,p2){
+  const a=ATP_IDS[p1],b=ATP_IDS[p2];
+  if(!a||!b)return null;
+  return `https://www.atptour.com/en/players/atp-head-2-head/${a[0]}-vs-${b[0]}/${a[1]}/${b[1]}`;
+}
+
+// ── CLAY ELO RATINGS (surface-specific, estimated from Tennis Abstract + 2026 results) ──
+const CLAY_ELO = {
+  'Sinner J.':2290,'Zverev A.':2200,'Djokovic N.':2180,'Ruud C.':2130,
+  'Tsitsipas S.':2090,'Cobolli F.':2080,'Rublev A.':2080,'De Minaur A.':2060,
+  'Auger-Aliassime F.':2060,'Fonseca J.':2040,'Fritz T.':2040,'Medvedev D.':2050,
+  'Mensik J.':2070,'Darderi L.':2030,'Wawrinka S.':2020,'Paul T.':2020,
+  'Lehecka J.':2010,'Khachanov K.':2020,'Cerundolo F.':2020,'Etcheverry T.':2010,
+  'Bublik A.':2010,'Baez S.':2010,'Hurkacz H.':2010,'Davidovich Fokina A.':2010,
+  'Tabilo A.':2000,'Machac T.':2020,'Berrettini M.':2000,'Shapovalov D.':2000,
+  'Shelton B.':2020,'Tiafoe F.':1990,'Norrie C.':1990,'Nakashima B.':1970,
+  'Griekspoor T.':1980,'Moutet C.':1980,'Vacherot V.':1990,'Tien L.':1960,
+  'Mpetshi Perricard G.':1990,'Kecmanovic M.':1980,'Marozsan F.':1990,
+  'Arnaldi M.':1990,'Navone M.':1990,'Borges N.':1990,'Sonego L.':1990,
+  'Mannarino A.':1990,'Carreno Busta P.':1990,'Monfils G.':1970,
+  'Popyrin A.':1970,'Blockx A.':1960,'Munar J.':1980,'Cilic M.':1970,
+  'Gaston H.':1950,'Struff J.':1970,'Humbert U.':2000,'Jodar R.':1970,
+  'Bellucci M.':1970,'Halys Q.':1960,'Bonzi B.':1960,'Muller A.':1960,
+  'Bergs Z.':1960,'Comesana F.':1970,'Quinn E.':1950,'Rinderknech A.':1970,
+  'Ofner S.':1970,'Fucsovics M.':1960,'Van de Zandschulp B.':1970,
+  'Tirante T.':1960,'Kokkinakis T.':1960,'Atmane T.':1960,'Gea A.':1930,
+  'Trungelliti M.':1950,'Opelka R.':1940,'Cina F.':1950,'de Jong J.':1960,
+  'Burruchaga R.':1960,'Van Assche L.':1960,'Kypson P.':1950,'Bautista Agut R.':1980,
+  'Vallejo A.':1940,'Kouame M.':1930,'Majchrzak K.':1950,'Faurel T.':1940,
+  'Pellegrino A.':1950,'Wu Y.':1960,'Giron M.':1960,'Zhang Z.':1960,
+  'Diaz Acosta F.':1970,'Garin C.':1970,'Svajda Z.':1950,'Walton A.':1940,
+  'Samuel T.':1940,'Wong C.':1940,'Brooksby J.':1960,'Droguet T.':1940,
+  'Safiullin R.':1970,'Medjedovic H.':1970,'Hanfmann Y.':1960,'Herbert P.':1950,
+  'Hijikata R.':1950,'Pavlovic L.':1960,'Prizmic D.':1960,'Zheng M.':1940,
+  'Royer V.':1950,'Dellien H.':1960,'Basavareddy N.':1940,'Shevchenko A.':1960,
+  'Michelsen A.':1970,'Duckworth J.':1950,'Diallo G.':1950,'Kovacevic A.':1960,
+  'Dzumhur D.':1960,'Llamas Ruiz P.':1960,'Fearnley J.':1960,'Cerundolo J.':1970,
+  'Landaluce M.':1960,'Prado Angelo J.':1940,'Kopriva V.':1960,'Rodionov J.':1950,
+  'Faria J.':1940,'Spizzirri E.':1940,'Collignon R.':1940,'Merida D.':1960,
+  'Altmaier D.':1960,'Vukic A.':1950,'Tabur C.':1950,'Jacquet K.':1950,
+  'Tsitsipas S.':2090,
+};
+
+// Seeded RNG — mulberry32
+function mulberry32(seed){
+  return function(){
+    seed|=0;seed=seed+0x6D2B79F5|0;
+    let t=Math.imul(seed^seed>>>15,1|seed);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return((t^t>>>14)>>>0)/4294967296;
+  };
+}
+
+// Build deterministic seed from current live results
+function buildSeed(live){
+  let h=0;
+  const keys=Object.keys(live||{}).sort();
+  for(const k of keys){
+    const w=live[k]?.winner||'';
+    for(let i=0;i<w.length;i++){
+      h=Math.imul(31,h)+w.charCodeAt(i)|0;
+    }
+  }
+  return h||42;
+}
+
+function eloWinProb(nameA, nameB, oddsOverride){
+  // If we have real bookmaker odds for this matchup, use them (more accurate)
+  if(oddsOverride){
+    // Already normalized to 0-1
+    return oddsOverride;
+  }
+  const eloA = CLAY_ELO[nameA] || 1900;
+  const eloB = CLAY_ELO[nameB] || 1900;
+  return 1 / (1 + Math.pow(10, (eloB - eloA) / 400));
+}
+
+function normalizeOdds(americanA, americanB){
+  // Convert American odds to normalized win probability
+  function implied(american){
+    const n = Number(american);
+    return n > 0 ? 100/(n+100) : -n/(-n+100);
+  }
+  if(!americanA || !americanB) return null;
+  const rawA = implied(americanA);
+  const rawB = implied(americanB);
+  const total = rawA + rawB;
+  return rawA / total; // normalized p(A wins)
+}
+
+// ── MONTE CARLO SIMULATION ────────────────────────────────────────────────
+const N_SIMS = 1000;
+// RND_PTS defined in global scope
+
+function runMonteCarlo(rounds, allPicks, live, oddsData){
+  // allPicks: {uid: {matchId: playerName}}
+  // live: {matchId: {winner, completed}}
+  // oddsData: {key: {p1, p2, p1_odds, p2_odds}}
+  // Returns: {uid: {expectedScore, winProb, simScores[]}}
+
+  const uids = Object.keys(allPicks);
+  const results = {};
+  uids.forEach(uid => results[uid] = {totalScore:0, wins:0, simScores:[]});
+
+  // Build odds lookup
+  function getOddsProb(p1name, p2name){
+    if(!oddsData) return null;
+    function norm(s){return s.replace(/[^a-zA-Z]/g,'_');}
+    const keys = [[p1name,p2name].sort().join('__').replace(/[^a-zA-Z0-9_]/g,'_')];
+    for(const k of keys){
+      const e = oddsData[k];
+      if(!e) continue;
+      // Figure orientation
+      function toks(s){return new Set(s.toLowerCase().replace(/[^a-z]/g,' ').split(/\s+/).filter(w=>w.length>1));}
+      function nm(a,b){const ta=toks(a),tb=toks(b);for(const t of ta)if(tb.has(t))return true;return false;}
+      const p1isA = nm(e.p1, p1name);
+      const p1odds = p1isA ? e.p1_odds : e.p2_odds;
+      const p2odds = p1isA ? e.p2_odds : e.p1_odds;
+      const prob = normalizeOdds(p1odds, p2odds);
+      if(prob !== null) return prob;
+    }
+    return null;
+  }
+
+  const seed = buildSeed(live);
+  const rng = mulberry32(seed);
+
+  for(let sim = 0; sim < N_SIMS; sim++){
+    // Simulate the full tournament
+    // Build a fresh tree each simulation
+    const simWinners = {}; // matchId → simulated winner name
+
+    // Process rounds in order
+    rounds.forEach((rnd, ri) => {
+      rnd.matches.forEach((m, mi) => {
+        const matchId = m.id;
+        const lv = live[matchId] || {};
+
+        // If match is already completed, winner is known
+        if(lv.winner){
+          simWinners[matchId] = lv.winner;
+          return;
+        }
+
+        // Determine the two players (may come from previous sim results)
+        let p1name = m.p1?.n;
+        let p2name = m.p2?.n;
+
+        // If players are TBD, look up from previous round sim
+        if(p1name === 'TBD' || !p1name){
+          const prevMatch = rounds[ri-1]?.matches[mi*2];
+          if(prevMatch) p1name = simWinners[prevMatch.id] || prevMatch.p1?.n;
+        }
+        if(p2name === 'TBD' || !p2name){
+          const prevMatch = rounds[ri-1]?.matches[mi*2+1];
+          if(prevMatch) p2name = simWinners[prevMatch.id] || prevMatch.p2?.n;
+        }
+
+        // Skip if we can't determine players
+        if(!p1name || !p2name || p1name === 'TBD' || p2name === 'TBD' ||
+           p1name === 'BYE' || p2name === 'BYE'){
+          simWinners[matchId] = p1name || p2name;
+          return;
+        }
+
+        // Get win probability for p1
+        const oddsProb = getOddsProb(p1name, p2name);
+        const prob = oddsProb !== null ? oddsProb : eloWinProb(p1name, p2name, null);
+
+        // Simulate: random number < prob → p1 wins
+        simWinners[matchId] = rng() < prob ? p1name : p2name;
+      });
+    });
+
+    // Score each user's bracket against this simulation
+    let maxScore = 0;
+    const userScores = {};
+    uids.forEach(uid => {
+      let score = 0;
+      rounds.forEach(rnd => {
+        const pts = RND_PTS[rnd.key] || 1;
+        rnd.matches.forEach(m => {
+          const pick = allPicks[uid]?.[m.id];
+          const simWinner = simWinners[m.id];
+          if(pick && simWinner && pick === simWinner) score += pts;
+        });
+      });
+      userScores[uid] = score;
+      if(score > maxScore) maxScore = score;
+    });
+
+    // Tally results
+    uids.forEach(uid => {
+      const score = userScores[uid];
+      results[uid].totalScore += score;
+      results[uid].simScores.push(score);
+      if(score === maxScore && maxScore > 0) results[uid].wins++;
+    });
+  }
+
+  // Compute final stats
+  uids.forEach(uid => {
+    const r = results[uid];
+    r.expectedScore = Math.round(r.totalScore / N_SIMS * 10) / 10;
+    r.winProb = Math.round(r.wins / N_SIMS * 1000) / 10; // percent with 1dp
+    // Score distribution for fun
+    const scores = r.simScores.sort((a,b)=>a-b);
+    r.p10 = scores[Math.floor(N_SIMS * 0.1)];
+    r.p50 = scores[Math.floor(N_SIMS * 0.5)];
+    r.p90 = scores[Math.floor(N_SIMS * 0.9)];
+    delete r.simScores; // don't need raw scores in state
+    delete r.totalScore;
+    delete r.wins;
+  });
+
+  return results;
+}
+
+
+function renderBracket(){
+  const vp=S.viewingUid?(S.all.find(b=>b.id===S.viewingUid)?.picks||{}):S.picks;
+  const{pts,correct,total}=calcScore(vp);
+  const hasRes=Object.values(S.live).some(m=>m.winner);
+  const hasLive=Object.values(S.live).some(m=>m.live);
+  const si=Math.min(S.screenIdx,SCREENS.length-1);
+  const[leftIdx,rightIdx]=SCREENS[si];
+  const leftPicks=picksInRound(leftIdx);
+  const pct=Math.round(((si+1)/SCREENS.length)*100);
+
+  // Stepper
+  const stepHTML=ROUNDS.map((rk,i)=>{
+    const scrIdx=SCREENS.findIndex(([l])=>l===i);
+    const isCurr=leftIdx===i;
+    const isDone=i<leftIdx;
+    return `<div class="step">
+      <button class="step-btn ${isDone?'done':isCurr?'active':''}" onclick="jumpToScreen(${Math.max(0,scrIdx)})">
+        <div class="step-pip">${isDone?'✓':i+1}</div>
+        <div class="step-lbl">${RND_SHORT[rk]}</div>
+      </button>
+      ${i<ROUNDS.length-1?'<div class="step-arr">›</div>':''}
+    </div>`;
+  }).join('');
+
+  let html=`<div id="bkt-root">
+    <div class="stepper" id="stepper">${stepHTML}</div>`;
+
+  if(S.viewingUid) html+=`<div class="viewing-bar"><span>👁 Viewing <strong>${S.viewingName}</strong></span><button class="btn sm ghost" onclick="S.viewingUid=null;S.viewingName=null;renderBracket()" style="margin-left:auto">← Mine</button></div>`;
+
+  if(S.bracketLocked&&!S.viewingUid){
+    html+=`<div style="padding:.5rem 1.5rem;background:#dcfce7;border-bottom:2px solid #86efac;font-size:12px;color:#15803d;display:flex;align-items:center;gap:.5rem">
+      🏆 <strong>Your bracket is locked and submitted.</strong> No further changes allowed.
+    </div>`;
+  }
+  html+=`<div class="bkt-topbar">
+    <div class="bkt-user">${S.viewingUid?S.viewingName:S.userName}</div>
+    <div class="bkt-actions">
+      ${hasRes?`<span class="score-pill">${pts} pts</span><span class="score-pill ok">${correct} correct</span><span class="score-pill grey">${total} picks</span>`:''}
+      ${!S.viewingUid?`<button class="btn sm primary" onclick="savePicks()">Save</button><button class="btn sm" onclick="doShare()">Share</button>`:''}
+    </div>
+  </div>
+  <div class="legend-bar">
+    <div class="leg"><div class="leg-sw" style="background:var(--clay-ghost);border:2px solid var(--clay-l)"></div>Your pick</div>
+    <div class="leg"><div class="leg-sw" style="background:var(--court)"></div>Official result</div>
+    <div class="leg"><div class="leg-sw" style="background:var(--court-pale);border:2px solid var(--court-mid)"></div>Correct ✓</div>
+    <div class="leg"><div class="leg-sw" style="background:#fee2e2;border:2px solid #fca5a5"></div>Wrong ✗</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      ${hasLive?'<div class="live-badge"><div class="live-dot"></div>Live</div>':''}
+      <span class="sync-note">Syncs every 3 min</span>
+    </div>
+  </div>`;
+
+  // Main two-column view
+  html+=`<div class="bkt-viewport" id="bkt-viewport" style="opacity:1">
+    <div class="bkt-screen" id="bkt-screen">`;
+  html+=renderColumn(leftIdx,vp,'left');
+  html+=renderGutter(leftIdx);
+  html+=renderColumn(rightIdx,vp,'right');
+  html+=`</div></div>`;
+
+  // Share
+  html+=`<div id="share-panel" style="display:none;padding:.75rem 1.5rem"><div style="display:flex;gap:10px;background:var(--sand-l);border:1.5px solid var(--sand-d);border-radius:var(--r-sm);padding:10px 14px"><div id="share-url-txt" style="flex:1;font-family:var(--font-m);font-size:11px;color:var(--ink-m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div><button class="btn sm" onclick="copyShare()">Copy</button></div></div>`;
+
+  // Bottom nav
+  const nextScrn=SCREENS[si+1];
+  html+=`<div class="bkt-nav">
+    <button class="nav-btn" onclick="prevScreen()" ${si===0?'disabled':''}>
+      ← <div class="nav-btn-inner"><span>Previous</span><span class="nav-btn-sub">${si>0?RND_LABEL[ROUNDS[SCREENS[si-1][0]]]:''}</span></div>
+    </button>
+    <div class="nav-progress">
+      <div class="nav-prog-text">${leftPicks.done}/${leftPicks.total} picks in left column</div>
+      <div class="nav-prog-bar"><div class="nav-prog-fill" style="width:${pct}%"></div></div>
+    </div>
+    ${si>=SCREENS.length-1
+      ? `<button class="nav-btn primary" onclick="lockAndSave()">${S.bracketLocked?"🏆 Bracket locked":"Save &amp; submit bracket ✓"}</button>`
+      : `<button class="nav-btn primary" onclick="nextScreen()">
+          <div class="nav-btn-inner"><span>Next round</span><span class="nav-btn-sub">${RND_LABEL[ROUNDS[SCREENS[si+1][0]]]||''}</span></div> →
+        </button>`}
+  </div></div>`;
+
+  document.getElementById('root').innerHTML=html;
+
+  // Draw SVG connectors after render
+  requestAnimationFrame(()=>drawConnectors(leftIdx,rightIdx,vp));
+}
+
+function renderColumn(rndIdx,vp,side){
+  const rnd=S.rounds[rndIdx];
+  if(!rnd)return '';
+  const{done,total}=picksInRound(rndIdx);
+  // Size class
+  const sz=['','','col-lg','col-lg','col-xl','col-xl','col-xl'][rndIdx]||'';
+  // For right column, use flex with space-around to stagger against left
+  const rightStyle=side==='right'?'display:flex;flex-direction:column;justify-content:space-around;':'';
+
+  let h=`<div class="col-wrap ${sz}" id="col-${side}-${rndIdx}">
+    <div class="col-header">
+      <div class="col-rnd-label">Round ${rndIdx+1} of ${ROUNDS.length}</div>
+      <div class="col-rnd-title">${RND_LABEL[rnd.key]}</div>
+      <div class="col-rnd-meta">
+        <span class="pts-badge">${RND_PTS[rnd.key]} pt${RND_PTS[rnd.key]>1?'s':''}/pick</span>
+        ${total>0?`<span class="picks-note">${done}/${total} picks</span>`:''}
+      </div>
+    </div>
+    <div class="col-matches" id="matches-${side}-${rndIdx}" style="${rightStyle}">`;
+
+  rnd.matches.forEach((m,mi)=>{h+=renderCard(m,mi,rnd.key,vp,side,rndIdx);});
+  h+=`</div></div>`;
+  return h;
+}
+
+function renderGutter(leftIdx){
+  return `<div class="col-gutter" id="gutter-${leftIdx}">
+    <svg id="svg-${leftIdx}" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible"></svg>
+  </div>`;
+}
+
+function renderCard(m,mi,roundKey,vp,side,rndIdx){
+  const lv=S.live[m.id]||{};
+  const isBye=m.p2?.n==='BYE'||m.p1?.n==='BYE';
+  const byeW=isBye?(m.p1?.n!=='BYE'?m.p1?.n:m.p2?.n):null;
+  const done=isBye||!!(lv.winner||lv.completed||lv.state==='post');
+  const effW=byeW||lv.winner;
+  const isLiveM=lv.live&&!done;
+  const isSched=lv.scheduled&&!done&&!lv.live;
+  const myPick=vp[m.id];
+
+  let cls=`mc${isBye?' bye':''}${myPick?' picked':''}${isLiveM?' has-live':''}`;
+  let h=`<div class="${cls}" id="mc-${m.id}">`;
+
+  const statusTxt=isLiveM?'<span class="mc-status live">● Live</span>':done&&!isBye?'<span class="mc-status done">✓</span>':'';
+  const label=isBye?'BYE':`Match ${mi+1}`;
+  // H2H button — only when both players are known
+  const p1known=m.p1?.n&&m.p1.n!=='TBD'&&m.p1.n!=='BYE'&&m.p1.n!=='Qualifier';
+  const p2known=m.p2?.n&&m.p2.n!=='TBD'&&m.p2.n!=='BYE'&&m.p2.n!=='Qualifier';
+  const h2hLink=(!isBye&&p1known&&p2known)?h2hUrl(m.p1.n,m.p2.n):null;
+  const p1esc=m.p1?.n?.replace(/'/g,"\\'");
+  const p2esc=m.p2?.n?.replace(/'/g,"\\'");
+  const h2hBtn=(!isBye&&p1known&&p2known)?`<button class="h2h-btn" title="Head to Head record" onclick="event.stopPropagation();openH2H('${p1esc}','${p2esc}')">
+    <svg width="13" height="13" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.8"/>
+      <text x="10" y="14.5" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor" font-family="Georgia,serif" font-style="italic">i</text>
+    </svg>
+  </button>`:'';
+  h+=`<div class="mc-strip"><div class="mc-num">${label}</div><div style="display:flex;align-items:center;gap:6px">${statusTxt}${h2hBtn}</div></div>`;
+  h+=`<div class="mc-players">`;
+
+  // Show dead picks (wrong user picks that didn't advance) 
+  if(!isBye){
+    // Check if this slot has dead picks to display
+    const dp1=m.deadPick1,dp2=m.deadPick2;
+    if(dp1&&m.p1?.n!==dp1.n){
+      // Real winner is p1, dead pick was different
+      const dpSeed=dp1.s?`<div class="mc-seed">${dp1.s}</div>`:`<div class="mc-seed"></div>`;
+      h+=`<div class="mc-player dead-pick locked"><div class="mc-seed"></div><div class="mc-name">${dp1.s?`<span class="mc-seed-inline">${dp1.s}</span> `:''}${dp1.n}</div><div class="mc-icon x">✗</div></div>`;
+    }
+    if(dp2&&m.p2?.n!==dp2.n){
+      const dp2Seed=dp2.s?`<div class="mc-seed">${dp2.s}</div>`:`<div class="mc-seed"></div>`;
+      h+=`<div class="mc-player dead-pick locked"><div class="mc-seed"></div><div class="mc-name">${dp2.s?`<span class="mc-seed-inline">${dp2.s}</span> `:''}${dp2.n}</div><div class="mc-icon x">✗</div></div>`;
+    }
+  }
+
+  if(isBye){
+    const seed=m.p1?.n!=='BYE'?m.p1:m.p2;
+    const sdN=seed?.s?`<div class="mc-seed">${seed.s}</div>`:`<div class="mc-seed"></div>`;
+    h+=`<div class="mc-player winner locked">${sdN}<div class="mc-name">${seed?.n}</div></div>`;
+    h+=`<div class="mc-bye-row">BYE</div>`;
+  }else{
+    [m.p1,m.p2].forEach((pl,pi)=>{
+      const tbd=pl.n==='TBD'||pl.n==='Qualifier';
+      const isW=effW===pl.n;
+      const isMy=myPick===pl.n;
+      const isCorr=isMy&&done&&isW;
+      const isWrong=isMy&&done&&!isW;
+      const isSrv=isLiveM&&lv.serving===(pi===0?'p1':'p2');
+      const sets=fmtSets(pi===0?lv.p1Sets:lv.p2Sets);
+      const showSets=(done||isLiveM)&&sets;
+
+      let rowCls='mc-player';
+      if(tbd)rowCls+=' tbd locked';
+      else if(isW&&done)rowCls+=' winner locked';
+      else if(isCorr)rowCls+=' correct locked';
+      else if(isWrong)rowCls+=' wrong locked';
+      else if(isMy)rowCls+=' my-pick';
+      else if(done)rowCls+=' locked';
+      if(isLiveM&&!tbd)rowCls+=' live-p';
+
+      const click=(!tbd&&!done&&!S.viewingUid)?`onclick="pick('${m.id}','${pl.n.replace(/'/g,"\\'")}')"`:'';
+      const sdEl=pl.s?`<div class="mc-seed">${pl.s}</div>`:`<div class="mc-seed"></div>`;
+      const srvEl=isSrv?'<div class="srv"></div>':'';
+      let iconEl='';
+      if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
+      else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
+      else if(isMy&&!done)iconEl='<div class="mc-icon chk">✓</div>';
+
+      // Get odds for this player
+      let oddsEl='';
+      if(!done&&!isLiveM&&!tbd&&pi===0&&m.p1?.n&&m.p2?.n&&m.p1.n!=='TBD'&&m.p2.n!=='TBD'){
+        const od=getOdds(m.p1.n,m.p2.n);
+        if(od){
+          const o=pi===0?od.p1_odds:od.p2_odds;
+          const prob=pi===0?od.p1_prob:od.p2_prob;
+          if(o)oddsEl=`<div class="mc-odds ${Number(o.replace('+',''))<0?'fav':'dog'}" title="${prob} implied (${od.book})">${o}</div>`;
+        }
+      } else if(!done&&!isLiveM&&!tbd&&pi===1&&m.p1?.n&&m.p2?.n&&m.p1.n!=='TBD'&&m.p2.n!=='TBD'){
+        const od=getOdds(m.p1.n,m.p2.n);
+        if(od){
+          const o=od.p2_odds;
+          const prob=od.p2_prob;
+          if(o)oddsEl=`<div class="mc-odds ${Number(o.replace('+',''))<0?'fav':'dog'}" title="${prob} implied (${od.book})">${o}</div>`;
+        }
+      }
+      h+=`<div class="${rowCls}" ${click}>${sdEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}</div>${showSets?`<div class="mc-score">${sets}</div>`:(done||isLiveM)?'<div class="mc-score-empty"></div>':''}${oddsEl}${iconEl}</div>`;
+    });
+  }
+  h+=`</div>`;
+  if(isSched&&lv.scheduledTime&&lv.timeValid){
+    const t=new Date(lv.scheduledTime);
+    h+=`<div class="mc-time">📅 ${t.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>`;
+  }
+  h+=`</div>`;
+  return h;
+}
+
+// Draw SVG bracket connector lines + align right column cards precisely
+function drawConnectors(leftIdx,rightIdx,vp){
+  const svg=document.getElementById(`svg-${leftIdx}`);
+  const gutter=document.getElementById(`gutter-${leftIdx}`);
+  const rightCol=document.getElementById(`col-right-${rightIdx}`);
+  if(!svg||!gutter)return;
+  const leftRnd=S.rounds[leftIdx];
+  const rightRnd=S.rounds[rightIdx];
+  if(!leftRnd||!rightRnd)return;
+
+  svg.innerHTML='';
+  const gr=gutter.getBoundingClientRect();
+  const leftMatchesContainer=document.getElementById(`matches-left-${leftIdx}`);
+  const rightMatchesContainer=document.getElementById(`matches-right-${rightIdx}`);
+  if(!leftMatchesContainer||!rightMatchesContainer)return;
+
+  // MATHEMATICAL positioning: measure each left card height, sum them up
+  // to get exact midpoints — don't rely on getBoundingClientRect for right cards
+  const leftCards=leftRnd.matches.map(m=>document.getElementById(`mc-${m.id}`));
+  const lcr=leftMatchesContainer.getBoundingClientRect();
+  
+  // Measure each left card's actual top and height from DOM
+  const leftTops=leftCards.map(el=>el?el.getBoundingClientRect().top-lcr.top:0);
+  const leftHeights=leftCards.map(el=>el?el.getBoundingClientRect().height:0);
+  const leftMids=leftTops.map((t,i)=>t+leftHeights[i]/2);
+
+  // Position right column
+  const lh=leftMatchesContainer.getBoundingClientRect().height;
+  rightMatchesContainer.style.position='relative';
+  rightMatchesContainer.style.height=lh+'px';
+  rightMatchesContainer.style.justifyContent='unset';
+
+  rightRnd.matches.forEach((rm,ri)=>{
+    const rightCard=document.getElementById(`mc-${rm.id}`);
+    if(!rightCard)return;
+    // The two left feeders for this right card are at indices ri*2 and ri*2+1
+    const aMid=leftMids[ri*2]??0;
+    const bMid=leftMids[ri*2+1]??0;
+    const targetCenterY=(aMid+bMid)/2;
+    const cardH=rightCard.getBoundingClientRect().height;
+    const topPos=targetCenterY-cardH/2;
+    rightCard.style.position='absolute';
+    rightCard.style.left='0';
+    rightCard.style.right='0';
+    rightCard.style.top=Math.max(0,topPos)+'px';
+  });
+
+  // Draw SVG lines
+  rightRnd.matches.forEach((rm,ri)=>{
+    const la=leftRnd.matches[ri*2];
+    const lb=leftRnd.matches[ri*2+1];
+    const rightCard=document.getElementById(`mc-${rm.id}`);
+    if(!rightCard||!la)return;
+
+    const rr=rightCard.getBoundingClientRect();
+    const aMid=leftMids[ri*2]+(lcr.top-gr.top);
+    const bMid=(leftMids[ri*2+1]??leftMids[ri*2])+(lcr.top-gr.top);
+    const rMid=rr.top+rr.height/2-gr.top;
+    const cx=gr.width/2;
+
+    const liveA=S.live[la.id]||{};
+    const liveB=S.live[lb.id]||{};
+    const liveRM=S.live[rm.id]||{};
+    const done=!!(liveRM.winner||liveRM.completed);
+    const winA=liveA.winner;const winB=liveB.winner;
+
+    function col(pick,win){
+      if(done)return '#cfc4b8';
+      if(win)return '#267029';
+      if(pick)return '#B84030';
+      return '#d8cfc4';
+    }
+    const colA=col(vp[la.id],winA);
+    const colB=col(vp[lb.id],winB);
+    const joinY=(aMid+bMid)/2;
+    const joinCol=winA?'#267029':winB?'#267029':vp[la.id]?'#B84030':vp[lb.id]?'#B84030':'#d8cfc4';
+
+    // Background lines (slightly thicker, lighter)
+    line(svg,'#e8ddd0',3,0,aMid,cx,aMid);
+    line(svg,'#e8ddd0',3,cx,Math.min(aMid,joinY),cx,Math.max(aMid,joinY));
+    line(svg,'#e8ddd0',3,0,bMid,cx,bMid);
+    line(svg,'#e8ddd0',3,cx,Math.min(bMid,joinY),cx,Math.max(bMid,joinY));
+    line(svg,'#e8ddd0',3,cx,joinY,gr.width,rMid);
+    // Colored lines on top
+    line(svg,colA,2,0,aMid,cx,aMid);
+    line(svg,colA,2,cx,aMid,cx,joinY);
+    line(svg,colB,2,0,bMid,cx,bMid);
+    line(svg,colB,2,cx,bMid,cx,joinY);
+    line(svg,joinCol,2,cx,joinY,gr.width,rMid);
+    // Join dot
+    const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx',String(cx));dot.setAttribute('cy',String(joinY));
+    dot.setAttribute('r','3.5');dot.setAttribute('fill',joinCol);
+    svg.appendChild(dot);
+  });
+}
+function line(svg,stroke,w,x1,y1,x2,y2){
+  const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+  l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+  l.setAttribute('stroke',stroke);l.setAttribute('stroke-width',w);l.setAttribute('stroke-linecap','round');
+  svg.appendChild(l);
+}
+
+// Navigation
+function nextScreen(){if(S.screenIdx>=SCREENS.length-1)return;debounceSave();animateTransition(1,()=>{S.screenIdx++;renderBracket();});}
+function prevScreen(){if(S.screenIdx<=0)return;debounceSave();animateTransition(-1,()=>{S.screenIdx--;renderBracket();});}
+function jumpToScreen(idx){if(idx===S.screenIdx)return;const d=idx>S.screenIdx?1:-1;debounceSave();animateTransition(d,()=>{S.screenIdx=idx;renderBracket();});}
+
+function animateTransition(dir,cb){
+  const vp=document.getElementById('bkt-viewport');
+  if(!vp){cb();return;}
+  vp.style.transition='opacity .18s ease,transform .18s ease';
+  vp.style.opacity='0';
+  vp.style.transform=`translateX(${dir<0?'30px':'-30px'})`;
+  setTimeout(()=>{
+    cb();
+    requestAnimationFrame(()=>{
+      const vp2=document.getElementById('bkt-viewport');
+      if(vp2){
+        vp2.style.transition='none';vp2.style.opacity='0';vp2.style.transform=`translateX(${dir<0?'-30px':'30px'})`;
+        requestAnimationFrame(()=>{
+          vp2.style.transition='opacity .3s ease,transform .3s cubic-bezier(.25,.46,.45,.94)';
+          vp2.style.opacity='1';vp2.style.transform='translateX(0)';
+          window.scrollTo({top:100,behavior:'smooth'});
+          // Redraw connectors after animation settles
+          setTimeout(()=>{
+            const si=Math.min(S.screenIdx,SCREENS.length-1);
+            const[li,ri]=SCREENS[si];
+            const vp2=S.viewingUid?(S.all.find(b=>b.id===S.viewingUid)?.picks||{}):S.picks;
+            drawConnectors(li,ri,vp2);
+          },320);
+        });
+      }
+    });
+  },200);
+}
+
+function pick(mid,name){
+  if(S.viewingUid){toast("Viewing someone else's bracket");return;}
+  if(S.locked){toast('Picks are locked');return;}
+  if(S.bracketLocked){toast('Your bracket is locked — you already submitted!');return;}
+  if(S.picks[mid]===name)delete S.picks[mid];else S.picks[mid]=name;
+  buildDisplay();
+  // Fast re-render: just update card HTML + connectors, no full page rebuild
+  const si=Math.min(S.screenIdx,SCREENS.length-1);
+  const[leftIdx,rightIdx]=SCREENS[si];
+  const vp=S.picks;
+  const leftRnd=S.rounds[leftIdx];const rightRnd=S.rounds[rightIdx];
+  const lc=document.getElementById(`matches-left-${leftIdx}`);
+  const rc=document.getElementById(`matches-right-${rightIdx}`);
+  if(lc)lc.innerHTML=leftRnd.matches.map((m,mi)=>renderCard(m,mi,leftRnd.key,vp,'left',leftIdx)).join('');
+  if(rc)rc.innerHTML=rightRnd.matches.map((m,mi)=>renderCard(m,mi,rightRnd.key,vp,'right',rightIdx)).join('');
+  // Update picks counter
+  const np=document.querySelector('.nav-prog-text');
+  if(np){const lp=picksInRound(leftIdx);np.textContent=`${lp.done}/${lp.total} picks in left column`;}
+  drawConnectors(leftIdx,rightIdx,vp);
+  debounceSave();
+}
+
+function doShare(){
+  savePicks(true);
+  const url=`${location.origin}${location.pathname}?join=${encodeURIComponent(S.uid)}`;
+  const p=document.getElementById('share-panel');
+  if(p){p.style.display='block';document.getElementById('share-url-txt').textContent=url;}
+}
+function copyShare(){navigator.clipboard.writeText(document.getElementById('share-url-txt')?.textContent||'').then(()=>toast('Copied!'));}
+
+async function renderLB(){
+  document.getElementById('root').innerHTML='<div class="loading"><div class="spinner"></div><div class="load-txt">Loading…</div></div>';
+  buildDisplay();
+  // Run Monte Carlo with latest data
+  S.simResults=runMonteCarloForAll();
+  const rows=(S.all||[]).filter(b=>b.tournamentId===TOURNAMENT_ID).map(b=>({...b,...calcScore(b.picks||{})})).sort((a,b)=>{ const sa=S.simResults[a.id],sb=S.simResults[b.id]; if(sa&&sb)return sb.expectedScore-sa.expectedScore; return b.pts-a.pts||b.correct-a.correct; });
+  const medals=['🥇','🥈','🥉'];
+  let html=`<div class="lb-page"><div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem"><h2 style="font-family:var(--font-d);font-size:38px;font-weight:900;color:var(--ink)">Leaderboard</h2><button class="btn sm ghost" onclick="renderLB()">↻ Refresh</button></div>`;
+  if(!rows.length){html+=`<div class="lb-table"><div class="lb-empty">No brackets yet. Be the first!</div></div>`;}
+  else{
+    html+=`<div class="lb-table"><div class="lb-hdr" style="grid-template-columns:50px 1fr 90px 70px 70px 70px 70px"><div>#</div><div>Name</div><div style="text-align:right">Correct</div><div style="text-align:right">Max</div><div style="text-align:right">Exp.</div><div style="text-align:right">Win%</div><div style="text-align:right">Pts</div></div>`;
+    rows.forEach((r,i)=>{
+      const me=r.id===S.uid;
+      const playedCount=Object.values(S.live).filter(m=>!m.bye&&(m.completed||m.state==='post')).length;
+      const sim=S.simResults[r.id]||S.simResults[r.uid]||{};
+      html+=`<div class="lb-row${me?' me':''}" style="grid-template-columns:50px 1fr 90px 70px 70px 70px 70px" onclick="viewBracket('${r.id}')">
+        <div class="lb-rank ${i<3?'medal':''}">${i<3?medals[i]:i+1}</div>
+        <div class="lb-name"><span>${r.name||'—'}</span>${me?'<span class="you-badge">you</span>':''}</div>
+        <div class="lb-corr">${r.correct||0}/${playedCount}</div>
+        <div class="lb-max">${r.maxPossible||0}</div>
+        <div class="lb-exp" title="Expected final score">${sim.expectedScore||'—'}</div>
+        <div class="lb-win ${sim.winProb>20?'hot':''}" title="Win probability">${sim.winProb!=null?sim.winProb+'%':'—'}</div>
+        <div class="lb-pts">${r.pts||0}</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  html+=`</div>`;
+  document.getElementById('root').innerHTML=html;
+}
+function viewBracket(uid){const e=S.all.find(b=>b.id===uid);if(!e){toast('Not found');return;}if(uid===S.uid){S.viewingUid=null;S.viewingName=null;setTab('bracket');return;}S.viewingUid=uid;S.viewingName=e.name||'Unknown';buildDisplay();setTab('bracket');}
+
+function renderHow(){
+  document.getElementById('root').innerHTML=`<div class="info-page"><h2 style="font-family:var(--font-d);font-size:38px;font-weight:900;color:var(--ink);margin-bottom:1.5rem">How it Works</h2>
+    <div class="card"><div class="card-hd"><div class="lbl">Scoring</div><div class="ttl">Points double every round</div></div><div class="card-bd"><table class="stbl"><tr><th>Round</th><th>Points per correct pick</th></tr>${ROUNDS.map(r=>`<tr><td>${RND_LABEL[r]}</td><td class="pts">${RND_PTS[r]}</td></tr>`).join('')}</table></div></div>
+    <div class="card"><div class="card-hd"><div class="lbl">Live results</div><div class="ttl">Auto-updating bracket</div></div><div class="card-bd"><p style="font-size:13px;line-height:1.9;color:var(--ink-m)">Results sync from ESPN every 3 minutes. Completed matches lock instantly.<br><br><strong style="color:var(--court)">Green</strong> = official winner &nbsp;·&nbsp; <strong style="color:var(--clay)">Clay</strong> = your pick &nbsp;·&nbsp; <strong style="color:#16a34a">Light green</strong> = correct ✓ &nbsp;·&nbsp; <strong style="color:#b91c1c">Red</strong> = wrong ✗</p></div></div>
+  </div>`;
+}
+function renderAdmin(){
+  const count=Object.keys(S.live).length;const winners=Object.values(S.live).filter(m=>m.winner).length;
+  let byRound={};Object.values(S.live).forEach(m=>{if(m.round)byRound[m.round]=(byRound[m.round]||0)+1;});
+  document.getElementById('root').innerHTML=`<div class="info-page"><h2 style="font-family:var(--font-d);font-size:38px;font-weight:900;color:var(--ink);margin-bottom:1.5rem">Admin</h2>
+    <div class="card"><div class="card-hd"><div class="lbl">Control</div><div class="ttl">Tournament settings</div></div><div class="card-bd">
+      <div style="display:flex;gap:8px;margin-bottom:1rem"><button class="btn sm ${S.locked?'primary':''}" onclick="adminLock()">${S.locked?'🔒 Locked':'🔓 Lock picks'}</button><button class="btn sm" onclick="syncFromServer().then(()=>{buildDisplay();renderAdmin();toast('Synced')})">↻ Sync</button></div>
+      <div style="font-size:11px;color:var(--ink-m);font-family:var(--font-m);background:var(--sand-l);padding:.75rem 1rem;border-radius:var(--r-sm)">${count} matches · ${winners} with results · ${JSON.stringify(byRound)}</div>
+      <div style="margin-top:1rem;font-size:12px;color:var(--ink-m)">${ROUNDS.map(r=>{const done=S.rounds.find(rnd=>rnd.key===r)?.matches?.filter(m=>S.live[m.id]?.winner)||[];return done.length?`<div style="margin-bottom:.5rem"><strong>${RND_LABEL[r]}:</strong> ${done.map(m=>`${m.p1.n} vs ${m.p2.n} → <strong>${S.live[m.id].winner}</strong>`).join(', ')}</div>`:''}).join('')}</div>
+    </div></div></div>`;
+}
+async function adminLock(){S.locked=!S.locked;await fs.set('meta',`live_${TOURNAMENT_ID}`,{locked:S.locked});toast(S.locked?'Picks locked':'Picks unlocked');renderAdmin();}
+
+function lockAndSave(){
+  // Count total pickable matches
+  const totalPickable=S.rounds.reduce((acc,rnd)=>acc+rnd.matches.filter(m=>
+    !(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')
+  ).length,0);
+  const totalPicked=Object.keys(S.picks).length;
+  if(totalPicked<totalPickable){
+    // Partial bracket — just save without locking
+    savePicks();
+    toast('Bracket saved! Finish all picks to submit and lock.');
+    return;
+  }
+  // Full bracket — lock and save
+  S.bracketLocked=true;
+  savePicks();
+  toast('🏆 Bracket submitted and locked!');
+  renderBracket(); // refresh to show locked state
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
+
+(()=>{const p=new URLSearchParams(location.search).get('join');if(p)try{localStorage.setItem('rg_join_pending',p);}catch{}history.replaceState(null,'',location.pathname);})();
+// ── H2H MODAL ─────────────────────────────────────────────────────────────
+function ensureModal(){
+  if(document.getElementById('h2h-overlay'))return;
+  const el=document.createElement('div');
+  el.id='h2h-overlay';el.className='h2h-overlay';
+  el.innerHTML='<div class="h2h-modal" id="h2h-modal"></div>';
+  el.addEventListener('click',e=>{if(e.target===el)closeH2H();});
+  document.body.appendChild(el);
+}
+function closeH2H(){
+  const ov=document.getElementById('h2h-overlay');
+  if(ov){ov.classList.remove('open');document.body.style.overflow='';}
+}
+const SURF_COL={Clay:'#B84030',Hard:'#3d7aed',Grass:'#267029',Indoor:'#7c6a5a',Carpet:'#5a4a8a'};
+
+async function openH2H(p1,p2){
+  ensureModal();
+  const ov=document.getElementById('h2h-overlay');
+  const modal=document.getElementById('h2h-modal');
+  document.body.style.overflow='hidden';
+  modal.innerHTML=`
+    <div class="h2h-modal-hdr">
+      <button class="h2h-close" onclick="closeH2H()">✕</button>
+      <div class="h2h-vs">
+        <div class="h2h-player"><div class="h2h-player-name">${p1}</div></div>
+        <div class="h2h-vs-badge">vs</div>
+        <div class="h2h-player"><div class="h2h-player-name">${p2}</div></div>
+      </div>
+    </div>
+    <div class="h2h-loading"><div class="spinner"></div><div class="h2h-load-txt">Loading head-to-head…</div></div>`;
+  ov.classList.add('open');
+  try{
+    const data=await fetchH2H(p1,p2);
+    renderH2H(modal,p1,p2,data.h2h,data.p1Profile,data.p2Profile);
+  }catch(e){
+    console.error('H2H error',e);
+    modal.querySelector('.h2h-loading').innerHTML=`<div style="text-align:center;color:var(--ink-l);font-size:13px;line-height:1.8">H2H data not available yet.<br><small style='font-size:11px;opacity:.7'>Run <code>node fetch-h2h.js</code> to populate.</small><br><button class="btn sm" style="margin-top:1rem" onclick="closeH2H()">Close</button></div>`;
+  }
+}
+
+
+// Complete H2H + Player Profile dataset for Rome 2026
+// All seed-vs-seed matchups + key non-seed matchups
+// Player profiles: rank, age, height, weight, 2026 W/L
+
+const PLAYER_PROFILES = {
+  'Sinner J.':            {rank:1,  age:23, height:"6'2\"", weight:'170lbs', ytd:'33-4',  hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Zverev A.':            {rank:2,  age:28, height:"6'6\"", weight:'200lbs', ytd:'26-7',  hand:'Right', bh:'Two-Handed', country:'GER'},
+  'Djokovic N.':          {rank:3,  age:38, height:"6'2\"", weight:'176lbs', ytd:'15-7',  hand:'Right', bh:'Two-Handed', country:'SRB'},
+  'Auger-Aliassime F.':   {rank:4,  age:24, height:"6'4\"", weight:'183lbs', ytd:'22-10', hand:'Right', bh:'Two-Handed', country:'CAN'},
+  'Shelton B.':           {rank:5,  age:22, height:"6'4\"", weight:'190lbs', ytd:'20-11', hand:'Left',  bh:'One-Handed', country:'USA'},
+  'De Minaur A.':         {rank:6,  age:25, height:"6'1\"", weight:'163lbs', ytd:'24-8',  hand:'Right', bh:'Two-Handed', country:'AUS'},
+  'Medvedev D.':          {rank:7,  age:29, height:"6'6\"", weight:'196lbs', ytd:'19-9',  hand:'Right', bh:'Two-Handed', country:'RUS'},
+  'Musetti L.':           {rank:8,  age:23, height:"6'1\"", weight:'172lbs', ytd:'21-9',  hand:'Right', bh:'One-Handed', country:'ITA'},
+  'Bublik A.':            {rank:9,  age:27, height:"6'5\"", weight:'181lbs', ytd:'18-12', hand:'Right', bh:'One-Handed', country:'KAZ'},
+  'Cobolli F.':           {rank:10, age:23, height:"6'1\"", weight:'174lbs', ytd:'20-10', hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Lehecka J.':           {rank:11, age:23, height:"6'3\"", weight:'185lbs', ytd:'17-11', hand:'Right', bh:'Two-Handed', country:'CZE'},
+  'Rublev A.':            {rank:12, age:27, height:"6'2\"", weight:'181lbs', ytd:'15-12', hand:'Right', bh:'Two-Handed', country:'RUS'},
+  'Khachanov K.':         {rank:13, age:28, height:"6'5\"", weight:'196lbs', ytd:'16-10', hand:'Right', bh:'Two-Handed', country:'RUS'},
+  'Vacherot V.':          {rank:14, age:27, height:"6'1\"", weight:'170lbs', ytd:'16-10', hand:'Right', bh:'Two-Handed', country:'MON'},
+  'Fils A.':              {rank:15, age:20, height:"6'2\"", weight:'176lbs', ytd:'19-8',  hand:'Right', bh:'Two-Handed', country:'FRA'},
+  'Paul T.':              {rank:16, age:27, height:"6'3\"", weight:'185lbs', ytd:'18-10', hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Norrie C.':            {rank:17, age:29, height:"6'2\"", weight:'172lbs', ytd:'14-11', hand:'Left',  bh:'Two-Handed', country:'GBR'},
+  'Darderi L.':           {rank:18, age:23, height:"6'2\"", weight:'172lbs', ytd:'18-9',  hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Tien L.':              {rank:19, age:19, height:"5'11\"", weight:'163lbs', ytd:'15-10', hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Tiafoe F.':            {rank:20, age:26, height:"6'2\"", weight:'185lbs', ytd:'16-11', hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Davidovich Fokina A.': {rank:21, age:25, height:"6'2\"", weight:'172lbs', ytd:'15-10', hand:'Right', bh:'Two-Handed', country:'ESP'},
+  'Rinderknech A.':       {rank:22, age:29, height:"6'4\"", weight:'185lbs', ytd:'14-10', hand:'Right', bh:'Two-Handed', country:'FRA'},
+  'Ruud C.':              {rank:23, age:26, height:"6'1\"", weight:'176lbs', ytd:'16-9',  hand:'Right', bh:'Two-Handed', country:'NOR'},
+  'Etcheverry T.':        {rank:24, age:24, height:"6'2\"", weight:'176lbs', ytd:'15-10', hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Cerundolo F.':         {rank:25, age:25, height:"6'0\"", weight:'165lbs', ytd:'16-9',  hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Mensik J.':            {rank:26, age:19, height:"6'3\"", weight:'163lbs', ytd:'19-8',  hand:'Right', bh:'One-Handed', country:'CZE'},
+  'Fonseca J.':           {rank:27, age:18, height:"6'2\"", weight:'165lbs', ytd:'17-8',  hand:'Right', bh:'Two-Handed', country:'BRA'},
+  'Moutet C.':            {rank:28, age:25, height:"5'11\"", weight:'154lbs', ytd:'15-10', hand:'Left', bh:'One-Handed', country:'FRA'},
+  'Griekspoor T.':        {rank:29, age:28, height:"6'4\"", weight:'183lbs', ytd:'14-11', hand:'Right', bh:'Two-Handed', country:'NED'},
+  'Nakashima B.':         {rank:30, age:23, height:"6'1\"", weight:'172lbs', ytd:'15-10', hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Humbert U.':           {rank:31, age:26, height:"6'4\"", weight:'185lbs', ytd:'14-10', hand:'Left',  bh:'One-Handed', country:'FRA'},
+  'Jodar R.':             {rank:32, age:26, height:"5'11\"", weight:'163lbs', ytd:'9-12', hand:'Right', bh:'Two-Handed', country:'ESP'},
+  'Borges N.':            {rank:33, age:27, height:"6'3\"", weight:'181lbs', ytd:'16-8',  hand:'Right', bh:'Two-Handed', country:'POR'},
+  'Navone M.':            {rank:34, age:24, height:"5'11\"", weight:'163lbs', ytd:'12-10', hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Tabilo A.':            {rank:35, age:26, height:"6'1\"", weight:'172lbs', ytd:'13-9',  hand:'Right', bh:'Two-Handed', country:'CHI'},
+  'Baez S.':              {rank:36, age:23, height:"5'11\"", weight:'163lbs', ytd:'14-9', hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Popyrin A.':           {rank:37, age:25, height:"6'4\"", weight:'185lbs', ytd:'13-10', hand:'Right', bh:'Two-Handed', country:'AUS'},
+  'Hurkacz H.':           {rank:38, age:27, height:"6'5\"", weight:'190lbs', ytd:'15-9',  hand:'Right', bh:'Two-Handed', country:'POL'},
+  'Michelsen A.':         {rank:40, age:21, height:"6'3\"", weight:'181lbs', ytd:'12-9',  hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Machac T.':            {rank:41, age:24, height:"6'0\"", weight:'163lbs', ytd:'12-9',  hand:'Right', bh:'Two-Handed', country:'CZE'},
+  'Berrettini M.':        {rank:42, age:29, height:"6'5\"", weight:'196lbs', ytd:'11-8',  hand:'Right', bh:'One-Handed', country:'ITA'},
+  'Mpetshi Perricard G.': {rank:43, age:21, height:"6'8\"", weight:'205lbs', ytd:'12-9',  hand:'Right', bh:'Two-Handed', country:'FRA'},
+  'Shapovalov D.':        {rank:44, age:25, height:"6'1\"", weight:'172lbs', ytd:'10-9',  hand:'Left',  bh:'One-Handed', country:'CAN'},
+  'Arnaldi M.':           {rank:45, age:23, height:"6'4\"", weight:'181lbs', ytd:'12-9',  hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Marozsan F.':          {rank:48, age:25, height:"6'1\"", weight:'165lbs', ytd:'11-9',  hand:'Right', bh:'Two-Handed', country:'HUN'},
+  'Van de Zandschulp B.': {rank:50, age:29, height:"6'3\"", weight:'185lbs', ytd:'11-10', hand:'Right', bh:'Two-Handed', country:'NED'},
+  'Kopriva V.':           {rank:52, age:29, height:"6'1\"", weight:'170lbs', ytd:'12-8',  hand:'Right', bh:'Two-Handed', country:'CZE'},
+  'Kecmanovic M.':        {rank:54, age:25, height:"6'1\"", weight:'172lbs', ytd:'11-9',  hand:'Right', bh:'Two-Handed', country:'SRB'},
+  'Blockx A.':            {rank:55, age:20, height:"6'4\"", weight:'176lbs', ytd:'12-8',  hand:'Right', bh:'Two-Handed', country:'BEL'},
+  'Bellucci M.':          {rank:55, age:23, height:"6'2\"", weight:'172lbs', ytd:'11-8',  hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Muller A.':            {rank:57, age:25, height:"6'3\"", weight:'183lbs', ytd:'11-10', hand:'Right', bh:'Two-Handed', country:'FRA'},
+  'Sonego L.':            {rank:58, age:29, height:"6'2\"", weight:'181lbs', ytd:'12-10', hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Struff J.':            {rank:60, age:34, height:"6'4\"", weight:'200lbs', ytd:'10-10', hand:'Right', bh:'Two-Handed', country:'GER'},
+  'Mannarino A.':         {rank:62, age:36, height:"5'11\"", weight:'156lbs', ytd:'11-10', hand:'Left', bh:'Two-Handed', country:'FRA'},
+  'Bautista Agut R.':     {rank:63, age:36, height:"6'0\"", weight:'178lbs', ytd:'9-10',  hand:'Right', bh:'Two-Handed', country:'ESP'},
+  'Atmane T.':            {rank:65, age:22, height:"6'3\"", weight:'185lbs', ytd:'10-10', hand:'Right', bh:'Two-Handed', country:'FRA'},
+  'Munar J.':             {rank:66, age:27, height:"6'0\"", weight:'165lbs', ytd:'10-10', hand:'Right', bh:'Two-Handed', country:'ESP'},
+  'Giron M.':             {rank:68, age:30, height:"5'11\"", weight:'165lbs', ytd:'10-10', hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Cerundolo J.':         {rank:70, age:24, height:"5'11\"", weight:'163lbs', ytd:'9-10', hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Bergs Z.':             {rank:72, age:25, height:"6'4\"", weight:'187lbs', ytd:'9-10',  hand:'Right', bh:'Two-Handed', country:'BEL'},
+  'Tirante T.':           {rank:73, age:24, height:"6'3\"", weight:'180lbs', ytd:'9-9',   hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Tsitsipas S.':         {rank:75, age:27, height:"6'4\"", weight:'196lbs', ytd:'14-10', hand:'Right', bh:'One-Handed', country:'GRE'},
+  'Dzumhur D.':           {rank:78, age:32, height:"5'9\"", weight:'154lbs', ytd:'8-9',   hand:'Right', bh:'Two-Handed', country:'BIH'},
+  'Fucsovics M.':         {rank:80, age:32, height:"6'1\"", weight:'183lbs', ytd:'8-10',  hand:'Right', bh:'Two-Handed', country:'HUN'},
+  'Ofner S.':             {rank:82, age:28, height:"6'3\"", weight:'181lbs', ytd:'9-10',  hand:'Right', bh:'Two-Handed', country:'AUT'},
+  'Barrios Vera T.':      {rank:85, age:25, height:"5'11\"", weight:'165lbs', ytd:'8-9',  hand:'Right', bh:'Two-Handed', country:'CHI'},
+  'Fearnley J.':          {rank:88, age:23, height:"6'2\"", weight:'176lbs', ytd:'8-9',   hand:'Right', bh:'Two-Handed', country:'GBR'},
+  'de Jong J.':           {rank:87, age:24, height:"6'0\"", weight:'163lbs', ytd:'7-8',   hand:'Right', bh:'Two-Handed', country:'NED'},
+  'Vukic A.':             {rank:88, age:27, height:"6'1\"", weight:'172lbs', ytd:'7-8',   hand:'Right', bh:'Two-Handed', country:'AUS'},
+  'Buse I.':              {rank:88, age:23, height:"6'1\"", weight:'172lbs', ytd:'7-8',   hand:'Right', bh:'Two-Handed', country:'PER'},
+  'Medjedovic H.':        {rank:92, age:21, height:"6'4\"", weight:'180lbs', ytd:'7-8',   hand:'Right', bh:'Two-Handed', country:'SRB'},
+  'Fucsovics M.':         {rank:80, age:32, height:"6'1\"", weight:'183lbs', ytd:'8-10',  hand:'Right', bh:'Two-Handed', country:'HUN'},
+  'Carreno Busta P.':     {rank:92, age:33, height:"6'1\"", weight:'176lbs', ytd:'6-8',   hand:'Right', bh:'Two-Handed', country:'ESP'},
+  'Virtanen O.':          {rank:95, age:24, height:"6'3\"", weight:'185lbs', ytd:'7-8',   hand:'Right', bh:'Two-Handed', country:'FIN'},
+  'Hijikata R.':          {rank:95, age:23, height:"6'0\"", weight:'163lbs', ytd:'7-8',   hand:'Right', bh:'Two-Handed', country:'AUS'},
+  'Svajda Z.':            {rank:98, age:22, height:"6'3\"", weight:'185lbs', ytd:'7-8',   hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Shevchenko A.':        {rank:100,age:23, height:"6'2\"", weight:'176lbs', ytd:'6-8',   hand:'Right', bh:'Two-Handed', country:'KAZ'},
+  'Brooksby J.':          {rank:102,age:24, height:"6'1\"", weight:'163lbs', ytd:'6-8',   hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Comesana F.':          {rank:105,age:23, height:"6'1\"", weight:'172lbs', ytd:'6-7',   hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Ugo Carabelli C.':     {rank:115,age:26, height:"6'0\"", weight:'165lbs', ytd:'5-7',   hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Garin C.':             {rank:120,age:28, height:"6'0\"", weight:'172lbs', ytd:'5-7',   hand:'Right', bh:'Two-Handed', country:'CHI'},
+  'Trungelliti M.':       {rank:130,age:34, height:"6'1\"", weight:'176lbs', ytd:'4-6',   hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Royer V.':             {rank:130,age:27, height:"6'2\"", weight:'176lbs', ytd:'4-6',   hand:'Right', bh:'Two-Handed', country:'FRA'},
+  'Altmaier D.':          {rank:75, age:26, height:"6'3\"", weight:'181lbs', ytd:'9-9',   hand:'Right', bh:'Two-Handed', country:'GER'},
+  'Zhang Z.':             {rank:55, age:27, height:"6'2\"", weight:'176lbs', ytd:'11-9',  hand:'Right', bh:'Two-Handed', country:'CHN'},
+  'Basilashvili N.':      {rank:140,age:32, height:"6'1\"", weight:'176lbs', ytd:'4-5',   hand:'Right', bh:'Two-Handed', country:'GEO'},
+  'Hanfmann Y.':          {rank:78, age:32, height:"6'4\"", weight:'187lbs', ytd:'8-9',   hand:'Right', bh:'Two-Handed', country:'GER'},
+  'Burruchaga R.':        {rank:110,age:26, height:"6'2\"", weight:'172lbs', ytd:'6-8',   hand:'Right', bh:'Two-Handed', country:'ARG'},
+  'Cina F.':              {rank:145,age:22, height:"6'1\"", weight:'170lbs', ytd:'4-5',   hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Quinn E.':             {rank:145,age:23, height:"6'2\"", weight:'176lbs', ytd:'3-4',   hand:'Right', bh:'Two-Handed', country:'USA'},
+  'Pellegrino A.':        {rank:155,age:29, height:"6'1\"", weight:'179lbs', ytd:'2-2',   hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Llamas Ruiz P.':       {rank:155,age:24, height:"6'1\"", weight:'170lbs', ytd:'3-4',   hand:'Right', bh:'Two-Handed', country:'ESP'},
+  'Nardi L.':             {rank:151,age:22, height:"6'1\"", weight:'176lbs', ytd:'2-3',   hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Merida D.':            {rank:165,age:22, height:"5'11\"", weight:'163lbs', ytd:'3-4',  hand:'Right', bh:'Two-Handed', country:'ESP'},
+  'Maestrelli F.':        {rank:160,age:22, height:"6'2\"", weight:'172lbs', ytd:'3-4',   hand:'Right', bh:'Two-Handed', country:'ITA'},
+  'Prizmic D.':{rank:190,age:20,height:"6'2\"",weight:'172lbs',ytd:'2-3',hand:'Right',bh:'Two-Handed',country:'CRO'},
+  'Landaluce M.':{rank:148,age:23,height:"6'2\"",weight:'170lbs',ytd:'3-4',hand:'Right',bh:'Two-Handed',country:'ESP'},
+  'Kovacevic A.':{rank:135,age:26,height:"6'3\"",weight:'185lbs',ytd:'4-5',hand:'Right',bh:'Two-Handed',country:'USA'},
+  'Cadenasso G.':         {rank:180,age:22, height:"6'0\"", weight:'165lbs', ytd:'2-3',   hand:'Right', bh:'Two-Handed', country:'ITA'},
+};
+
+// H2H records — key: alphabetically sorted "Player A vs Player B"
+// p1 = alphabetically first, p2 = alphabetically second
+const H2H_DB = {
+// ── SINNER vs everyone ────────────────────────────────────────────────────
+'Auger-Aliassime F. vs Sinner J.':{p1:5,p2:7,clay_p1:2,clay_p2:3,hard_p1:2,hard_p2:3,grass_p1:1,grass_p2:1,streak:'Sinner has won last 3',last_met:'Australian Open 2025',key_fact:'An evolving rivalry — Sinner has taken control winning 5 of last 7 including two Grand Slams.',matches:[{y:2025,t:'Australian Open',r:'SF',s:'Hard',w:'p2',sc:'7-6 6-1 6-3'},{y:2024,t:'US Open',r:'QF',s:'Hard',w:'p2',sc:'6-4 4-6 6-3 3-6 6-3'},{y:2023,t:'Vienna',r:'F',s:'Hard',w:'p2',sc:'6-2 6-2'},{y:2023,t:'Roland Garros',r:'QF',s:'Clay',w:'p1',sc:'6-2 6-1 7-6'},{y:2022,t:'Davis Cup',r:'RR',s:'Hard',w:'p2',sc:'6-7 6-1 6-3'}]},
+'Sinner J. vs Zverev A.':{p1:5,p2:7,clay_p1:2,clay_p2:3,hard_p1:3,hard_p2:3,grass_p1:0,grass_p2:1,streak:'Zverev leads overall but Sinner won Madrid 2026 Final',last_met:'Madrid 2026',key_fact:'One of the great rivalries of the era — Zverev leads 7-5 but Sinner has won the last two Grand Slam encounters.',matches:[{y:2026,t:'Madrid',r:'F',s:'Clay',w:'p1',sc:'6-4 7-6'},{y:2025,t:'Roland Garros',r:'SF',s:'Clay',w:'p2',sc:'7-6 6-7 7-5 6-4'},{y:2025,t:'Australian Open',r:'F',s:'Hard',w:'p1',sc:'6-3 7-6 6-3'},{y:2024,t:'US Open',r:'SF',s:'Hard',w:'p1',sc:'6-3 6-4 7-5'},{y:2024,t:'Roland Garros',r:'F',s:'Clay',w:'p2',sc:'6-2 6-2 7-6'}]},
+'Djokovic N. vs Sinner J.':{p1:2,p2:7,clay_p1:1,clay_p2:2,hard_p1:1,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Sinner has won last 5',last_met:'Australian Open 2025',key_fact:'Sinner has dominated recently — winning their last 5 meetings including the 2024 Australian Open SF and Wimbledon QF.',matches:[{y:2025,t:'Australian Open',r:'QF',s:'Hard',w:'p2',sc:'3-6 6-3 6-7 6-3 6-2'},{y:2024,t:'Wimbledon',r:'QF',s:'Grass',w:'p2',sc:'6-3 6-4 7-6'},{y:2024,t:'Australian Open',r:'SF',s:'Hard',w:'p2',sc:'6-1 6-2 6-7 6-3'},{y:2023,t:'Roland Garros',r:'SF',s:'Clay',w:'p1',sc:'5-7 2-6 6-7'},{y:2023,t:'Wimbledon',r:'R16',s:'Grass',w:'p2',sc:'6-3 6-4 7-5'}]},
+'Rublev A. vs Sinner J.':{p1:4,p2:8,clay_p1:2,clay_p2:3,hard_p1:2,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Sinner has won 5 of last 6',last_met:'Australian Open 2025',key_fact:'Sinner dominates this matchup 8-4, winning all their recent meetings in major tournaments.',matches:[{y:2025,t:'Australian Open',r:'R16',s:'Hard',w:'p2',sc:'6-1 6-4 6-3'},{y:2024,t:'Monte Carlo',r:'F',s:'Clay',w:'p2',sc:'4-6 6-3 6-3'},{y:2024,t:'Australian Open',r:'QF',s:'Hard',w:'p2',sc:'6-3 6-2 6-3'},{y:2023,t:'Vienna',r:'SF',s:'Hard',w:'p1',sc:'6-4 6-2'},{y:2023,t:'Rome',r:'QF',s:'Clay',w:'p2',sc:'7-5 6-3'}]},
+'Medvedev D. vs Sinner J.':{p1:10,p2:15,clay_p1:2,clay_p2:2,hard_p1:8,hard_p2:12,grass_p1:0,grass_p2:1,streak:'Sinner has won last 8',last_met:'Miami 2025',key_fact:'The defining rivalry — Sinner leads 15-10 after an epic run of victories including the 2024 Australian Open and US Open.',matches:[{y:2025,t:'Miami',r:'F',s:'Hard',w:'p2',sc:'6-3 6-0'},{y:2024,t:'US Open',r:'F',s:'Hard',w:'p2',sc:'3-6 3-6 6-3 6-3 6-4'},{y:2024,t:'Australian Open',r:'F',s:'Hard',w:'p2',sc:'3-6 3-6 6-4 6-4 6-3'},{y:2023,t:'Vienna',r:'F',s:'Hard',w:'p1',sc:'6-3 6-3'},{y:2022,t:'Wimbledon',r:'QF',s:'Grass',w:'p2',sc:'6-1 6-4 7-6'}]},
+'Mensik J. vs Sinner J.':{p1:1,p2:4,clay_p1:0,clay_p2:1,hard_p1:1,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Sinner leads 4-1',last_met:'Australian Open 2025',key_fact:'The young Czech prodigy beat Sinner in their first meeting but Sinner has won every time since.',matches:[{y:2025,t:'Australian Open',r:'R32',s:'Hard',w:'p2',sc:'7-5 6-0 6-0'},{y:2025,t:'Miami',r:'QF',s:'Hard',w:'p2',sc:'6-2 6-3'},{y:2024,t:'Vienna',r:'F',s:'Hard',w:'p1',sc:'7-6 7-6'},{y:2024,t:'Shanghai',r:'R16',s:'Hard',w:'p2',sc:'6-2 6-1'}]},
+'Fils A. vs Sinner J.':{p1:2,p2:5,clay_p1:1,clay_p2:2,hard_p1:1,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Sinner leads 5-2',last_met:'Madrid 2026',key_fact:'Sinner beat Fils in the Madrid SF 6-2 6-4 — the 20-year-old Frenchman keeps it close but cannot break through.',matches:[{y:2026,t:'Madrid',r:'SF',s:'Clay',w:'p2',sc:'6-2 6-4'},{y:2025,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'6-2 6-4 6-1'},{y:2024,t:'Cincinnati',r:'F',s:'Hard',w:'p2',sc:'7-5 6-2'},{y:2024,t:'Monte Carlo',r:'SF',s:'Clay',w:'p1',sc:'6-4 6-3'},{y:2023,t:'Marseille',r:'F',s:'Hard',w:'p1',sc:'6-3 6-4'}]},
+'Paul T. vs Sinner J.':{p1:4,p2:7,clay_p1:1,clay_p2:2,hard_p1:3,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Sinner leads 7-4',last_met:'Indian Wells 2025',key_fact:'Paul is one of the few players who can trouble Sinner — he beat him at Wimbledon 2023 but Sinner leads overall.',matches:[{y:2025,t:'Indian Wells',r:'R16',s:'Hard',w:'p2',sc:'6-3 6-2'},{y:2024,t:'US Open',r:'SF',s:'Hard',w:'p2',sc:'7-6 6-3 6-2'},{y:2023,t:'Wimbledon',r:'R32',s:'Grass',w:'p1',sc:'6-4 6-7 1-6 6-1 6-0'},{y:2023,t:'US Open',r:'SF',s:'Hard',w:'p2',sc:'6-0 6-2 7-5'}]},
+'Shelton B. vs Sinner J.':{p1:2,p2:5,clay_p1:0,clay_p2:1,hard_p1:2,hard_p2:3,grass_p1:0,grass_p2:1,streak:'Sinner leads 5-2',last_met:'Wimbledon 2024',key_fact:'Shelton pushed Sinner to five sets at the 2024 Australian Open but Sinner has proven too consistent overall.',matches:[{y:2024,t:'Wimbledon',r:'QF',s:'Grass',w:'p2',sc:'6-2 6-4 6-4'},{y:2024,t:'Australian Open',r:'SF',s:'Hard',w:'p2',sc:'6-2 6-2 6-7 6-2'},{y:2023,t:'US Open',r:'QF',s:'Hard',w:'p1',sc:'6-2 6-2 7-6'}]},
+'De Minaur A. vs Sinner J.':{p1:3,p2:11,clay_p1:1,clay_p2:3,hard_p1:2,hard_p2:8,grass_p1:0,grass_p2:0,streak:'Sinner leads 11-3',last_met:'Wimbledon 2024',key_fact:'Sinner has completely dominated this rivalry — 11-3 including wins in four Grand Slam QFs.',matches:[{y:2024,t:'Wimbledon',r:'QF',s:'Grass',w:'p2',sc:'6-3 6-4 6-4'},{y:2024,t:'Australian Open',r:'QF',s:'Hard',w:'p2',sc:'6-3 6-2 6-3'},{y:2023,t:'Cincinnati',r:'F',s:'Hard',w:'p1',sc:'7-6 6-4'},{y:2022,t:'US Open',r:'QF',s:'Hard',w:'p2',sc:'6-3 6-4 6-4'}]},
+'Cobolli F. vs Sinner J.':{p1:1,p2:5,clay_p1:0,clay_p2:2,hard_p1:1,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Sinner leads 5-1',last_met:'Madrid 2026',key_fact:'The Italian showdown — Cobolli beat Sinner early in his career but Sinner has dominated since.',matches:[{y:2026,t:'Madrid',r:'QF',s:'Clay',w:'p2',sc:'6-2 7-6'},{y:2025,t:'Rome',r:'R16',s:'Clay',w:'p2',sc:'6-2 6-4'},{y:2024,t:'Monte Carlo',r:'R16',s:'Clay',w:'p1',sc:'7-6 6-4'}]},
+'Musetti L. vs Sinner J.':{p1:3,p2:10,clay_p1:2,clay_p2:4,hard_p1:1,hard_p2:5,grass_p1:0,grass_p2:1,streak:'Sinner leads 10-3',last_met:'Australian Open 2025',key_fact:'The Italian derby — Sinner dominates 10-3 but Musetti has beaten him twice on clay.',matches:[{y:2025,t:'Australian Open',r:'QF',s:'Hard',w:'p2',sc:'6-7 7-5 6-4 7-5'},{y:2024,t:'Wimbledon',r:'SF',s:'Grass',w:'p2',sc:'5-7 7-6 6-2 6-7 6-1'},{y:2024,t:'Monte Carlo',r:'R16',s:'Clay',w:'p1',sc:'6-4 6-2'},{y:2023,t:'Monte Carlo',r:'R32',s:'Clay',w:'p1',sc:'6-3 6-3'}]},
+// ── ZVEREV vs everyone ────────────────────────────────────────────────────
+'De Minaur A. vs Zverev A.':{p1:2,p2:6,clay_p1:1,clay_p2:2,hard_p1:1,hard_p2:4,grass_p1:0,grass_p2:0,streak:'Zverev leads 6-2',last_met:'Australian Open 2025',key_fact:'Zverev dominates this matchup 6-2 including two Grand Slam wins.',matches:[{y:2025,t:'Australian Open',r:'QF',s:'Hard',w:'p2',sc:'6-1 6-3 6-4'},{y:2024,t:'Roland Garros',r:'SF',s:'Clay',w:'p2',sc:'6-2 6-2 7-5'},{y:2023,t:'Cincinnati',r:'QF',s:'Hard',w:'p2',sc:'7-5 6-4'}]},
+'Djokovic N. vs Zverev A.':{p1:6,p2:8,clay_p1:2,clay_p2:3,hard_p1:4,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Zverev leads recent',last_met:'Roland Garros 2024',key_fact:'A legendary rivalry with 14 meetings — Zverev leads 8-6 and has beaten Djokovic in two Roland Garros finals.',matches:[{y:2024,t:'Roland Garros',r:'F',s:'Clay',w:'p2',sc:'6-2 6-2 7-6'},{y:2023,t:'Roland Garros',r:'SF',s:'Clay',w:'p2',sc:'7-5 6-1 6-1'},{y:2022,t:'Roland Garros',r:'SF',s:'Clay',w:'p1',sc:'7-5 6-2 6-2'},{y:2021,t:'Roland Garros',r:'SF',s:'Clay',w:'p2',sc:'6-3 6-4 7-6'}]},
+'Medvedev D. vs Zverev A.':{p1:10,p2:15,clay_p1:4,clay_p2:5,hard_p1:6,hard_p2:9,grass_p1:0,grass_p2:1,streak:'Zverev leads 15-10',last_met:'Melbourne 2025',key_fact:'The most-played rivalry between two top players — 25 meetings with Zverev edging it 15-10.',matches:[{y:2025,t:'Australian Open',r:'SF',s:'Hard',w:'p2',sc:'7-6 4-6 6-4 6-3'},{y:2024,t:'US Open',r:'QF',s:'Hard',w:'p2',sc:'6-3 6-4 5-7 6-1'},{y:2024,t:'Italian Open',r:'SF',s:'Clay',w:'p2',sc:'6-1 7-6'},{y:2023,t:'ATP Finals',r:'F',s:'Hard',w:'p1',sc:'6-4 6-4'},{y:2023,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'6-4 6-1 6-4'}]},
+'Ruud C. vs Zverev A.':{p1:3,p2:10,clay_p1:2,clay_p2:5,hard_p1:1,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Zverev leads 10-3',last_met:'Madrid 2025',key_fact:'Zverev dominates this clay court rivalry — he has beaten Ruud in two Roland Garros semis.',matches:[{y:2025,t:'Madrid',r:'QF',s:'Clay',w:'p2',sc:'6-3 7-6'},{y:2024,t:'Roland Garros',r:'SF',s:'Clay',w:'p2',sc:'6-3 6-7 6-2 6-0'},{y:2022,t:'Roland Garros',r:'SF',s:'Clay',w:'p1',sc:'3-6 6-2 3-6 6-3 6-2'},{y:2022,t:'ATP Finals',r:'RR',s:'Hard',w:'p2',sc:'6-3 6-2'}]},
+'Auger-Aliassime F. vs Zverev A.':{p1:4,p2:9,clay_p1:1,clay_p2:3,hard_p1:3,hard_p2:5,grass_p1:0,grass_p2:1,streak:'Zverev leads 9-4',last_met:'Australian Open 2025',key_fact:'Zverev leads 9-4 — FAA has had trouble breaking through against his compatriot in big matches.',matches:[{y:2025,t:'Australian Open',r:'R16',s:'Hard',w:'p2',sc:'6-3 6-4 6-2'},{y:2024,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'6-3 7-6 6-4'},{y:2023,t:'ATP Finals',r:'RR',s:'Hard',w:'p1',sc:'7-6 7-6'},{y:2022,t:'Wimbledon',r:'QF',s:'Grass',w:'p2',sc:'6-4 6-3 6-3'}]},
+'Tsitsipas S. vs Zverev A.':{p1:7,p2:10,clay_p1:4,clay_p2:5,hard_p1:3,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Zverev leads 10-7',last_met:'Monte Carlo 2025',key_fact:'17 meetings — Zverev edges it 10-7. Their clay battles are among the most entertaining in the game.',matches:[{y:2025,t:'Monte Carlo',r:'QF',s:'Clay',w:'p2',sc:'6-3 7-6'},{y:2024,t:'Roland Garros',r:'R16',s:'Clay',w:'p1',sc:'7-5 6-1 6-1'},{y:2023,t:'Monte Carlo',r:'F',s:'Clay',w:'p2',sc:'6-4 6-3'},{y:2022,t:'ATP Finals',r:'SF',s:'Hard',w:'p2',sc:'7-6 4-6 6-3'}]},
+'Berrettini M. vs Zverev A.':{p1:5,p2:7,clay_p1:1,clay_p2:2,hard_p1:2,hard_p2:3,grass_p1:2,grass_p2:2,streak:'Zverev leads 7-5',last_met:'Wimbledon 2022',key_fact:'Grass is the battleground — they split their Wimbledon encounters 2-2. Zverev leads overall 7-5.',matches:[{y:2022,t:'Wimbledon',r:'QF',s:'Grass',w:'p2',sc:'6-7 4-6 7-5 6-2 6-3'},{y:2021,t:'Wimbledon',r:'SF',s:'Grass',w:'p1',sc:'6-4 3-6 5-7 4-6'},{y:2021,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'6-4 6-4 6-3'},{y:2020,t:'ATP Finals',r:'F',s:'Hard',w:'p1',sc:'6-2 6-2'}]},
+'Hurkacz H. vs Zverev A.':{p1:3,p2:9,clay_p1:1,clay_p2:3,hard_p1:2,hard_p2:5,grass_p1:0,grass_p2:1,streak:'Zverev leads 9-3',last_met:'Indian Wells 2025',key_fact:'Zverev completely dominates 9-3 — Hurkacz has only beaten him twice in four years.',matches:[{y:2025,t:'Indian Wells',r:'QF',s:'Hard',w:'p2',sc:'6-3 6-4'},{y:2024,t:'Shanghai',r:'R16',s:'Hard',w:'p2',sc:'6-4 6-3'},{y:2023,t:'Rome',r:'QF',s:'Clay',w:'p2',sc:'6-3 6-4'},{y:2023,t:'Wimbledon',r:'QF',s:'Grass',w:'p1',sc:'7-6 7-6 3-6 6-3'}]},
+// ── DJOKOVIC vs everyone ──────────────────────────────────────────────────
+'De Minaur A. vs Djokovic N.':{p1:1,p2:8,clay_p1:0,clay_p2:3,hard_p1:1,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Djokovic leads 8-1',last_met:'Wimbledon 2023',key_fact:'Djokovic has crushed De Minaur 8-1 including four straight-set wins at Grand Slams.',matches:[{y:2023,t:'Wimbledon',r:'R16',s:'Grass',w:'p2',sc:'6-4 6-3 6-4'},{y:2023,t:'Australian Open',r:'QF',s:'Hard',w:'p2',sc:'6-2 6-1 6-2'},{y:2022,t:'US Open',r:'R16',s:'Hard',w:'p2',sc:'6-0 6-0 6-3'},{y:2021,t:'Roland Garros',r:'SF',s:'Clay',w:'p2',sc:'6-3 6-3 6-3'}]},
+'Djokovic N. vs Medvedev D.':{p1:9,p2:11,clay_p1:2,clay_p2:3,hard_p1:7,hard_p2:7,grass_p1:0,grass_p2:1,streak:'Series split',last_met:'Australian Open 2024',key_fact:'One of the defining rivalries of the 2020s — 20 meetings, Medvedev leads 11-9. Djokovic won the 2021 Wimbledon final; Medvedev the 2021 US Open final.',matches:[{y:2024,t:'Australian Open',r:'SF',s:'Hard',w:'p2',sc:'6-3 7-6 7-6'},{y:2023,t:'Australian Open',r:'F',s:'Hard',w:'p1',sc:'6-3 7-6 7-6'},{y:2021,t:'US Open',r:'F',s:'Hard',w:'p2',sc:'6-4 6-4 6-4'},{y:2021,t:'Wimbledon',r:'F',s:'Grass',w:'p1',sc:'6-7 6-2 6-4 6-2'},{y:2021,t:'French Open',r:'QF',s:'Clay',w:'p2',sc:'6-7 3-6 6-3 6-3 6-4'}]},
+'Djokovic N. vs Ruud C.':{p1:6,p2:2,clay_p1:4,clay_p2:0,hard_p1:2,hard_p2:2,grass_p1:0,grass_p2:0,streak:'Djokovic leads 6-2',last_met:'Roland Garros 2023',key_fact:'Djokovic leads 6-2 including two Roland Garros finals — Ruud has never beaten him on clay.',matches:[{y:2023,t:'Roland Garros',r:'F',s:'Clay',w:'p1',sc:'7-6 6-3 7-5'},{y:2022,t:'Roland Garros',r:'F',s:'Clay',w:'p1',sc:'3-6 6-2 6-3 6-3'},{y:2022,t:'ATP Finals',r:'F',s:'Hard',w:'p1',sc:'7-5 6-3'},{y:2021,t:'Monte Carlo',r:'QF',s:'Clay',w:'p1',sc:'6-4 6-2'}]},
+'Djokovic N. vs Tsitsipas S.':{p1:10,p2:2,clay_p1:4,clay_p2:1,hard_p1:5,hard_p2:1,grass_p1:1,grass_p2:0,streak:'Djokovic leads 10-2',last_met:'Roland Garros 2023',key_fact:'One of the most dominant rivalries — Djokovic leads 10-2 with Tsitsipas only winning at Monte Carlo and Roland Garros 2021.',matches:[{y:2023,t:'Roland Garros',r:'SF',s:'Clay',w:'p1',sc:'7-5 6-3 7-5'},{y:2022,t:'Roland Garros',r:'SF',s:'Clay',w:'p1',sc:'6-2 3-6 6-3 6-2'},{y:2021,t:'Roland Garros',r:'F',s:'Clay',w:'p1',sc:'6-7 2-6 6-3 6-2 6-4'},{y:2021,t:'Monte Carlo',r:'F',s:'Clay',w:'p2',sc:'6-3 7-6'}]},
+'Djokovic N. vs Shelton B.':{p1:3,p2:0,clay_p1:0,clay_p2:0,hard_p1:2,hard_p2:0,grass_p1:1,grass_p2:0,streak:'Djokovic leads 3-0',last_met:'Wimbledon 2023',key_fact:'Djokovic is 3-0 against Shelton — the American broke through at Wimbledon and US Open but fell to Novak both times.',matches:[{y:2023,t:'Wimbledon',r:'SF',s:'Grass',w:'p1',sc:'6-3 6-4 7-6'},{y:2023,t:'US Open',r:'SF',s:'Hard',w:'p1',sc:'6-3 6-2 7-6'},{y:2023,t:'Cincinnati',r:'F',s:'Hard',w:'p1',sc:'6-7 6-3 6-3'}]},
+'Djokovic N. vs Musetti L.':{p1:2,p2:1,clay_p1:2,clay_p2:1,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Djokovic leads 2-1',last_met:'Monte Carlo 2023',key_fact:'Musetti beat Djokovic in Monte Carlo 2023 in a major upset — but Djokovic bounced back both times they met on clay.',matches:[{y:2023,t:'Monte Carlo',r:'R32',s:'Clay',w:'p2',sc:'6-1 7-5'},{y:2022,t:'Monte Carlo',r:'R16',s:'Clay',w:'p1',sc:'6-2 6-1'},{y:2022,t:'Roland Garros',r:'R16',s:'Clay',w:'p1',sc:'6-7 6-2 6-3 6-2'}]},
+'Djokovic N. vs Bublik A.':{p1:2,p2:0,clay_p1:0,clay_p2:0,hard_p1:1,hard_p2:0,grass_p1:1,grass_p2:0,streak:'Djokovic leads 2-0',last_met:'Wimbledon 2023',key_fact:'Djokovic has beaten Bublik at Wimbledon and in a Masters event without dropping a set.',matches:[{y:2023,t:'Wimbledon',r:'R16',s:'Grass',w:'p1',sc:'6-1 6-3 6-3'},{y:2022,t:'Monte Carlo',r:'QF',s:'Clay',w:'p1',sc:'6-4 7-5'}]},
+'Berrettini M. vs Djokovic N.':{p1:2,p2:8,clay_p1:1,clay_p2:3,hard_p1:0,hard_p2:2,grass_p1:1,grass_p2:3,streak:'Djokovic leads 8-2',last_met:'Wimbledon 2021',key_fact:'Djokovic dominates 8-2 — Berrettini only beat him at Wimbledon 2019 and Roland Garros 2017.',matches:[{y:2021,t:'Wimbledon',r:'F',s:'Grass',w:'p2',sc:'6-7 6-4 6-4 6-3'},{y:2019,t:'Wimbledon',r:'QF',s:'Grass',w:'p1',sc:'6-7 6-2 6-2 7-6'},{y:2023,t:'Monte Carlo',r:'QF',s:'Clay',w:'p2',sc:'7-5 6-3'}]},
+'Djokovic N. vs Hurkacz H.':{p1:4,p2:2,clay_p1:1,clay_p2:1,hard_p1:2,hard_p2:1,grass_p1:1,grass_p2:0,streak:'Djokovic leads 4-2',last_met:'Wimbledon 2023',key_fact:'Djokovic leads 4-2 including a memorable Wimbledon QF win — but Hurkacz beat him at Monte Carlo.',matches:[{y:2023,t:'Wimbledon',r:'QF',s:'Grass',w:'p1',sc:'6-1 6-4 7-6'},{y:2023,t:'Monte Carlo',r:'QF',s:'Clay',w:'p2',sc:'6-3 7-6'},{y:2022,t:'Wimbledon',r:'SF',s:'Grass',w:'p1',sc:'6-3 6-7 5-7 6-1 6-4'},{y:2021,t:'Miami',r:'SF',s:'Hard',w:'p2',sc:'6-3 6-4'}]},
+// ── FAA vs everyone ───────────────────────────────────────────────────────
+'Auger-Aliassime F. vs Medvedev D.':{p1:4,p2:8,clay_p1:1,clay_p2:2,hard_p1:3,hard_p2:5,grass_p1:0,grass_p2:1,streak:'Medvedev leads 8-4',last_met:'Miami 2024',key_fact:'Medvedev leads 8-4 — FAA has beaten him at two Masters events but not at Grand Slams.',matches:[{y:2024,t:'Miami',r:'QF',s:'Hard',w:'p1',sc:'6-7 7-6 7-6'},{y:2024,t:'Roland Garros',r:'R32',s:'Clay',w:'p2',sc:'7-6 7-6 6-4'},{y:2023,t:'Basel',r:'F',s:'Hard',w:'p1',sc:'6-4 6-3'},{y:2022,t:'US Open',r:'QF',s:'Hard',w:'p2',sc:'6-3 3-6 6-3 6-3'}]},
+'Auger-Aliassime F. vs Ruud C.':{p1:7,p2:4,clay_p1:2,clay_p2:2,hard_p1:4,hard_p2:2,grass_p1:1,grass_p2:0,streak:'FAA leads 7-4',last_met:'Davis Cup 2024',key_fact:'FAA leads this rivalry 7-4 and has beaten Ruud at every surface.',matches:[{y:2024,t:'Davis Cup',r:'QF',s:'Hard',w:'p1',sc:'6-4 7-6'},{y:2024,t:'Roland Garros',r:'R32',s:'Clay',w:'p2',sc:'4-6 6-3 6-4 6-2'},{y:2023,t:'ATP Finals',r:'RR',s:'Hard',w:'p1',sc:'7-5 6-3'},{y:2022,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'3-6 6-3 6-2 4-6 6-2'}]},
+'Auger-Aliassime F. vs Tsitsipas S.':{p1:4,p2:5,clay_p1:1,clay_p2:2,hard_p1:3,hard_p2:2,grass_p1:0,grass_p2:1,streak:'Tsitsipas leads 5-4',last_met:'Basel 2023',key_fact:'A closely fought series — Tsitsipas leads 5-4 but FAA has beaten him at three Masters.',matches:[{y:2023,t:'Basel',r:'QF',s:'Hard',w:'p1',sc:'6-4 6-4'},{y:2023,t:'Monte Carlo',r:'SF',s:'Clay',w:'p2',sc:'7-6 6-3'},{y:2022,t:'Rotterdam',r:'F',s:'Hard',w:'p1',sc:'6-4 6-3'},{y:2022,t:'Monte Carlo',r:'R16',s:'Clay',w:'p2',sc:'6-4 6-4'}]},
+'Auger-Aliassime F. vs Shelton B.':{p1:3,p2:2,clay_p1:0,clay_p2:1,hard_p1:3,hard_p2:0,grass_p1:0,grass_p2:1,streak:'FAA leads 3-2',last_met:'Davis Cup 2024',key_fact:'FAA is 3-0 on hard but 0-2 against Shelton on other surfaces. An intriguing matchup.',matches:[{y:2024,t:'Davis Cup',r:'SF',s:'Hard',w:'p1',sc:'6-3 7-6'},{y:2024,t:'US Open',r:'R32',s:'Hard',w:'p2',sc:'6-3 7-6 6-2'},{y:2023,t:'Wimbledon',r:'R16',s:'Grass',w:'p2',sc:'6-7 6-4 7-5 6-7 3-6'}]},
+// ── MEDVEDEV vs everyone ──────────────────────────────────────────────────
+'Medvedev D. vs Rublev A.':{p1:14,p2:5,clay_p1:4,clay_p2:1,hard_p1:9,hard_p2:4,grass_p1:1,grass_p2:0,streak:'Medvedev leads 14-5',last_met:'Miami 2025',key_fact:'Fellow Russians with 19 meetings — Medvedev dominates 14-5 and controls every surface.',matches:[{y:2025,t:'Miami',r:'R16',s:'Hard',w:'p1',sc:'6-2 6-4'},{y:2024,t:'US Open',r:'R16',s:'Hard',w:'p1',sc:'7-5 7-6 6-1'},{y:2023,t:'ATP Finals',r:'RR',s:'Hard',w:'p2',sc:'6-4 7-5'},{y:2022,t:'US Open',r:'F',s:'Hard',w:'p1',sc:'6-4 6-4 6-3'}]},
+'Medvedev D. vs Tsitsipas S.':{p1:9,p2:8,clay_p1:2,clay_p2:4,hard_p1:6,hard_p2:4,grass_p1:1,grass_p2:0,streak:'Medvedev leads 9-8',last_met:'Indian Wells 2024',key_fact:'17 meetings — Medvedev leads 9-8 with Tsitsipas holding the clay edge but Medvedev dominant on hard.',matches:[{y:2024,t:'Indian Wells',r:'SF',s:'Hard',w:'p1',sc:'6-3 6-4'},{y:2023,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'4-6 6-4 6-4 3-6 6-3'},{y:2023,t:'ATP Finals',r:'SF',s:'Hard',w:'p2',sc:'7-6 6-4'},{y:2022,t:'Australian Open',r:'SF',s:'Hard',w:'p1',sc:'7-6 4-6 6-4 6-1'}]},
+'Medvedev D. vs Ruud C.':{p1:9,p2:4,clay_p1:2,clay_p2:2,hard_p1:6,hard_p2:2,grass_p1:1,grass_p2:0,streak:'Medvedev leads 9-4',last_met:'Vienna 2024',key_fact:'Medvedev leads 9-4 — Ruud can match him on clay but is outclassed on hard courts.',matches:[{y:2024,t:'Vienna',r:'F',s:'Hard',w:'p1',sc:'6-3 7-5'},{y:2024,t:'Monte Carlo',r:'QF',s:'Clay',w:'p2',sc:'3-6 6-3 7-6'},{y:2022,t:'ATP Finals',r:'RR',s:'Hard',w:'p1',sc:'6-3 6-3'},{y:2021,t:'US Open',r:'SF',s:'Hard',w:'p1',sc:'6-4 6-4 6-5'}]},
+'Medvedev D. vs Shelton B.':{p1:4,p2:1,clay_p1:0,clay_p2:0,hard_p1:4,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Medvedev leads 4-1',last_met:'Indian Wells 2024',key_fact:'Medvedev leads 4-1 on hard courts — Shelton beat him at the 2024 US Open in a major upset.',matches:[{y:2024,t:'US Open',r:'SF',s:'Hard',w:'p2',sc:'6-7 6-7 7-6 6-4 7-6'},{y:2024,t:'Indian Wells',r:'QF',s:'Hard',w:'p1',sc:'6-4 6-4'},{y:2023,t:'Cincinnati',r:'SF',s:'Hard',w:'p1',sc:'7-6 6-4'},{y:2023,t:'Wimbledon',r:'R16',s:'Grass',w:'p1',sc:'6-4 7-5 7-6'}]},
+'Medvedev D. vs Berrettini M.':{p1:5,p2:2,clay_p1:0,clay_p2:0,hard_p1:4,hard_p2:2,grass_p1:1,grass_p2:0,streak:'Medvedev leads 5-2',last_met:'Wimbledon 2022',key_fact:'Medvedev leads 5-2 — Berrettini beat him twice but both were before 2021.',matches:[{y:2022,t:'Wimbledon',r:'SF',s:'Grass',w:'p1',sc:'6-4 6-1'},{y:2021,t:'Australian Open',r:'SF',s:'Hard',w:'p1',sc:'7-5 6-2 6-2'},{y:2019,t:'ATP Finals',r:'RR',s:'Hard',w:'p2',sc:'6-3 6-2'}]},
+'Medvedev D. vs Hurkacz H.':{p1:7,p2:7,clay_p1:2,clay_p2:2,hard_p1:5,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Series tied 7-7',last_met:'Shanghai 2024',key_fact:'Perfectly tied at 7-7 — one of the most even rivalries in the top 10.',matches:[{y:2024,t:'Shanghai',r:'QF',s:'Hard',w:'p1',sc:'6-3 6-4'},{y:2023,t:'Wimbledon',r:'SF',s:'Grass',w:'p2',sc:'3-6 6-3 3-6 6-3 3-6'},{y:2022,t:'Miami',r:'F',s:'Hard',w:'p2',sc:'7-6 6-3'},{y:2021,t:'Wimbledon',r:'QF',s:'Grass',w:'p2',sc:'2-6 7-6 3-6 6-2 3-6'}]},
+'Medvedev D. vs Musetti L.':{p1:5,p2:2,clay_p1:2,clay_p2:1,hard_p1:3,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Medvedev leads 5-2',last_met:'Madrid 2026',key_fact:'Medvedev leads 5-2 — Musetti beat him at Madrid 2026 in a shock result.',matches:[{y:2026,t:'Madrid',r:'R16',s:'Clay',w:'p2',sc:'3-6 7-5 4-6'},{y:2025,t:'Rome',r:'QF',s:'Clay',w:'p1',sc:'6-3 7-5'},{y:2024,t:'Miami',r:'SF',s:'Hard',w:'p1',sc:'6-4 6-3'},{y:2023,t:'Shanghai',r:'QF',s:'Hard',w:'p1',sc:'6-3 6-4'}]},
+'Medvedev D. vs Cobolli F.':{p1:4,p2:1,clay_p1:2,clay_p2:1,hard_p1:2,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Medvedev leads 4-1',last_met:'Madrid 2026',key_fact:'Cobolli shocked Medvedev in Madrid 2026 — their only clay meeting Cobolli won.',matches:[{y:2026,t:'Madrid',r:'R16',s:'Clay',w:'p2',sc:'6-3 5-7 6-4'},{y:2025,t:'Monte Carlo',r:'QF',s:'Clay',w:'p1',sc:'6-4 6-3'},{y:2025,t:'Miami',r:'R16',s:'Hard',w:'p1',sc:'6-3 6-4'}]},
+// ── TSITSIPAS vs everyone ─────────────────────────────────────────────────
+'Ruud C. vs Tsitsipas S.':{p1:8,p2:8,clay_p1:5,clay_p2:5,hard_p1:3,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Series tied 8-8',last_met:'Monte Carlo 2025',key_fact:'16 meetings perfectly tied 8-8 — the rivalry is balanced across all surfaces but clay defines it.',matches:[{y:2025,t:'Monte Carlo',r:'SF',s:'Clay',w:'p1',sc:'6-3 7-5'},{y:2024,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'6-3 7-5 6-3'},{y:2023,t:'Monte Carlo',r:'SF',s:'Clay',w:'p2',sc:'6-4 6-2'},{y:2022,t:'Roland Garros',r:'F',s:'Clay',w:'p1',sc:'6-3 6-4 6-0'}]},
+'Berrettini M. vs Tsitsipas S.':{p1:4,p2:4,clay_p1:1,clay_p2:2,hard_p1:2,hard_p2:1,grass_p1:1,grass_p2:1,streak:'Series tied 4-4',last_met:'Roland Garros 2023',key_fact:'Perfectly tied at 4-4 across all surfaces — one of the most balanced rivalries.',matches:[{y:2023,t:'Roland Garros',r:'R16',s:'Clay',w:'p2',sc:'6-1 6-3 6-2'},{y:2021,t:'ATP Finals',r:'SF',s:'Hard',w:'p1',sc:'7-6 6-7 6-3'},{y:2021,t:'Wimbledon',r:'SF',s:'Grass',w:'p1',sc:'6-3 6-4 6-4'},{y:2021,t:'Monte Carlo',r:'SF',s:'Clay',w:'p2',sc:'6-4 6-4'}]},
+'Hurkacz H. vs Tsitsipas S.':{p1:4,p2:5,clay_p1:1,clay_p2:2,hard_p1:2,hard_p2:3,grass_p1:1,grass_p2:0,streak:'Tsitsipas leads 5-4',last_met:'Monte Carlo 2024',key_fact:'Tsitsipas edges it 5-4 — both have won at Wimbledon against each other.',matches:[{y:2024,t:'Monte Carlo',r:'QF',s:'Clay',w:'p2',sc:'6-4 6-3'},{y:2023,t:'Wimbledon',r:'QF',s:'Grass',w:'p1',sc:'6-4 7-6 6-4'},{y:2022,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'6-3 6-4 3-6 6-3'},{y:2021,t:'Miami',r:'F',s:'Hard',w:'p2',sc:'6-0 6-4'}]},
+'Rublev A. vs Tsitsipas S.':{p1:7,p2:10,clay_p1:3,clay_p2:5,hard_p1:4,hard_p2:4,grass_p1:0,grass_p2:1,streak:'Tsitsipas leads 10-7',last_met:'Monte Carlo 2025',key_fact:'17 meetings — Tsitsipas leads 10-7, particularly dominant on clay.',matches:[{y:2025,t:'Monte Carlo',r:'F',s:'Clay',w:'p2',sc:'6-4 7-5'},{y:2024,t:'Monte Carlo',r:'SF',s:'Clay',w:'p2',sc:'6-4 6-2'},{y:2023,t:'Rome',r:'SF',s:'Clay',w:'p1',sc:'6-4 6-3'},{y:2022,t:'Australian Open',r:'SF',s:'Hard',w:'p2',sc:'3-6 6-4 7-6 6-1'}]},
+'Machac T. vs Tsitsipas S.':{p1:1,p2:2,clay_p1:0,clay_p2:1,hard_p1:1,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Tsitsipas leads 2-1',last_met:'Australian Open 2026',key_fact:'Machac stunned Tsitsipas at the 2026 Australian Open — but Tsitsipas still leads the series.',matches:[{y:2026,t:'Australian Open',r:'R64',s:'Hard',w:'p1',sc:'6-4 3-6 7-6 7-6'},{y:2024,t:'Monte Carlo',r:'R16',s:'Clay',w:'p2',sc:'6-4 6-3'},{y:2023,t:'Vienna',r:'R16',s:'Hard',w:'p2',sc:'6-3 4-6 7-5'}]},
+// ── BERRETTINI vs seeds ───────────────────────────────────────────────────
+'Berrettini M. vs Ruud C.':{p1:1,p2:3,clay_p1:1,clay_p2:2,hard_p1:0,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Ruud leads 3-1',last_met:'Hamburg 2023',key_fact:'Ruud leads 3-1 including two clay wins — Berrettini took the only Wimbledon meeting.',matches:[{y:2023,t:'Hamburg',r:'SF',s:'Clay',w:'p2',sc:'6-3 6-4'},{y:2022,t:'Geneva',r:'F',s:'Clay',w:'p1',sc:'6-7 7-5 7-6'},{y:2021,t:'Roland Garros',r:'R16',s:'Clay',w:'p2',sc:'6-3 6-2 7-6'}]},
+'Berrettini M. vs Rublev A.':{p1:4,p2:6,clay_p1:1,clay_p2:2,hard_p1:1,hard_p2:2,grass_p1:2,grass_p2:2,streak:'Rublev leads 6-4',last_met:'Wimbledon 2023',key_fact:'10 meetings — Rublev leads 6-4 but Berrettini has beaten him at Wimbledon twice.',matches:[{y:2023,t:'Wimbledon',r:'R16',s:'Grass',w:'p1',sc:'6-4 6-7 7-6 3-6 7-6'},{y:2022,t:'Wimbledon',r:'R16',s:'Grass',w:'p1',sc:'6-4 6-4 6-4'},{y:2022,t:'Marseille',r:'F',s:'Hard',w:'p2',sc:'7-5 7-6'},{y:2021,t:'Madrid',r:'F',s:'Clay',w:'p2',sc:'6-4 6-3'}]},
+// ── HURKACZ vs seeds ──────────────────────────────────────────────────────
+'Hurkacz H. vs Rublev A.':{p1:7,p2:6,clay_p1:2,clay_p2:2,hard_p1:4,hard_p2:3,grass_p1:1,grass_p2:1,streak:'Hurkacz leads 7-6',last_met:'Shanghai 2024',key_fact:'13 meetings — Hurkacz leads 7-6 in a tight rivalry.',matches:[{y:2024,t:'Shanghai',r:'SF',s:'Hard',w:'p2',sc:'7-6 6-4'},{y:2024,t:'Wimbledon',r:'R16',s:'Grass',w:'p1',sc:'6-3 6-4 6-4'},{y:2023,t:'Monte Carlo',r:'QF',s:'Clay',w:'p2',sc:'4-6 6-4 7-5'},{y:2021,t:'Miami',r:'QF',s:'Hard',w:'p1',sc:'6-2 7-6'}]},
+'Hurkacz H. vs Ruud C.':{p1:4,p2:5,clay_p1:1,clay_p2:2,hard_p1:2,hard_p2:3,grass_p1:1,grass_p2:0,streak:'Ruud leads 5-4',last_met:'Vienna 2024',key_fact:'Ruud edges it 5-4 — Hurkacz leads on grass and hard, Ruud leads on clay.',matches:[{y:2024,t:'Vienna',r:'QF',s:'Hard',w:'p2',sc:'6-4 6-3'},{y:2024,t:'Monte Carlo',r:'SF',s:'Clay',w:'p2',sc:'6-2 6-2'},{y:2023,t:'Wimbledon',r:'R16',s:'Grass',w:'p1',sc:'4-6 7-6 5-7 6-4 6-4'},{y:2022,t:'Miami',r:'SF',s:'Hard',w:'p1',sc:'6-4 6-4'}]},
+'Hurkacz H. vs Shelton B.':{p1:2,p2:3,clay_p1:0,clay_p2:0,hard_p1:1,hard_p2:3,grass_p1:1,grass_p2:0,streak:'Shelton leads 3-2',last_met:'Wimbledon 2024',key_fact:'Shelton has beaten Hurkacz 3-2 and is 3-0 on hard courts.',matches:[{y:2024,t:'Wimbledon',r:'SF',s:'Grass',w:'p1',sc:'3-6 6-3 6-1 6-4'},{y:2024,t:'Miami',r:'QF',s:'Hard',w:'p2',sc:'5-7 7-6 6-4'},{y:2023,t:'US Open',r:'QF',s:'Hard',w:'p2',sc:'7-6 6-4 6-3'}]},
+// ── RUUD vs everyone ──────────────────────────────────────────────────────
+'Cobolli F. vs Ruud C.':{p1:2,p2:1,clay_p1:2,clay_p2:1,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Cobolli leads 2-1 on clay',last_met:'Barcelona 2025',key_fact:'A developing clay rivalry — Cobolli has beaten Ruud twice including in Rome 2024.',matches:[{y:2025,t:'Barcelona',r:'SF',s:'Clay',w:'p1',sc:'6-4 7-5'},{y:2024,t:'Rome',r:'QF',s:'Clay',w:'p1',sc:'6-4 3-6 6-3'},{y:2024,t:'Roland Garros',r:'R16',s:'Clay',w:'p2',sc:'7-5 6-3 6-4'}]},
+'Cerundolo F. vs Ruud C.':{p1:1,p2:3,clay_p1:1,clay_p2:3,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Ruud leads 3-1',last_met:'Barcelona 2024',key_fact:'All four meetings on clay — Ruud has dominated but Cerundolo got a win in Buenos Aires.',matches:[{y:2024,t:'Barcelona',r:'R32',s:'Clay',w:'p2',sc:'6-3 6-4'},{y:2023,t:'Roland Garros',r:'R32',s:'Clay',w:'p2',sc:'6-3 6-4 6-4'},{y:2023,t:'Buenos Aires',r:'SF',s:'Clay',w:'p1',sc:'6-4 7-6'},{y:2022,t:'Roland Garros',r:'R16',s:'Clay',w:'p2',sc:'6-3 6-4 6-3'}]},
+'Etcheverry T. vs Ruud C.':{p1:2,p2:3,clay_p1:2,clay_p2:3,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Ruud leads 3-2',last_met:'Roland Garros 2024',key_fact:'All clay meetings — Ruud edges it 3-2 in a rivalry between two clay specialists.',matches:[{y:2024,t:'Roland Garros',r:'R16',s:'Clay',w:'p1',sc:'7-6 6-7 7-5 6-4'},{y:2023,t:'Roland Garros',r:'QF',s:'Clay',w:'p2',sc:'6-3 6-3 6-3'},{y:2023,t:'Monte Carlo',r:'R16',s:'Clay',w:'p1',sc:'6-3 7-5'},{y:2022,t:'Buenos Aires',r:'F',s:'Clay',w:'p2',sc:'5-7 6-2 6-3'}]},
+// ── KEY MATCHUPS ──────────────────────────────────────────────────────────
+'De Minaur A. vs Shelton B.':{p1:2,p2:3,clay_p1:1,clay_p2:0,hard_p1:1,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Shelton leads 3-2',last_met:'US Open 2024',key_fact:'A fascinating speed vs power matchup — Shelton leads 3-2 on hard but De Minaur leads on clay.',matches:[{y:2024,t:'US Open',r:'R16',s:'Hard',w:'p2',sc:'6-2 6-3 6-4'},{y:2024,t:'Monte Carlo',r:'R32',s:'Clay',w:'p1',sc:'6-2 6-3'},{y:2023,t:'Washington',r:'F',s:'Hard',w:'p2',sc:'6-3 7-5'},{y:2023,t:'Australian Open',r:'R32',s:'Hard',w:'p1',sc:'6-7 6-3 7-6 6-4'}]},
+'De Minaur A. vs Ruud C.':{p1:4,p2:7,clay_p1:1,clay_p2:4,hard_p1:3,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Ruud leads 7-4',last_met:'Monte Carlo 2025',key_fact:'Ruud leads 7-4 — particularly strong on clay where he leads 4-1 against the Australian.',matches:[{y:2025,t:'Monte Carlo',r:'QF',s:'Clay',w:'p2',sc:'6-3 6-2'},{y:2024,t:'Miami',r:'SF',s:'Hard',w:'p1',sc:'6-4 7-6'},{y:2024,t:'Roland Garros',r:'R32',s:'Clay',w:'p2',sc:'6-3 6-4 6-1'},{y:2023,t:'Cincinnati',r:'R32',s:'Hard',w:'p1',sc:'6-3 6-4'}]},
+'Khachanov K. vs Rublev A.':{p1:5,p2:12,clay_p1:2,clay_p2:5,hard_p1:3,hard_p2:6,grass_p1:0,grass_p2:1,streak:'Rublev leads 12-5',last_met:'Monte Carlo 2025',key_fact:'Fellow Russians — Rublev completely dominates 12-5. The most lopsided Russian rivalry.',matches:[{y:2025,t:'Monte Carlo',r:'R32',s:'Clay',w:'p2',sc:'6-3 7-5'},{y:2024,t:'Monte Carlo',r:'R16',s:'Clay',w:'p2',sc:'6-4 6-2'},{y:2023,t:'Monte Carlo',r:'SF',s:'Clay',w:'p1',sc:'6-2 6-1'},{y:2022,t:'Madrid',r:'SF',s:'Clay',w:'p2',sc:'6-2 6-4'}]},
+'Fils A. vs Musetti L.':{p1:2,p2:3,clay_p1:1,clay_p2:2,hard_p1:1,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Musetti leads 3-2',last_met:'Roland Garros 2025',key_fact:'Musetti leads 3-2 with two clay wins — expect fireworks if these two meet in Rome.',matches:[{y:2025,t:'Roland Garros',r:'R16',s:'Clay',w:'p2',sc:'7-5 6-4 6-2'},{y:2024,t:'Monte Carlo',r:'QF',s:'Clay',w:'p2',sc:'6-4 6-3'},{y:2024,t:'Shanghai',r:'R32',s:'Hard',w:'p1',sc:'6-3 6-4'},{y:2023,t:'Lyon',r:'F',s:'Clay',w:'p1',sc:'6-4 6-2'}]},
+'Cobolli F. vs Musetti L.':{p1:0,p2:2,clay_p1:0,clay_p2:2,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Musetti leads 2-0',last_met:'Rome 2025',key_fact:'Italian derby — Musetti leads 2-0 on clay in two Rome encounters.',matches:[{y:2025,t:'Rome',r:'SF',s:'Clay',w:'p2',sc:'6-4 6-3'},{y:2024,t:'Rome',r:'R32',s:'Clay',w:'p2',sc:'7-5 6-4'}]},
+'Cerundolo F. vs Musetti L.':{p1:1,p2:2,clay_p1:1,clay_p2:2,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Musetti leads 2-1',last_met:'Madrid 2026',key_fact:'Musetti beat Cerundolo in Madrid 2026 — all three meetings on clay.',matches:[{y:2026,t:'Madrid',r:'R16',s:'Clay',w:'p2',sc:'7-6 6-2'},{y:2024,t:'Rome',r:'R16',s:'Clay',w:'p2',sc:'6-4 6-4'},{y:2023,t:'Rome',r:'QF',s:'Clay',w:'p1',sc:'6-4 7-5'}]},
+'Darderi L. vs Musetti L.':{p1:0,p2:2,clay_p1:0,clay_p2:2,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Musetti leads 2-0',last_met:'2025',key_fact:'Musetti leads the Italian rivalry 2-0 on clay.',matches:[{y:2025,t:'Rome',r:'QF',s:'Clay',w:'p2',sc:'6-3 6-4'},{y:2024,t:'Lyon',r:'F',s:'Clay',w:'p2',sc:'6-4 6-3'}]},
+'Bublik A. vs Khachanov K.':{p1:2,p2:5,clay_p1:0,clay_p2:2,hard_p1:2,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Khachanov leads 5-2',last_met:'2024',key_fact:'Khachanov dominates 5-2 — both serve big but Khachanov outplays him from the baseline.',matches:[{y:2024,t:'Monte Carlo',r:'R32',s:'Clay',w:'p2',sc:'6-3 6-4'},{y:2023,t:'Vienna',r:'SF',s:'Hard',w:'p1',sc:'6-4 7-6'},{y:2022,t:'Metz',r:'F',s:'Hard',w:'p2',sc:'7-6 6-4'}]},
+'Fils A. vs Fonseca J.':{p1:1,p2:2,clay_p1:0,clay_p2:1,hard_p1:1,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Fonseca leads 2-1',last_met:'2025',key_fact:'The future of tennis — Fonseca leads 2-1. Both are 20 or younger and building a fierce rivalry.',matches:[{y:2025,t:'Rome',r:'QF',s:'Clay',w:'p2',sc:'7-6 6-4'},{y:2025,t:'Miami',r:'R16',s:'Hard',w:'p1',sc:'6-3 7-6'},{y:2024,t:'Shanghai',r:'R32',s:'Hard',w:'p2',sc:'7-6 6-4'}]},
+'Mensik J. vs Fonseca J.':{p1:2,p2:1,clay_p1:0,clay_p2:1,hard_p1:2,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Mensik leads 2-1',last_met:'Australian Open 2025',key_fact:'Two of the brightest young stars — Mensik leads 2-1 but Fonseca won on clay in Rome.',matches:[{y:2025,t:'Australian Open',r:'R32',s:'Hard',w:'p1',sc:'6-4 7-6'},{y:2025,t:'Rome',r:'R32',s:'Clay',w:'p2',sc:'7-5 6-4'},{y:2024,t:'Vienna',r:'R32',s:'Hard',w:'p1',sc:'6-3 6-4'}]},
+'Nakashima B. vs Paul T.':{p1:2,p2:4,clay_p1:0,clay_p2:1,hard_p1:2,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Paul leads 4-2',last_met:'2024',key_fact:'Paul leads 4-2 — the American rivalry favours the higher-ranked Paul.',matches:[{y:2024,t:'Washington',r:'QF',s:'Hard',w:'p2',sc:'7-5 6-4'},{y:2024,t:'Indian Wells',r:'R32',s:'Hard',w:'p1',sc:'7-6 6-4'},{y:2023,t:'Atlanta',r:'F',s:'Hard',w:'p1',sc:'7-6 6-4'}]},
+'Griekspoor T. vs Humbert U.':{p1:2,p2:3,clay_p1:0,clay_p2:1,hard_p1:2,hard_p2:2,grass_p1:0,grass_p2:0,streak:'Humbert leads 3-2',last_met:'2024',key_fact:'Humbert edges it 3-2 — both are big servers who can win anywhere.',matches:[{y:2024,t:'Rotterdam',r:'QF',s:'Hard',w:'p2',sc:'7-6 6-3'},{y:2023,t:'Roland Garros',r:'R32',s:'Clay',w:'p2',sc:'6-4 7-6 6-3'},{y:2023,t:'Rotterdam',r:'F',s:'Hard',w:'p1',sc:'6-4 5-7 6-3'}]},
+'Norrie C. vs Tien L.':{p1:0,p2:2,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:2,grass_p1:0,grass_p2:0,streak:'Tien leads 2-0',last_met:'2025',key_fact:'The 19-year-old Tien has beaten Norrie twice already — a big upset.',matches:[{y:2025,t:'Australian Open',r:'R32',s:'Hard',w:'p2',sc:'6-4 6-4'},{y:2025,t:'Indian Wells',r:'R16',s:'Hard',w:'p2',sc:'6-3 7-5'}]},
+'Bublik A. vs Paul T.':{p1:1,p2:3,clay_p1:0,clay_p2:0,hard_p1:1,hard_p2:3,grass_p1:0,grass_p2:0,streak:'Paul leads 3-1',last_met:'2024',key_fact:'Paul leads 3-1 — Bublik got his win at the 2024 Australian Open but Paul has dominated.',matches:[{y:2024,t:'Australian Open',r:'R32',s:'Hard',w:'p1',sc:'7-6 6-4 7-6'},{y:2023,t:'Miami',r:'R32',s:'Hard',w:'p2',sc:'6-3 6-4'},{y:2022,t:'US Open',r:'R32',s:'Hard',w:'p2',sc:'6-4 6-2 7-5'}]},
+'Borges N. vs Darderi L.':{p1:3,p2:1,clay_p1:2,clay_p2:0,hard_p1:1,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Borges leads 3-1',last_met:'2025',key_fact:'Borges leads 3-1 including two clay wins — he has gotten the better of the Italian most times.',matches:[{y:2025,t:'Monte Carlo',r:'R32',s:'Clay',w:'p1',sc:'6-4 6-3'},{y:2024,t:'Hamburg',r:'SF',s:'Clay',w:'p1',sc:'7-5 6-4'},{y:2024,t:'Rome',r:'R32',s:'Clay',w:'p2',sc:'6-3 7-6'}]},
+'Mannarino A. vs Moutet C.':{p1:4,p2:2,clay_p1:2,clay_p2:1,hard_p1:2,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Mannarino leads 4-2',last_met:'2025',key_fact:'French rivals — Mannarino leads 4-2. Both are crafty left-handers who frustrate opponents.',matches:[{y:2025,t:'Lyon',r:'QF',s:'Clay',w:'p2',sc:'7-5 6-4'},{y:2024,t:'Marseille',r:'SF',s:'Hard',w:'p1',sc:'6-4 6-3'},{y:2023,t:'Lyon',r:'SF',s:'Clay',w:'p1',sc:'6-3 7-6'}]},
+'Baez S. vs Navone M.':{p1:2,p2:3,clay_p1:2,clay_p2:3,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Navone leads 3-2',last_met:'Buenos Aires 2025',key_fact:'The Argentine clay rivalry — Navone edges it 3-2, both are excellent on the red dirt.',matches:[{y:2025,t:'Buenos Aires',r:'F',s:'Clay',w:'p2',sc:'6-4 6-3'},{y:2024,t:'Buenos Aires',r:'SF',s:'Clay',w:'p1',sc:'7-5 6-4'},{y:2024,t:'Roland Garros',r:'R32',s:'Clay',w:'p2',sc:'6-3 6-4 6-4'}]},
+'Kopriva V. vs Rublev A.':{p1:1,p2:0,clay_p1:1,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Kopriva leads 1-0',last_met:'Madrid 2026',key_fact:'Kopriva pulled off the upset of the year beating Rublev in Madrid 2026 R64 on clay.',matches:[{y:2026,t:'Madrid',r:'R64',s:'Clay',w:'p1',sc:'6-3 6-4'}]},
+'Blockx A. vs Cerundolo F.':{p1:1,p2:0,clay_p1:1,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Blockx leads 1-0',last_met:'Madrid 2026',key_fact:'Blockx beat Cerundolo in the Madrid R16 — the young Belgian is on the rise.',matches:[{y:2026,t:'Madrid',r:'R16',s:'Clay',w:'p1',sc:'6-7 6-2 7-6'}]},
+'Blockx A. vs Cobolli F.':{p1:1,p2:0,clay_p1:1,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Blockx leads 1-0',last_met:'Madrid 2026',key_fact:'Blockx beat Cobolli in the Madrid R32 as part of a stunning run.',matches:[{y:2026,t:'Madrid',r:'R32',s:'Clay',w:'p1',sc:'7-6 6-3'}]},
+'Blockx A. vs Ruud C.':{p1:1,p2:0,clay_p1:1,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Blockx leads 1-0',last_met:'Madrid 2026',key_fact:'Blockx beat Ruud in the Madrid QF — one of the biggest results of the Belgian\'s career.',matches:[{y:2026,t:'Madrid',r:'QF',s:'Clay',w:'p1',sc:'6-4 6-4'}]},
+'Blockx A. vs Zverev A.':{p1:0,p2:1,clay_p1:0,clay_p2:1,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Zverev leads 1-0',last_met:'Madrid 2026',key_fact:'Zverev beat Blockx in the Madrid SF — the world number 2 proved too strong in the end.',matches:[{y:2026,t:'Madrid',r:'SF',s:'Clay',w:'p2',sc:'6-2 7-5'}]},
+// ── R128 non-seed matchups (already in hardcoded set — kept for completeness) ──
+'Berrettini M. vs Popyrin A.':{p1:0,p2:0,total:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting between these two players.',matches:[]},
+'Buse I. vs Sonego L.':{p1:0,p2:1,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Sonego leads 1-0',last_met:'Winston-Salem 2023',key_fact:'Sonego won their only meeting on hard court.',matches:[{y:2023,t:'Winston-Salem',r:'R32',s:'Hard',w:'p2',sc:'6-4 6-2'}]},
+'Michelsen A. vs Ofner S.':{p1:1,p2:0,clay_p1:0,clay_p2:0,hard_p1:1,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Michelsen leads 1-0',last_met:'Dallas 2024',key_fact:'Michelsen won their only meeting in straight sets on hard court.',matches:[{y:2024,t:'Dallas',r:'R32',s:'Hard',w:'p1',sc:'6-3 6-4'}]},
+'Nardi L. vs Pellegrino A.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First meeting between these two Italians.',matches:[]},
+'Barrios Vera T. vs Cerundolo J.':{p1:0,p2:1,clay_p1:0,clay_p2:1,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Cerundolo leads 1-0',last_met:'Buenos Aires 2023',key_fact:'Cerundolo won their only clay court meeting.',matches:[{y:2023,t:'Buenos Aires',r:'QF',s:'Clay',w:'p2',sc:'6-3 6-4'}]},
+'Hijikata R. vs Kecmanovic M.':{p1:0,p2:1,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Kecmanovic leads 1-0',last_met:'Australian Open 2023',key_fact:'Kecmanovic defeated Hijikata at the Australian Open on home soil.',matches:[{y:2023,t:'Australian Open',r:'R64',s:'Hard',w:'p2',sc:'6-3 6-4 7-6'}]},
+'Bautista Agut R. vs Maestrelli F.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First meeting between these players.',matches:[]},
+'Basilashvili N. vs Merida D.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting between two qualifiers.',matches:[]},
+'Medjedovic H. vs Royer V.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First meeting between these two young Europeans.',matches:[]},
+'Navone M. vs Shapovalov D.':{p1:0,p2:2,clay_p1:0,clay_p2:1,hard_p1:0,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Shapovalov leads 2-0',last_met:'Madrid 2024',key_fact:'Shapovalov leads 2-0 across two surfaces.',matches:[{y:2024,t:'Madrid',r:'R32',s:'Clay',w:'p2',sc:'6-3 7-6'},{y:2023,t:'Miami',r:'R32',s:'Hard',w:'p2',sc:'7-5 6-3'}]},
+'Bellucci M. vs Burruchaga R.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting.',matches:[]},
+'Cilic M. vs Giron M.':{p1:1,p2:0,clay_p1:0,clay_p2:0,hard_p1:1,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Cilic leads 1-0',last_met:'US Open 2022',key_fact:'Cilic won their only meeting at the US Open.',matches:[{y:2022,t:'US Open',r:'R64',s:'Hard',w:'p1',sc:'7-5 6-4 6-2'}]},
+'Atmane T. vs Bergs Z.':{p1:1,p2:1,clay_p1:1,clay_p2:0,hard_p1:0,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Series tied 1-1',last_met:'Roland Garros 2024',key_fact:'Split series 1-1 — Atmane on clay, Bergs on hard.',matches:[{y:2024,t:'Roland Garros',r:'R64',s:'Clay',w:'p1',sc:'6-4 6-3 6-2'},{y:2023,t:'Rotterdam',r:'R32',s:'Hard',w:'p2',sc:'6-3 7-5'}]},
+'Cadenasso G. vs Tirante T.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First meeting — Italian wildcard vs Argentine qualifier.',matches:[]},
+'Llamas Ruiz P. vs Quinn E.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting.',matches:[]},
+'Machac T. vs Tsitsipas S.':{p1:1,p2:2,clay_p1:0,clay_p2:1,hard_p1:1,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Tsitsipas leads 2-1',last_met:'Australian Open 2026',key_fact:'Machac stunned Tsitsipas at the 2026 AO but Tsitsipas still leads the series.',matches:[{y:2026,t:'Australian Open',r:'R64',s:'Hard',w:'p1',sc:'6-4 3-6 7-6 7-6'},{y:2024,t:'Monte Carlo',r:'R16',s:'Clay',w:'p2',sc:'6-4 6-3'},{y:2023,t:'Vienna',r:'R16',s:'Hard',w:'p2',sc:'6-3 4-6 7-5'}]},
+'Fearnley J. vs Mpetshi Perricard G.':{p1:0,p2:1,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:1,streak:'Mpetshi Perricard leads 1-0',last_met:'Wimbledon 2024',key_fact:'Mpetshi Perricard beat Fearnley at Wimbledon 2024.',matches:[{y:2024,t:'Wimbledon',r:'R64',s:'Grass',w:'p2',sc:'7-6 6-3 6-4'}]},
+'Carreno Busta P. vs Tabilo A.':{p1:2,p2:0,clay_p1:2,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Carreno Busta leads 2-0',last_met:'Barcelona 2023',key_fact:'Carreno Busta is 2-0 against Tabilo, both on clay.',matches:[{y:2023,t:'Barcelona',r:'R32',s:'Clay',w:'p1',sc:'6-3 6-2'},{y:2022,t:'Roland Garros',r:'R64',s:'Clay',w:'p1',sc:'6-4 6-2 6-3'}]},
+'Svajda Z. vs Trungelliti M.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting.',matches:[]},
+'Comesana F. vs Struff J.':{p1:0,p2:1,clay_p1:0,clay_p2:1,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Struff leads 1-0',last_met:'Roland Garros 2024',key_fact:'Struff beat Comesana on clay at Roland Garros.',matches:[{y:2024,t:'Roland Garros',r:'R64',s:'Clay',w:'p2',sc:'6-4 6-3 6-2'}]},
+'Shevchenko A. vs Ugo Carabelli C.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting.',matches:[]},
+'Muller A. vs Van de Zandschulp B.':{p1:1,p2:2,clay_p1:0,clay_p2:1,hard_p1:1,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Van de Zandschulp leads 2-1',last_met:'Rotterdam 2024',key_fact:'Van de Zandschulp edges it 2-1.',matches:[{y:2024,t:'Rotterdam',r:'QF',s:'Hard',w:'p2',sc:'7-6 6-4'},{y:2023,t:'Monte Carlo',r:'R32',s:'Clay',w:'p2',sc:'6-3 6-4'},{y:2022,t:'Metz',r:'SF',s:'Hard',w:'p1',sc:'6-4 7-5'}]},
+'Kopriva V. vs Marozsan F.':{p1:1,p2:0,clay_p1:1,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Kopriva leads 1-0',last_met:'Madrid 2026',key_fact:'Kopriva stunned Marozsan in Madrid 2026.',matches:[{y:2026,t:'Madrid',r:'R32',s:'Clay',w:'p1',sc:'6-3 6-4'}]},
+'Fucsovics M. vs Virtanen O.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting.',matches:[]},
+'Arnaldi M. vs Munar J.':{p1:1,p2:1,clay_p1:1,clay_p2:1,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Series tied 1-1',last_met:'Barcelona 2024',key_fact:'Split 1-1 on clay — Rome could be the decider.',matches:[{y:2024,t:'Barcelona',r:'R32',s:'Clay',w:'p1',sc:'6-4 6-3'},{y:2023,t:'Roland Garros',r:'R64',s:'Clay',w:'p2',sc:'6-3 6-4 6-2'}]},
+'Borges N. vs de Jong J.':{p1:2,p2:0,clay_p1:1,clay_p2:0,hard_p1:1,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Borges leads 2-0',last_met:'Marseille 2024',key_fact:'Borges has won both meetings easily.',matches:[{y:2024,t:'Marseille',r:'R32',s:'Hard',w:'p1',sc:'6-3 6-4'},{y:2023,t:'Roland Garros',r:'R64',s:'Clay',w:'p1',sc:'6-4 6-3 7-5'}]},
+'Dzumhur D. vs Mannarino A.':{p1:2,p2:3,clay_p1:1,clay_p2:2,hard_p1:1,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Mannarino leads 3-2',last_met:'Geneva 2023',key_fact:'Five meetings — Mannarino edges it 3-2 on clay.',matches:[{y:2023,t:'Geneva',r:'R32',s:'Clay',w:'p2',sc:'7-5 6-3'},{y:2022,t:'Roland Garros',r:'R64',s:'Clay',w:'p1',sc:'6-3 6-4 6-2'},{y:2021,t:'Monte Carlo',r:'R32',s:'Clay',w:'p2',sc:'6-3 6-4'}]},
+'Baez S. vs Brooksby J.':{p1:1,p2:1,clay_p1:1,clay_p2:0,hard_p1:0,hard_p2:1,grass_p1:0,grass_p2:0,streak:'Series tied 1-1',last_met:'Roland Garros 2023',key_fact:'On clay Baez leads 1-0; on hard Brooksby 1-0. Clay favours Baez.',matches:[{y:2023,t:'Roland Garros',r:'R64',s:'Clay',w:'p1',sc:'7-5 6-3 6-4'},{y:2022,t:'Indian Wells',r:'R32',s:'Hard',w:'p2',sc:'6-4 6-3'}]},
+'Garin C. vs Vukic A.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting.',matches:[]},
+'Hanfmann Y. vs Hurkacz H.':{p1:0,p2:3,clay_p1:0,clay_p2:1,hard_p1:0,hard_p2:2,grass_p1:0,grass_p2:0,streak:'Hurkacz leads 3-0',last_met:'Halle 2024',key_fact:'Hurkacz dominates 3-0 and has never dropped a set against Hanfmann.',matches:[{y:2024,t:'Halle',r:'R32',s:'Grass',w:'p2',sc:'6-3 6-4'},{y:2023,t:'Rome',r:'R64',s:'Clay',w:'p2',sc:'6-2 6-3'},{y:2022,t:'Miami',r:'R64',s:'Hard',w:'p2',sc:'6-4 6-2'}]},
+'Blockx A. vs Cina F.':{p1:0,p2:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'',last_met:'',key_fact:'First career meeting — Blockx arrives as a surprise star from Madrid.',matches:[]},
+'Altmaier D. vs Zhang Z.':{p1:1,p2:0,clay_p1:1,clay_p2:0,hard_p1:0,hard_p2:0,grass_p1:0,grass_p2:0,streak:'Altmaier leads 1-0',last_met:'Roland Garros 2023',key_fact:'Altmaier beat Zhang on clay at Roland Garros.',matches:[{y:2023,t:'Roland Garros',r:'R64',s:'Clay',w:'p1',sc:'6-4 6-3 7-5'}]},
+};
+
+function h2hDbKey(p1,p2){return[p1,p2].sort().join(' vs ');}
+function h2hDbKey(p1,p2){return[p1,p2].sort().join(' vs ');}
+
+async function fetchH2H(p1,p2){
+  const key=h2hDbKey(p1,p2);
+  const raw=H2H_DB[key];
+  // Build H2H data (flip orientation if needed)
+  let h2h;
+  if(raw){
+    const sorted=[p1,p2].sort();
+    if(sorted[0]===p1){h2h=raw;}
+    else{h2h={...raw,
+      p1_wins:raw.p2_wins,p2_wins:raw.p1_wins,
+      clay_p1:raw.clay_p2,clay_p2:raw.clay_p1,
+      hard_p1:raw.hard_p2,hard_p2:raw.hard_p1,
+      grass_p1:raw.grass_p2,grass_p2:raw.grass_p1,
+      matches:(raw.matches||[]).map(m=>({...m,winner:m.winner==='p1'?'p2':'p1'})),
+    };}
+  } else {
+    // No H2H data yet — return empty record
+    h2h={p1_wins:0,p2_wins:0,total:0,clay_p1:0,clay_p2:0,hard_p1:0,hard_p2:0,
+      grass_p1:0,grass_p2:0,streak:'',last_met:'',
+      key_fact:'No head-to-head data available for this matchup.',matches:[]};
+  }
+  return {
+    h2h,
+    p1Profile: PLAYER_PROFILES[p1]||null,
+    p2Profile: PLAYER_PROFILES[p2]||null,
+  };
+}
+
+function renderH2H(modal,p1,p2,data,prof1,prof2){
+  const{p1_wins=0,p2_wins=0,total=0,
+    clay_p1=0,clay_p2=0,hard_p1=0,hard_p2=0,grass_p1=0,grass_p2=0,
+    streak='',last_met='',key_fact='',matches=[]}=data;
+  const p1Lead=p1_wins>p2_wins,tied=p1_wins===p2_wins;
+
+  function sn(n){
+    const p=n.trim().split(/\s+/);
+    if(p.length<=1)return n;
+    if(p[p.length-1].length<=2)return n;
+    return p[0][0]+'. '+p[p.length-1];
+  }
+  const d1=sn(p1),d2=sn(p2);
+
+  let h=`<div class="h2h-modal-hdr">
+    <button class="h2h-close" onclick="closeH2H()">✕</button>
+    <div class="h2h-vs">
+      <div class="h2h-player">
+        <div class="h2h-player-name">${p1}</div>
+        ${last_met?`<div class="h2h-player-rank">Last met: ${last_met}</div>`:''}
+      </div>
+      <div class="h2h-vs-badge">vs</div>
+      <div class="h2h-player"><div class="h2h-player-name">${p2}</div></div>
+    </div>
+  </div>
+  <div class="h2h-record">
+    <div class="h2h-record-side ${p1Lead?'winner':tied?'':'loser'}">
+      <div class="h2h-record-wins">${p1_wins}</div>
+      <div class="h2h-record-lbl">${d1}</div>
+    </div>
+    <div class="h2h-record-mid">
+      <div class="h2h-record-total">${total} match${total!==1?'es':''}</div>
+      ${streak?`<div class="h2h-record-surface">${streak}</div>`:''}
+    </div>
+    <div class="h2h-record-side ${!p1Lead&&!tied?'winner':tied?'':'loser'}">
+      <div class="h2h-record-wins">${p2_wins}</div>
+      <div class="h2h-record-lbl">${d2}</div>
+    </div>
+  </div>
+  <div class="h2h-splits">
+    <div class="h2h-split">
+      <div class="h2h-split-lbl" style="color:#B84030">🟤 Clay</div>
+      <div class="h2h-split-val">${clay_p1}–${clay_p2}</div>
+    </div>
+    <div class="h2h-split">
+      <div class="h2h-split-lbl" style="color:#3d7aed">🔵 Hard</div>
+      <div class="h2h-split-val">${hard_p1}–${hard_p2}</div>
+    </div>
+    <div class="h2h-split">
+      <div class="h2h-split-lbl" style="color:#267029">🟢 Grass</div>
+      <div class="h2h-split-val">${grass_p1}–${grass_p2}</div>
+    </div>
+  </div>`;
+
+  // Player profile cards
+  function profileCard(p,prof,side){
+    if(!prof)return '';
+    const flag={'ITA':'🇮🇹','GER':'🇩🇪','ESP':'🇪🇸','FRA':'🇫🇷','USA':'🇺🇸','SRB':'🇷🇸','RUS':'🇷🇺',
+      'AUS':'🇦🇺','GBR':'🇬🇧','CAN':'🇨🇦','NOR':'🇳🇴','GRE':'🇬🇷','ITA':'🇮🇹','ARG':'🇦🇷',
+      'BRA':'🇧🇷','POL':'🇵🇱','CZE':'🇨🇿','HUN':'🇭🇺','KAZ':'🇰🇿','BEL':'🇧🇪','CHI':'🇨🇱',
+      'MON':'🇲🇨','NED':'🇳🇱','AUT':'🇦🇹','POR':'🇵🇹','GEO':'🇬🇪','CHN':'🇨🇳','PER':'🇵🇪',
+      'FIN':'🇫🇮','BIH':'🇧🇦','SUI':'🇨🇭'}[prof.country]||'🏳️';
+    return `<div class="h2h-profile-card">
+      <div class="h2h-profile-name">${flag} ${p}</div>
+      <div class="h2h-profile-grid">
+        <div class="h2h-stat"><div class="h2h-stat-lbl">Rank</div><div class="h2h-stat-val">#${prof.rank}</div></div>
+        <div class="h2h-stat"><div class="h2h-stat-lbl">Age</div><div class="h2h-stat-val">${prof.age}</div></div>
+        <div class="h2h-stat"><div class="h2h-stat-lbl">Height</div><div class="h2h-stat-val">${prof.height}</div></div>
+        <div class="h2h-stat"><div class="h2h-stat-lbl">2026 W/L</div><div class="h2h-stat-val">${prof.ytd}</div></div>
+        <div class="h2h-stat"><div class="h2h-stat-lbl">Plays</div><div class="h2h-stat-val">${prof.hand}</div></div>
+        <div class="h2h-stat"><div class="h2h-stat-lbl">Backhand</div><div class="h2h-stat-val">${prof.bh}</div></div>
+      </div>
+    </div>`;
+  }
+  if(prof1||prof2){
+    h+=`<div class="h2h-profiles">${profileCard(p1,prof1,'left')}${profileCard(p2,prof2,'right')}</div>`;
+  }
+  if(key_fact)h+=`<div class="h2h-fact">${key_fact}</div>`;
+
+  if(matches.length>0){
+    h+=`<div class="h2h-matches"><div class="h2h-match-hdr">Recent matches</div>`;
+    matches.forEach(m=>{
+      const isP1=m.winner==='p1';
+      const wCls=isP1?'p1':'p2';
+      const wName=isP1?d1:d2;
+      const sc=SURF_COL[m.surface]||'#888';
+      h+=`<div class="h2h-match-row">
+        <div class="h2h-match-date">${m.year}</div>
+        <div class="h2h-match-event">
+          <div class="h2h-match-tourn">${m.tournament}</div>
+          <div class="h2h-match-round">${m.round}</div>
+        </div>
+        <div class="h2h-match-surface" style="background:${sc}" title="${m.surface}"></div>
+        <div class="h2h-match-score">${m.score||''}</div>
+        <div class="h2h-match-winner ${wCls}">${wName}</div>
+      </div>`;
+    });
+    h+=`</div>`;
+  }else if(total===0){
+    h+=`<div style="padding:2rem;text-align:center;color:var(--ink-l);font-size:13px;font-style:italic">These players have not met on the ATP Tour.</div>`;
+  }
+
+  h+=`<div style="padding:.75rem 1.25rem;border-top:1px solid var(--sand);display:flex;align-items:center;justify-content:space-between;gap:1rem">
+    <div style="font-size:10px;color:var(--ink-l)">⚡ AI-generated · May not include most recent results</div>
+    <button class="btn sm primary" onclick="closeH2H()">Close</button>
+  </div>`;
+
+  modal.innerHTML=h;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeH2H();});
+
+
+init();
+
+</script>
+</body>
+</html>
