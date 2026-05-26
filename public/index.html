@@ -369,16 +369,9 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .h2h-stat-lbl{font-size:8.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-l)}
 .h2h-stat-val{font-size:12px;font-weight:600;color:var(--ink)}
 
-.mc-player.dead-pick{background:#fff1f1;border-left:3px solid #fca5a5;cursor:default;opacity:.85}
-.mc-player.dead-pick .mc-name{color:#b91c1c;text-decoration:line-through;font-size:12px}
-.mc-seed-inline{font-size:8.5px;font-weight:700;color:#b91c1c;background:#fee2e2;border-radius:3px;padding:1px 4px;margin-right:2px}
-/* Inline dead pick — shown inside winner row */
-.mc-name-wrap{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.mc-name-wrap .mc-name{flex:none}
-.mc-dead-badge{font-size:10px;font-weight:600;color:rgba(255,255,255,.55);
-  background:rgba(0,0,0,.15);border-radius:4px;padding:1px 6px;
-  display:inline-flex;align-items:center;gap:3px;width:fit-content;
-  text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.mc-player.dead-pick{background:#fff8f8;border-top:1px dashed #fca5a5;cursor:default;opacity:.9;min-height:36px;padding:.4rem .9rem}
+.mc-player.dead-pick .mc-name{color:#c0392b;text-decoration:line-through;font-size:12.5px;font-weight:400}
+.mc-seed-inline{font-size:8px;font-weight:700;color:#b91c1c;background:#fee2e2;border-radius:3px;padding:1px 4px;margin-right:3px}
 .mc-odds{font-family:var(--font-m);font-size:11px;font-weight:600;padding:2px 8px;border-radius:var(--r-pill);flex-shrink:0;white-space:nowrap;cursor:default}
 .mc-odds.fav{background:#e8f4e8;color:var(--court);border:1px solid #b4ddb4}
 .mc-odds.dog{background:var(--sand);color:var(--ink-m);border:1px solid var(--sand-d)}
@@ -1528,9 +1521,9 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const sets=fmtSets(pi===0?lv.p1Sets:lv.p2Sets);
       const showSets=(done||isLiveM)&&sets;
 
-      // Dead pick for this slot — shown inline inside winner's row
+      // Dead pick for this slot — wrong pick that should show in this next-round card
       const dp=pi===0?m.deadPick1:m.deadPick2;
-      const hasDeadPick=!isBye&&dp&&pl.n!==dp.n&&isW&&done;
+      const hasDeadPick=dp&&pl.n!==dp.n&&isW&&done;
 
       let rowCls='mc-player';
       if(tbd)rowCls+=' tbd locked';
@@ -1550,11 +1543,6 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
       else if(isMy&&!done)iconEl='<div class="mc-icon chk">✓</div>';
 
-      // Dead pick badge shown inside winner row
-      const deadBadge=hasDeadPick
-        ?`<div class="mc-dead-badge" title="You picked ${dp.n}">✗ ${dp.n}</div>`
-        :'';
-
       // Get odds for this player
       let oddsEl='';
       if(!done&&!isLiveM&&!tbd&&m.p1?.n&&m.p2?.n&&m.p1.n!=='TBD'&&m.p2.n!=='TBD'){
@@ -1565,23 +1553,26 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
           if(o)oddsEl=`<div class="mc-odds ${Number(o.replace('+',''))<0?'fav':'dog'}" title="${prob} implied (${od.book})">${o}</div>`;
         }
       }
-      // Build right slot
+
+      // Build right slot — score width is always fixed, icon always sits outside
       let rightSlot='';
       if(showSets){
-        rightSlot=`<div class="mc-score">${sets}${iconEl}</div>`;
-        iconEl='';
+        rightSlot=`<div class="mc-score">${sets}</div>`;
       } else if(done||isLiveM){
         rightSlot=`<div class="mc-score-empty"></div>`;
       } else if(oddsEl){
         rightSlot=oddsEl;
         oddsEl='';
       }
-      // Name cell — if there's a dead badge, stack them
-      const nameCell=hasDeadPick
-        ?`<div class="mc-name-wrap"><div class="mc-name">${tbd?'TBD':pl.n}</div>${deadBadge}</div>`
-        :`<div class="mc-name">${tbd?'TBD':pl.n}</div>`;
 
-      h+=`<div class="${rowCls}" ${click}>${sdEl}${flagEl}${srvEl}${nameCell}${rightSlot}${iconEl}</div>`;
+      h+=`<div class="${rowCls}" ${click}>${sdEl}${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}</div>${rightSlot}${iconEl}</div>`;
+
+      // Dead pick row: render the wrong pick immediately after the winner row
+      if(hasDeadPick){
+        const dpFlag=getFlag(dp.n);
+        const dpSd=dp.s?`<div class="mc-seed" style="color:#fca5a5">${dp.s}</div>`:`<div class="mc-seed"></div>`;
+        h+=`<div class="mc-player dead-pick locked">${dpSd}<div class="mc-flag">${dpFlag}</div><div class="mc-name">${dp.s?`<span class="mc-seed-inline">${dp.s}</span>`:''}${dp.n}</div><div class="mc-score-empty"></div><div class="mc-icon x">✗</div></div>`;
+      }
     });
   }
   h+=`</div>`;
