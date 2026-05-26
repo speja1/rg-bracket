@@ -36,7 +36,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .tab.active{color:#fff;border-bottom-color:#fff}
 .tab:hover:not(.active){color:rgba(255,255,255,.7)}
 #root{margin-top:100px;min-height:calc(100vh - 100px)}
-#root.has-ticker{margin-top:128px}
+#root.has-ticker{margin-top:172px}
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:12px}
 .spinner{width:36px;height:36px;border:3px solid var(--sand-d);border-top-color:var(--clay);border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -322,15 +322,23 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-flag{font-size:14px;line-height:1;flex-shrink:0;width:20px;text-align:center}
 /* COURT BADGE on mc-strip */
 .mc-court{font-size:8px;font-weight:700;letter-spacing:.6px;color:var(--ink-l);background:var(--sand);border-radius:4px;padding:1px 5px;flex-shrink:0}
-/* LIVE TICKER */
-.ticker-wrap{position:fixed;top:100px;left:0;right:0;z-index:298;height:28px;background:#1a1a1a;overflow:hidden;display:flex;align-items:center}
-.ticker-label{background:var(--clay);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:0 10px;height:100%;display:flex;align-items:center;flex-shrink:0;white-space:nowrap}
-.ticker-track{display:flex;align-items:center;gap:0;white-space:nowrap;animation:ticker-scroll 40s linear infinite}
+/* LIVE TICKER — two-row design: live on top, finished below */
+.ticker-wrap{position:fixed;top:100px;left:0;right:0;z-index:298;background:#1a1a1a;overflow:hidden;display:flex;flex-direction:column}
+.ticker-row{display:flex;align-items:center;height:36px;overflow:hidden;border-bottom:1px solid #2a2a2a}
+.ticker-row:last-child{border-bottom:none}
+.ticker-label{flex-shrink:0;height:100%;padding:0 14px;display:flex;align-items:center;font-size:9px;font-weight:800;letter-spacing:1.8px;white-space:nowrap}
+.ticker-label.live-lbl{background:var(--clay);color:#fff}
+.ticker-label.fin-lbl{background:#2d2d2d;color:#888}
+.ticker-track{display:flex;align-items:center;white-space:nowrap;will-change:transform}
+.ticker-track.scrolling{animation:ticker-scroll linear infinite}
 .ticker-track:hover{animation-play-state:paused}
-.ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 18px;font-size:10px;color:#e0d0c0;border-right:1px solid #333}
-.ticker-item .tk-live{color:#4ade80;font-weight:700;font-size:8px;letter-spacing:.8px}
-.ticker-item .tk-score{font-family:var(--font-m);color:#fff;font-weight:600}
-.ticker-item .tk-done{color:#888;font-size:8px}
+.ticker-item{display:inline-flex;align-items:center;gap:9px;padding:0 22px;font-size:11px;color:#e0d0c0;border-right:1px solid #2e2e2e;height:36px}
+.ticker-item .tk-live{color:#4ade80;font-weight:800;font-size:8.5px;letter-spacing:1px;background:#14532d;border-radius:3px;padding:2px 5px}
+.ticker-item .tk-score{font-family:var(--font-m);color:#fff;font-weight:700;font-size:12px}
+.ticker-item .tk-srv{width:6px;height:6px;border-radius:50%;background:#f59e0b;display:inline-block;flex-shrink:0;animation:sp 1.2s ease-in-out infinite}
+.ticker-item .tk-done{color:#666;font-size:8px;letter-spacing:.8px;font-weight:700}
+.ticker-item .tk-winner{color:#fff;font-weight:600}
+.ticker-item .tk-loser{color:#777}
 @keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 /* TIEBREAKER MODAL */
 .tb-overlay{position:fixed;inset:0;background:rgba(22,12,6,.6);backdrop-filter:blur(4px);z-index:1100;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;transition:opacity .25s;pointer-events:none}
@@ -1917,42 +1925,97 @@ function lockAndSave(){
 function renderTicker(){
   const old=document.getElementById('ticker-wrap');
   if(old)old.remove();
-  // Gather live and recent matches
-  const liveMatches=[];
+  document.getElementById('root')?.classList.remove('has-ticker');
+
+  const shortName=n=>{
+    if(!n)return'?';
+    const p=n.trim().split(/\s+/);
+    return p.length>1?p[0][0]+'. '+p[p.length-1]:n;
+  };
+
+  // Separate live vs finished
+  const liveItems=[];
+  const finItems=[];
   S.rounds.forEach(rnd=>{
     rnd.matches.forEach(m=>{
       const lv=S.live[m.id]||{};
-      if(!lv.live&&!lv.winner)return;
       const p1=lv.p1||m.p1?.n||'?';
       const p2=lv.p2||m.p2?.n||'?';
-      liveMatches.push({id:m.id,p1,p2,lv,rnd:rnd.key});
+      if(lv.live&&!(lv.completed||lv.state==='post')){
+        liveItems.push({p1,p2,lv,rnd:rnd.key});
+      } else if(lv.winner){
+        finItems.push({p1,p2,lv,rnd:rnd.key});
+      }
     });
   });
-  if(!liveMatches.length)return; // no ticker if nothing live or finished
 
-  // Build ticker items — duplicated for infinite scroll
-  function itemHtml(m){
+  // Only show ticker if at least one live or finished match
+  if(!liveItems.length&&!finItems.length)return;
+
+  function liveItemHtml(m){
+    const f1=getFlag(m.p1),f2=getFlag(m.p2);
     const lv=m.lv;
-    const flag1=getFlag(m.p1);const flag2=getFlag(m.p2);
-    const shortName=n=>{const p=n.split(' ');return p.length>1?p[0][0]+'. '+p[p.length-1]:n;};
-    if(lv.live){
-      const s1=(lv.p1Sets||[]).map(s=>s.mine).join('-');
-      const s2=(lv.p2Sets||[]).map(s=>s.mine).join('-');
-      const srv1=lv.serving==='p1'?'● ':'';const srv2=lv.serving==='p2'?'● ':'';
-      return `<div class="ticker-item"><span class="tk-live">LIVE</span><span>${flag1}${srv1}${shortName(m.p1)} <span class="tk-score">${s1||'0'}</span> · ${flag2}${srv2}${shortName(m.p2)} <span class="tk-score">${s2||'0'}</span></span></div>`;
-    } else {
-      const winner=lv.winner;const loser=winner===m.p1?m.p2:m.p1;
-      const wFlag=getFlag(winner);const lFlag=getFlag(loser);
-      return `<div class="ticker-item"><span class="tk-done">FIN</span><span>${wFlag}${shortName(winner||m.p1)} def. ${lFlag}${shortName(loser||m.p2)}</span></div>`;
-    }
+    const s1=(lv.p1Sets||[]).map(s=>s.mine).join(' ');
+    const s2=(lv.p2Sets||[]).map(s=>s.mine).join(' ');
+    const srv1=lv.serving==='p1'?'<span class="tk-srv"></span>':'';
+    const srv2=lv.serving==='p2'?'<span class="tk-srv"></span>':'';
+    return `<div class="ticker-item">
+      <span class="tk-live">LIVE</span>
+      <span>${f1} ${srv1}${shortName(m.p1)}</span>
+      <span class="tk-score">${s1||'0'}</span>
+      <span style="color:#555">vs</span>
+      <span>${f2} ${srv2}${shortName(m.p2)}</span>
+      <span class="tk-score">${s2||'0'}</span>
+    </div>`;
   }
-  const items=liveMatches.map(itemHtml).join('');
+
+  function finItemHtml(m){
+    const lv=m.lv;
+    const winner=lv.winner;
+    const loser=winner===m.p1?m.p2:m.p1;
+    const wFlag=getFlag(winner);const lFlag=getFlag(loser);
+    return `<div class="ticker-item">
+      <span class="tk-done">FIN</span>
+      <span class="tk-winner">${wFlag} ${shortName(winner)}</span>
+      <span style="color:#555">def.</span>
+      <span class="tk-loser">${lFlag} ${shortName(loser)}</span>
+    </div>`;
+  }
+
+  // Build rows — only render a row if it has content
+  // Speed: ~80px/s. Duration = total content width / 80. We estimate ~180px per item.
+  function makeRow(items,htmlFn,labelText,labelCls,pxPerSec){
+    if(!items.length)return'';
+    const inner=items.map(htmlFn).join('');
+    // Duplicate for seamless loop
+    const doubled=inner+inner;
+    const estWidth=items.length*200; // px estimate
+    const dur=Math.max(15,Math.round(estWidth/pxPerSec));
+    return `<div class="ticker-row">
+      <div class="ticker-label ${labelCls}">${labelText}</div>
+      <div style="overflow:hidden;flex:1">
+        <div class="ticker-track scrolling" style="animation-duration:${dur}s">${doubled}</div>
+      </div>
+    </div>`;
+  }
+
+  const liveRow=makeRow(liveItems,liveItemHtml,'🎾 LIVE','live-lbl',60);
+  const finRow=makeRow(finItems,finItemHtml,'✓ RESULTS','fin-lbl',50);
+
+  // If only one type, ticker is one row (36px); two types = 72px
+  const tickerHeight=(liveItems.length>0&&finItems.length>0)?72:36;
+
   const wrap=document.createElement('div');
   wrap.id='ticker-wrap';
   wrap.className='ticker-wrap';
-  wrap.innerHTML=`<div class="ticker-label">🎾 LIVE</div><div class="ticker-track">${items}${items}</div>`;
+  wrap.innerHTML=liveRow+finRow;
   document.body.appendChild(wrap);
-  document.getElementById('root').classList.add('has-ticker');
+
+  const root=document.getElementById('root');
+  if(root){
+    root.classList.add('has-ticker');
+    root.style.marginTop=(100+tickerHeight)+'px';
+  }
 }
 
 // ── TIEBREAKER ────────────────────────────────────────────────────────────────
