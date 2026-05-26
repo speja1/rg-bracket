@@ -109,6 +109,9 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .col-matches{flex:1;padding:.75rem;display:flex;flex-direction:column;gap:.6rem}
 /* RIGHT COLUMN — staggered, matches centered between feeders */
 .col-right{justify-content:space-around}
+/* THREE COLUMNS for QF/SF/F screen */
+.bkt-screen.three-col{display:flex;width:100%}
+.col-wrap.col-mid{flex:1;min-width:0;border-right:1px solid var(--sand)}
 /* GUTTER */
 .col-gutter{width:52px;flex-shrink:0;position:relative;background:linear-gradient(90deg,var(--sand-l),var(--sand-l));border-left:1px solid var(--sand-m);border-right:1px solid var(--sand-m)}
 .col-gutter svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
@@ -144,13 +147,15 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.wrong .mc-name{color:#b91c1c;text-decoration:line-through}
 .mc-player.tbd .mc-name{font-style:italic;color:var(--ink-l)}
 .mc-score{font-family:var(--font-m);font-size:13px;font-weight:500;color:var(--ink-m);
-  letter-spacing:1px;white-space:nowrap;flex-shrink:0;width:68px;text-align:right;
-  display:flex;align-items:center;justify-content:flex-end;gap:5px}
-.mc-score-set{display:inline-block;width:16px;text-align:center}
+  letter-spacing:1px;white-space:nowrap;flex-shrink:0;min-width:68px;text-align:right;
+  display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.mc-score-set{display:inline-block;width:18px;text-align:center;line-height:1}
 .mc-player.winner .mc-score{color:rgba(255,255,255,.85);font-weight:600}
 .mc-player.wrong .mc-score,.mc-player.correct .mc-score{color:inherit}
 /* Placeholder score so name column is same width even without scores */
-.mc-score-empty{width:68px;flex-shrink:0}
+.mc-score-empty{min-width:68px;flex-shrink:0}
+/* Right-side slot: score OR odds, never both — consistent width */
+.mc-right{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-shrink:0;min-width:80px}
 .mc-icon{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
 .mc-icon.chk{background:var(--clay);color:#fff}.mc-icon.ok{background:var(--court);color:#fff}.mc-icon.x{background:#ef4444;color:#fff}
 .srv{width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;animation:sp 1.2s ease-in-out infinite}
@@ -345,6 +350,16 @@ const RND_SHORT = {R128:'R128',R64:'R64',R32:'R32',R16:'R16',QF:'QF',SF:'SF',F:'
 const RND_PTS   = {R128:1,R64:2,R32:4,R16:8,QF:16,SF:32,F:64};
 // Each screen shows [leftRoundIdx, rightRoundIdx]
 const SCREENS = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]];
+// Quadrant definitions: which R1 match indices belong to each quadrant (0-based)
+// Q1=TL(m01-16), Q2=BL(m17-32), Q3=TR(m33-48), Q4=BR(m49-64)
+// SF: Q1 vs Q2 (top half), Q3 vs Q4 (bottom half). Final: SF1 vs SF2
+const QUADRANTS = {
+  Q1:{label:'Top Left',  matches:[0,15],  sfSlot:0}, // m01-16
+  Q2:{label:'Bot Left',  matches:[16,31], sfSlot:1}, // m17-32
+  Q3:{label:'Top Right', matches:[32,47], sfSlot:2}, // m33-48
+  Q4:{label:'Bot Right', matches:[48,63], sfSlot:3}, // m49-64
+};
+const QUAD_KEYS = ['Q1','Q2','Q3','Q4'];
 
 const ATP_R1 = [
   // SECTION 1 — Sinner [1]
@@ -431,7 +446,10 @@ const ATP_R1 = [
 
 const S={tab:'bracket',draw:'mens',user:null,uid:null,userName:null,bracketLocked:false,odds:{},simResults:{},
   isAdmin:false,isGuest:false,viewingUid:null,viewingName:null,
-  locked:false,all:[],live:{},picks:{},rounds:[],screenIdx:0};
+  locked:false,all:[],live:{},picks:{},rounds:[],screenIdx:0,
+  quadrant:'Q1', // active quadrant: Q1 Q2 Q3 Q4
+  quadrantRndIdx:0, // which round within the quadrant (0=R128/R64, 1=R32/R16, 2=QF)
+};
 
 let db=null,auth=null;
 function initFB(){try{firebase.initializeApp(FB_CONFIG);db=firebase.firestore();auth=firebase.auth();}catch(e){console.error(e);}}
@@ -1119,27 +1137,12 @@ function renderBracket(){
   const{pts,correct,total}=calcScore(vp);
   const hasRes=Object.values(S.live).some(m=>m.winner);
   const hasLive=Object.values(S.live).some(m=>m.live);
-  const si=Math.min(S.screenIdx,SCREENS.length-1);
-  const[leftIdx,rightIdx]=SCREENS[si];
-  const leftPicks=picksInRound(leftIdx);
-  const pct=Math.round(((si+1)/SCREENS.length)*100);
 
-  // Stepper
-  const stepHTML=ROUNDS.map((rk,i)=>{
-    const scrIdx=SCREENS.findIndex(([l])=>l===i);
-    const isCurr=leftIdx===i;
-    const isDone=i<leftIdx;
-    return `<div class="step">
-      <button class="step-btn ${isDone?'done':isCurr?'active':''}" onclick="jumpToScreen(${Math.max(0,scrIdx)})">
-        <div class="step-pip">${isDone?'✓':i+1}</div>
-        <div class="step-lbl">${RND_SHORT[rk]}</div>
-      </button>
-      ${i<ROUNDS.length-1?'<div class="step-arr">›</div>':''}
-    </div>`;
-  }).join('');
+  // Quadrant-aware picks counter
+  const allPickable=S.rounds.reduce((acc,rnd)=>acc+rnd.matches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')).length,0);
+  const allPicked=Object.keys(vp).length;
 
-  let html=`<div id="bkt-root">
-    <div class="stepper" id="stepper">${stepHTML}</div>`;
+  let html=`<div id="bkt-root">`;
 
   if(S.viewingUid) html+=`<div class="viewing-bar"><span>👁 Viewing <strong>${S.viewingName}</strong></span><button class="btn sm ghost" onclick="S.viewingUid=null;S.viewingName=null;renderBracket()" style="margin-left:auto">← Mine</button></div>`;
 
@@ -1166,48 +1169,111 @@ function renderBracket(){
     </div>
   </div>`;
 
-  // Main two-column view
-  html+=`<div class="bkt-viewport" id="bkt-viewport" style="opacity:1">
-    <div class="bkt-screen" id="bkt-screen">`;
-  html+=renderColumn(leftIdx,vp,'left');
-  html+=renderGutter(leftIdx);
-  html+=renderColumn(rightIdx,vp,'right');
-  html+=`</div></div>`;
+  // Quadrant round stepper (within quadrant: R128→R64, R64→R32, R32→R16, etc.)
+  // Each quadrant has 3 pair-of-rounds screens (showing 2 rounds at once):
+  // screen 0: rounds 0+1 (R128/R64→R64/R32), screen 1: rounds 2+3 (R32/R16), screen 2: rounds 4+5+6 (QF/SF/F)
+  const quadScreens=[[0,1],[2,3],[4,5]];// [leftRoundIdx, rightRoundIdx] within full rounds array
+  const qsi=Math.min(S.quadrantRndIdx,quadScreens.length-1);
+  const[leftIdx,rightIdx]=quadScreens[qsi];
+  const stepLabels=[['R128','R64'],['R32','R16'],['QF + SF + Final']];
+  const stepHTML=stepLabels.map((lbl,i)=>{
+    const isDone=i<qsi;
+    const isCurr=i===qsi;
+    return `<div class="step">
+      <button class="step-btn ${isDone?'done':isCurr?'active':''}" onclick="jumpToQRnd(${i})">
+        <div class="step-pip">${isDone?'✓':i+1}</div>
+        <div class="step-lbl">${Array.isArray(lbl)?lbl.join('→'):lbl}</div>
+      </button>
+      ${i<stepLabels.length-1?'<div class="step-arr">›</div>':''}
+    </div>`;
+  }).join('');
+  html+=`<div class="stepper" id="stepper">${stepHTML}</div>`;
+
+  // Main bracket view — for screen 2 (QF+SF+F) render all 3 final rounds across quadrants
+  if(qsi===2){
+    // Show QF, SF, Final as 3 columns
+    html+=`<div class="bkt-viewport" id="bkt-viewport" style="opacity:1"><div class="bkt-screen" id="bkt-screen">`;
+    html+=renderColumnFiltered(4,vp,'left',null);   // QF (8 matches)
+    html+=renderGutter(4);
+    html+=renderColumnFiltered(5,vp,'mid',null);    // SF (4 matches)
+    html+=renderGutter(5);
+    html+=renderColumnFiltered(6,vp,'right',null);  // Final (2 matches)
+    html+=`</div></div>`;
+  } else {
+    // Quadrant-filtered view: only show matches belonging to active quadrant
+    const q=QUADRANTS[S.quadrant];
+    html+=`<div class="bkt-viewport" id="bkt-viewport" style="opacity:1"><div class="bkt-screen" id="bkt-screen">`;
+    html+=renderColumnFiltered(leftIdx,vp,'left',q);
+    html+=renderGutter(leftIdx);
+    html+=renderColumnFiltered(rightIdx,vp,'right',q);
+    html+=`</div></div>`;
+  }
 
   // Share
   html+=`<div id="share-panel" style="display:none;padding:.75rem 1.5rem"><div style="display:flex;gap:10px;background:var(--sand-l);border:1.5px solid var(--sand-d);border-radius:var(--r-sm);padding:10px 14px"><div id="share-url-txt" style="flex:1;font-family:var(--font-m);font-size:11px;color:var(--ink-m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div><button class="btn sm" onclick="copyShare()">Copy</button></div></div>`;
 
   // Bottom nav
-  const nextScrn=SCREENS[si+1];
   html+=`<div class="bkt-nav">
-    <button class="nav-btn" onclick="prevScreen()" ${si===0?'disabled':''}>
-      ← <div class="nav-btn-inner"><span>Previous</span><span class="nav-btn-sub">${si>0?RND_LABEL[ROUNDS[SCREENS[si-1][0]]]:''}</span></div>
+    <button class="nav-btn" onclick="prevQRnd()" ${qsi===0?'disabled':''}>
+      ← <div class="nav-btn-inner"><span>Earlier rounds</span></div>
     </button>
     <div class="nav-progress">
-      <div class="nav-prog-text">${leftPicks.done}/${leftPicks.total} picks in left column</div>
-      <div class="nav-prog-bar"><div class="nav-prog-fill" style="width:${pct}%"></div></div>
+      <div class="nav-prog-text">${allPicked}/${allPickable} total picks</div>
+      <div class="nav-prog-bar"><div class="nav-prog-fill" style="width:${Math.round(allPicked/Math.max(1,allPickable)*100)}%"></div></div>
     </div>
-    ${si>=SCREENS.length-1
+    ${qsi>=quadScreens.length-1
       ? `<button class="nav-btn primary" onclick="lockAndSave()">${S.bracketLocked?"🏆 Bracket locked":"Save &amp; submit bracket ✓"}</button>`
-      : `<button class="nav-btn primary" onclick="nextScreen()">
-          <div class="nav-btn-inner"><span>Next round</span><span class="nav-btn-sub">${RND_LABEL[ROUNDS[SCREENS[si+1][0]]]||''}</span></div> →
-        </button>`}
+      : `<button class="nav-btn primary" onclick="nextQRnd()">Later rounds →</button>`}
   </div></div>`;
 
   document.getElementById('root').innerHTML=html;
 
-  // Draw SVG connectors after render
-  requestAnimationFrame(()=>drawConnectors(leftIdx,rightIdx,vp));
+  // Render minimap navigator
+  renderMinimap();
+
+  // Draw connectors
+  requestAnimationFrame(()=>{
+    if(qsi===2){
+      drawConnectors(4,5,vp);
+      // Also draw SF→F connectors but using separate gutter
+      drawConnectors(5,6,vp);
+    } else {
+      const q=QUADRANTS[S.quadrant];
+      drawConnectorsFiltered(leftIdx,rightIdx,vp,q);
+    }
+  });
 }
 
-function renderColumn(rndIdx,vp,side){
+// Get matches for a round filtered to a quadrant's slice
+// For rounds 0-3 (R128/R64/R32/R16), each quadrant owns 1/4 of matches
+// For rounds 4-6 (QF/SF/F), all quadrants see all matches (no filter)
+function getQuadrantMatches(rndIdx, quadrant){
+  const rnd=S.rounds[rndIdx];
+  if(!rnd) return [];
+  if(!quadrant) return rnd.matches;
+  const totalMatches=rnd.matches.length;
+  // R128=64, R64=32, R32=16, R16=8 → each quadrant gets 1/4
+  // QF=4, SF=2, F=1 → no quadrant filter
+  if(rndIdx>=4) return rnd.matches; // QF/SF/F: all matches visible
+  const q=quadrant.matches; // [startR1Idx, endR1Idx] in R1 (0-based)
+  // Scale to this round: each successive round halves
+  const factor=Math.pow(2,rndIdx); // R64=2x, R32=4x, R16=8x
+  // Actually go from R1 range: q[0]/factor to (q[1]+1)/factor
+  const startR1=q[0]; const endR1=q[1];
+  const start=Math.floor(startR1/factor);
+  const end=Math.floor(endR1/factor);
+  return rnd.matches.slice(start,end+1);
+}
+
+function renderColumnFiltered(rndIdx,vp,side,quadrant){
   const rnd=S.rounds[rndIdx];
   if(!rnd)return '';
-  const{done,total}=picksInRound(rndIdx);
-  // Size class
+  const filteredMatches=getQuadrantMatches(rndIdx,quadrant);
+  if(!filteredMatches.length)return '';
   const sz=['','','col-lg','col-lg','col-xl','col-xl','col-xl'][rndIdx]||'';
-  // For right column, use flex with space-around to stagger against left
-  const rightStyle=side==='right'?'display:flex;flex-direction:column;justify-content:space-around;':'';
+  const rightStyle=side==='right'||side==='mid'?'display:flex;flex-direction:column;justify-content:space-around;':'';
+  const filteredDone=filteredMatches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&(vp[m.id]||S.live[m.id]?.winner)).length;
+  const filteredTotal=filteredMatches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')).length;
 
   let h=`<div class="col-wrap ${sz}" id="col-${side}-${rndIdx}">
     <div class="col-header">
@@ -1215,15 +1281,16 @@ function renderColumn(rndIdx,vp,side){
       <div class="col-rnd-title">${RND_LABEL[rnd.key]}</div>
       <div class="col-rnd-meta">
         <span class="pts-badge">${RND_PTS[rnd.key]} pt${RND_PTS[rnd.key]>1?'s':''}/pick</span>
-        ${total>0?`<span class="picks-note">${done}/${total} picks</span>`:''}
+        ${filteredTotal>0?`<span class="picks-note">${filteredDone}/${filteredTotal} picks</span>`:''}
       </div>
     </div>
     <div class="col-matches" id="matches-${side}-${rndIdx}" style="${rightStyle}">`;
-
-  rnd.matches.forEach((m,mi)=>{h+=renderCard(m,mi,rnd.key,vp,side,rndIdx);});
+  filteredMatches.forEach((m,mi)=>{h+=renderCard(m,mi,rnd.key,vp,side,rndIdx);});
   h+=`</div></div>`;
   return h;
 }
+
+function renderColumn(rndIdx,vp,side){return renderColumnFiltered(rndIdx,vp,side,null);}
 
 function renderGutter(leftIdx){
   return `<div class="col-gutter" id="gutter-${leftIdx}">
@@ -1326,7 +1393,18 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
           if(o)oddsEl=`<div class="mc-odds ${Number(o.replace('+',''))<0?'fav':'dog'}" title="${prob} implied (${od.book})">${o}</div>`;
         }
       }
-      h+=`<div class="${rowCls}" ${click}>${sdEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}</div>${showSets?`<div class="mc-score">${sets}</div>`:(done||isLiveM)?'<div class="mc-score-empty"></div>':''}${oddsEl}${iconEl}</div>`;
+      // Build right slot: always same width — score if available, odds if not, empty otherwise
+      let rightSlot='';
+      if(showSets){
+        rightSlot=`<div class="mc-score">${sets}${iconEl}</div>`;
+        iconEl=''; // consumed inside score
+      } else if((done||isLiveM)){
+        rightSlot=`<div class="mc-score-empty"></div>`;
+      } else if(oddsEl){
+        rightSlot=oddsEl;
+        oddsEl='';
+      }
+      h+=`<div class="${rowCls}" ${click}>${sdEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}</div>${rightSlot}${iconEl}</div>`;
     });
   }
   h+=`</div>`;
@@ -1338,7 +1416,169 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
   return h;
 }
 
-// Draw SVG bracket connector lines + align right column cards precisely
+// Quadrant-aware connector drawing
+function drawConnectorsFiltered(leftIdx,rightIdx,vp,quadrant){
+  const svg=document.getElementById(`svg-${leftIdx}`);
+  const gutter=document.getElementById(`gutter-${leftIdx}`);
+  if(!svg||!gutter)return;
+  const leftRnd=S.rounds[leftIdx];
+  const rightRnd=S.rounds[rightIdx];
+  if(!leftRnd||!rightRnd)return;
+
+  const leftMatches=getQuadrantMatches(leftIdx,quadrant);
+  const rightMatches=getQuadrantMatches(rightIdx,quadrant);
+
+  svg.innerHTML='';
+  const gr=gutter.getBoundingClientRect();
+  const leftMatchesContainer=document.getElementById(`matches-left-${leftIdx}`);
+  const rightMatchesContainer=document.getElementById(`matches-right-${rightIdx}`);
+  if(!leftMatchesContainer||!rightMatchesContainer)return;
+
+  const leftCards=leftMatches.map(m=>document.getElementById(`mc-${m.id}`));
+  const lcr=leftMatchesContainer.getBoundingClientRect();
+  const leftTops=leftCards.map(el=>el?el.getBoundingClientRect().top-lcr.top:0);
+  const leftHeights=leftCards.map(el=>el?el.getBoundingClientRect().height:0);
+  const leftMids=leftTops.map((t,i)=>t+leftHeights[i]/2);
+
+  const lh=leftMatchesContainer.getBoundingClientRect().height;
+  rightMatchesContainer.style.position='relative';
+  rightMatchesContainer.style.height=lh+'px';
+  rightMatchesContainer.style.justifyContent='unset';
+
+  rightMatches.forEach((rm,ri)=>{
+    const rightCard=document.getElementById(`mc-${rm.id}`);
+    if(!rightCard)return;
+    const aMid=leftMids[ri*2]??0;
+    const bMid=leftMids[ri*2+1]??aMid;
+    const targetCenterY=(aMid+bMid)/2;
+    const cardH=rightCard.getBoundingClientRect().height;
+    const topPos=targetCenterY-cardH/2;
+    rightCard.style.position='absolute';
+    rightCard.style.left='0';
+    rightCard.style.right='0';
+    rightCard.style.top=Math.max(0,topPos)+'px';
+  });
+
+  rightMatches.forEach((rm,ri)=>{
+    const la=leftMatches[ri*2];
+    const lb=leftMatches[ri*2+1];
+    const rightCard=document.getElementById(`mc-${rm.id}`);
+    if(!rightCard||!la)return;
+    const rr=rightCard.getBoundingClientRect();
+    const aMid=leftMids[ri*2]+(lcr.top-gr.top);
+    const bMid=(leftMids[ri*2+1]??leftMids[ri*2])+(lcr.top-gr.top);
+    const rMid=rr.top+rr.height/2-gr.top;
+    const cx=gr.width/2;
+    const liveA=S.live[la.id]||{};
+    const liveB=lb?S.live[lb.id]||{}:{};
+    const liveRM=S.live[rm.id]||{};
+    const done=!!(liveRM.winner||liveRM.completed);
+    const winA=liveA.winner;const winB=liveB.winner;
+    function col(pick,win){if(done)return '#cfc4b8';if(win)return '#267029';if(pick)return '#B84030';return '#d8cfc4';}
+    const colA=col(vp[la.id],winA);
+    const colB=lb?col(vp[lb.id],winB):'#d8cfc4';
+    const joinY=(aMid+bMid)/2;
+    const joinCol=winA?'#267029':winB?'#267029':vp[la.id]?'#B84030':vp[lb?.id]?'#B84030':'#d8cfc4';
+    line(svg,'#e8ddd0',3,0,aMid,cx,aMid);
+    line(svg,'#e8ddd0',3,cx,Math.min(aMid,joinY),cx,Math.max(aMid,joinY));
+    if(lb){line(svg,'#e8ddd0',3,0,bMid,cx,bMid);line(svg,'#e8ddd0',3,cx,Math.min(bMid,joinY),cx,Math.max(bMid,joinY));}
+    line(svg,'#e8ddd0',3,cx,joinY,gr.width,rMid);
+    line(svg,colA,2,0,aMid,cx,aMid);line(svg,colA,2,cx,aMid,cx,joinY);
+    if(lb){line(svg,colB,2,0,bMid,cx,bMid);line(svg,colB,2,cx,bMid,cx,joinY);}
+    line(svg,joinCol,2,cx,joinY,gr.width,rMid);
+    const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx',String(cx));dot.setAttribute('cy',String(joinY));
+    dot.setAttribute('r','3.5');dot.setAttribute('fill',joinCol);
+    svg.appendChild(dot);
+  });
+}
+
+// ── MINIMAP NAVIGATOR ────────────────────────────────────────────────────────
+function renderMinimap(){
+  // Remove old minimap if any
+  const old=document.getElementById('minimap-nav');
+  if(old)old.remove();
+
+  const qsi=Math.min(S.quadrantRndIdx,2);
+  // Don't show minimap on final screen (QF/SF/F shows all)
+  if(qsi===2)return;
+
+  const nav=document.createElement('div');
+  nav.id='minimap-nav';
+  nav.style.cssText=`position:fixed;bottom:90px;right:18px;z-index:500;
+    background:var(--white);border:1.5px solid var(--sand-d);border-radius:14px;
+    box-shadow:var(--sh-lg);padding:10px;display:flex;flex-direction:column;gap:6px;
+    width:130px;cursor:pointer;user-select:none`;
+
+  const label=document.createElement('div');
+  label.style.cssText='font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-l);text-align:center;margin-bottom:2px';
+  label.textContent='BRACKET VIEW';
+  nav.appendChild(label);
+
+  // Mini bracket grid: 2x2 quadrants
+  const grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:5px';
+
+  const quadLayout=[
+    {key:'Q1',label:'Q1',pos:'TL',sf:'SF1 ↑'},
+    {key:'Q3',label:'Q3',pos:'TR',sf:'SF2 ↑'},
+    {key:'Q2',label:'Q2',pos:'BL',sf:'SF1 ↓'},
+    {key:'Q4',label:'Q4',pos:'BR',sf:'SF2 ↓'},
+  ];
+
+  quadLayout.forEach(({key,label,pos,sf})=>{
+    const cell=document.createElement('div');
+    const isActive=S.quadrant===key;
+    // Count picks in this quadrant
+    const vp=S.viewingUid?(S.all.find(b=>b.id===S.viewingUid)?.picks||{}):S.picks;
+    const q=QUADRANTS[key];
+    const qMatches=getQuadrantMatches(0,q); // R128 matches for this quadrant
+    const picked=qMatches.filter(m=>vp[m.id]).length;
+    const total=qMatches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')).length;
+    const pct=total>0?Math.round(picked/total*100):0;
+
+    cell.style.cssText=`border-radius:8px;padding:6px 5px;text-align:center;cursor:pointer;transition:.15s;
+      border:${isActive?'2px solid var(--clay)':'1.5px solid var(--sand-d)'};
+      background:${isActive?'var(--clay-ghost)':'var(--sand-l)'}`;
+    cell.innerHTML=`<div style="font-size:9px;font-weight:800;color:${isActive?'var(--clay-d)':'var(--ink-m)'}">${label}</div>
+      <div style="font-size:7px;color:var(--ink-l);margin:1px 0">${pos}</div>
+      <div style="height:3px;border-radius:2px;background:var(--sand);margin:3px 0;overflow:hidden">
+        <div style="height:100%;background:${isActive?'var(--clay)':'var(--court)'};width:${pct}%;border-radius:2px;transition:width .3s"></div>
+      </div>
+      <div style="font-size:7px;color:var(--ink-l)">${picked}/${total}</div>`;
+    cell.onclick=()=>{S.quadrant=key;renderBracket();};
+    grid.appendChild(cell);
+  });
+  nav.appendChild(grid);
+
+  // SF/F hint
+  const hint=document.createElement('div');
+  hint.style.cssText='font-size:7.5px;color:var(--ink-l);text-align:center;border-top:1px solid var(--sand);padding-top:5px;line-height:1.4';
+  hint.innerHTML='Q1+Q2 → <strong>SF1</strong><br>Q3+Q4 → <strong>SF2</strong><br><span style="opacity:.7">Tap a quadrant to view</span>';
+  nav.appendChild(hint);
+
+  document.body.appendChild(nav);
+}
+
+// Quadrant navigation
+function nextQRnd(){
+  if(S.quadrantRndIdx>=2)return;
+  debounceSave();
+  animateTransition(1,()=>{S.quadrantRndIdx++;renderBracket();});
+}
+function prevQRnd(){
+  if(S.quadrantRndIdx<=0)return;
+  debounceSave();
+  animateTransition(-1,()=>{S.quadrantRndIdx--;renderBracket();});
+}
+function jumpToQRnd(idx){
+  if(idx===S.quadrantRndIdx)return;
+  const d=idx>S.quadrantRndIdx?1:-1;
+  debounceSave();
+  animateTransition(d,()=>{S.quadrantRndIdx=idx;renderBracket();});
+}
+
+// ── BRACKET CONNECTOR DRAWING (original, used for QF/SF/F full view) ──────────
 function drawConnectors(leftIdx,rightIdx,vp){
   const svg=document.getElementById(`svg-${leftIdx}`);
   const gutter=document.getElementById(`gutter-${leftIdx}`);
@@ -1441,10 +1681,10 @@ function line(svg,stroke,w,x1,y1,x2,y2){
   svg.appendChild(l);
 }
 
-// Navigation
-function nextScreen(){if(S.screenIdx>=SCREENS.length-1)return;debounceSave();animateTransition(1,()=>{S.screenIdx++;renderBracket();});}
-function prevScreen(){if(S.screenIdx<=0)return;debounceSave();animateTransition(-1,()=>{S.screenIdx--;renderBracket();});}
-function jumpToScreen(idx){if(idx===S.screenIdx)return;const d=idx>S.screenIdx?1:-1;debounceSave();animateTransition(d,()=>{S.screenIdx=idx;renderBracket();});}
+// Legacy screen nav (unused but kept for compatibility)
+function nextScreen(){nextQRnd();}
+function prevScreen(){prevQRnd();}
+function jumpToScreen(idx){jumpToQRnd(Math.floor(idx/2));}
 
 function animateTransition(dir,cb){
   const vp=document.getElementById('bkt-viewport');
@@ -1481,19 +1721,28 @@ function pick(mid,name){
   if(S.bracketLocked){toast('Your bracket is locked — you already submitted!');return;}
   if(S.picks[mid]===name)delete S.picks[mid];else S.picks[mid]=name;
   buildDisplay();
-  // Fast re-render: just update card HTML + connectors, no full page rebuild
-  const si=Math.min(S.screenIdx,SCREENS.length-1);
-  const[leftIdx,rightIdx]=SCREENS[si];
+  // Fast re-render using quadrant-aware state
+  const qsi=Math.min(S.quadrantRndIdx,2);
+  const quadScreens=[[0,1],[2,3],[4,5]];
+  const[leftIdx,rightIdx]=quadScreens[qsi];
   const vp=S.picks;
   const leftRnd=S.rounds[leftIdx];const rightRnd=S.rounds[rightIdx];
   const lc=document.getElementById(`matches-left-${leftIdx}`);
   const rc=document.getElementById(`matches-right-${rightIdx}`);
-  if(lc)lc.innerHTML=leftRnd.matches.map((m,mi)=>renderCard(m,mi,leftRnd.key,vp,'left',leftIdx)).join('');
-  if(rc)rc.innerHTML=rightRnd.matches.map((m,mi)=>renderCard(m,mi,rightRnd.key,vp,'right',rightIdx)).join('');
-  // Update picks counter
+  const q=qsi===2?null:QUADRANTS[S.quadrant];
+  const leftMatches=getQuadrantMatches(leftIdx,q);
+  const rightMatches=getQuadrantMatches(rightIdx,q);
+  if(lc)lc.innerHTML=leftMatches.map((m,mi)=>renderCard(m,mi,leftRnd.key,vp,'left',leftIdx)).join('');
+  if(rc)rc.innerHTML=rightMatches.map((m,mi)=>renderCard(m,mi,rightRnd.key,vp,'right',rightIdx)).join('');
   const np=document.querySelector('.nav-prog-text');
-  if(np){const lp=picksInRound(leftIdx);np.textContent=`${lp.done}/${lp.total} picks in left column`;}
-  drawConnectors(leftIdx,rightIdx,vp);
+  if(np){
+    const allPickable=S.rounds.reduce((acc,rnd)=>acc+rnd.matches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')).length,0);
+    const allPicked=Object.keys(S.picks).length;
+    np.textContent=`${allPicked}/${allPickable} total picks`;
+  }
+  if(qsi===2)drawConnectors(leftIdx,rightIdx,vp);
+  else drawConnectorsFiltered(leftIdx,rightIdx,vp,q);
+  renderMinimap();
   debounceSave();
 }
 
