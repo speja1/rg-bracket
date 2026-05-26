@@ -369,8 +369,14 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .h2h-stat-lbl{font-size:8.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-l)}
 .h2h-stat-val{font-size:12px;font-weight:600;color:var(--ink)}
 
-.mc-player.dead-pick{background:#fff8f8;border-top:1px dashed #fca5a5;cursor:default;opacity:.9;min-height:36px;padding:.4rem .9rem}
-.mc-player.dead-pick .mc-name{color:#c0392b;text-decoration:line-through;font-size:12.5px;font-weight:400}
+/* Dead pick shown inline inside winner row as a stacked sub-name */
+.mc-name-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.mc-name-stack .mc-name{flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-dead-line{font-size:10.5px;color:rgba(255,255,255,.5);text-decoration:line-through;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400;
+  display:flex;align-items:center;gap:3px}
+.mc-dead-seed{font-size:8px;font-weight:700;background:rgba(255,255,255,.15);
+  border-radius:3px;padding:0 3px;margin-right:1px;text-decoration:none}
 .mc-seed-inline{font-size:8px;font-weight:700;color:#b91c1c;background:#fee2e2;border-radius:3px;padding:1px 4px;margin-right:3px}
 .mc-odds{font-family:var(--font-m);font-size:11px;font-weight:600;padding:2px 8px;border-radius:var(--r-pill);flex-shrink:0;white-space:nowrap;cursor:default}
 .mc-odds.fav{background:#e8f4e8;color:var(--court);border:1px solid #b4ddb4}
@@ -1521,12 +1527,14 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const sets=fmtSets(pi===0?lv.p1Sets:lv.p2Sets);
       const showSets=(done||isLiveM)&&sets;
 
-      // Dead pick for this slot — wrong pick that should show in this next-round card
+      // Dead pick for this slot: user picked someone who lost a prior round
+      // They appear in this slot (strikethrough), real winner shown in their own row
       const dp=pi===0?m.deadPick1:m.deadPick2;
-      const hasDeadPick=dp&&pl.n!==dp.n&&isW&&done;
+      const hasDeadPick=!!(dp&&!tbd&&isW&&done);
 
       let rowCls='mc-player';
       if(tbd)rowCls+=' tbd locked';
+      else if(hasDeadPick)rowCls+=' winner locked'; // real winner still green
       else if(isW&&done)rowCls+=' winner locked';
       else if(isCorr)rowCls+=' correct locked';
       else if(isWrong)rowCls+=' wrong locked';
@@ -1542,6 +1550,8 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
       else if(isMy&&!done)iconEl='<div class="mc-icon chk">✓</div>';
+      // Winner row with a dead pick still gets a ✓
+      else if(hasDeadPick)iconEl='<div class="mc-icon ok">✓</div>';
 
       // Get odds for this player
       let oddsEl='';
@@ -1554,7 +1564,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
         }
       }
 
-      // Build right slot — score width is always fixed, icon always sits outside
+      // Build right slot — fixed width, icon outside
       let rightSlot='';
       if(showSets){
         rightSlot=`<div class="mc-score">${sets}</div>`;
@@ -1565,13 +1575,20 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
         oddsEl='';
       }
 
-      h+=`<div class="${rowCls}" ${click}>${sdEl}${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}</div>${rightSlot}${iconEl}</div>`;
-
-      // Dead pick row: render the wrong pick immediately after the winner row
       if(hasDeadPick){
+        // Show: real winner row (green) with dead pick name crossed out below it
         const dpFlag=getFlag(dp.n);
-        const dpSd=dp.s?`<div class="mc-seed" style="color:#fca5a5">${dp.s}</div>`:`<div class="mc-seed"></div>`;
-        h+=`<div class="mc-player dead-pick locked">${dpSd}<div class="mc-flag">${dpFlag}</div><div class="mc-name">${dp.s?`<span class="mc-seed-inline">${dp.s}</span>`:''}${dp.n}</div><div class="mc-score-empty"></div><div class="mc-icon x">✗</div></div>`;
+        const dpSd=dp.s?`<span class="mc-dead-seed">${dp.s}</span>`:'';
+        h+=`<div class="${rowCls}" ${click}>
+          ${sdEl}${flagEl}${srvEl}
+          <div class="mc-name-stack">
+            <div class="mc-name">${pl.n}</div>
+            <div class="mc-dead-line">${dpFlag} ${dpSd}${dp.n}</div>
+          </div>
+          ${rightSlot}${iconEl}
+        </div>`;
+      } else {
+        h+=`<div class="${rowCls}" ${click}>${sdEl}${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}</div>${rightSlot}${iconEl}</div>`;
       }
     });
   }
@@ -2093,15 +2110,22 @@ function renderTicker(){
     const winner=lv.winner;
     const loser=winner===m.p1?m.p2:m.p1;
     const wFlag=getFlag(winner),lFlag=getFlag(loser);
+    // Scores: winner's sets are whichever player won
+    const wIsP1=winner===m.p1;
+    const wSets=(wIsP1?lv.p1Sets:lv.p2Sets||[]);
+    const lSets=(wIsP1?lv.p2Sets:lv.p1Sets||[]);
+    const wScore=(wSets||[]).map(s=>s.mine).join(' ');
+    const lScore=(lSets||[]).map(s=>s.mine).join(' ');
     return `<div class="ticker-card" onclick="jumpToMatch('${m.id}')">
       <div class="ticker-card-player">
         <span class="tk-flag">${wFlag}</span>
         <span class="tk-name winner">${fullName(winner)}</span>
-        <span class="tk-check">✓</span>
+        ${wScore?`<span class="tk-score">${wScore}</span>`:'<span class="tk-check">✓</span>'}
       </div>
       <div class="ticker-card-player">
         <span class="tk-flag">${lFlag}</span>
         <span class="tk-name loser">${fullName(loser)}</span>
+        ${lScore?`<span class="tk-score" style="color:#555">${lScore}</span>`:''}
       </div>
     </div>`;
   }
