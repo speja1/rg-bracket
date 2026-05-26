@@ -212,11 +212,11 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.correct .mc-name{color:var(--court);font-weight:700}
 .mc-player.wrong .mc-name{color:#b91c1c;text-decoration:line-through}
 .mc-player.tbd .mc-name{font-style:italic;color:var(--ink-l)}
-.mc-score{font-family:var(--font-m);font-size:13.5px;font-weight:500;color:var(--ink-m);letter-spacing:1.2px;white-space:nowrap;flex-shrink:0;min-width:72px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.mc-score{font-family:var(--font-m);font-size:13.5px;font-weight:500;color:var(--ink-m);letter-spacing:1.2px;white-space:nowrap;flex-shrink:0;width:76px;min-width:76px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:5px}
 .mc-score-set{display:inline-block;width:20px;text-align:center;line-height:1}
 .mc-player.winner .mc-score{color:rgba(255,255,255,.85);font-weight:600}
 .mc-player.wrong .mc-score,.mc-player.correct .mc-score{color:inherit}
-.mc-score-empty{min-width:72px;flex-shrink:0}
+.mc-score-empty{width:76px;min-width:76px;flex-shrink:0}
 .mc-right{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-shrink:0;min-width:80px}
 .mc-icon{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
 .mc-icon.chk{background:var(--clay);color:#fff}.mc-icon.ok{background:var(--court);color:#fff}.mc-icon.x{background:#ef4444;color:#fff}
@@ -372,6 +372,13 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.dead-pick{background:#fff1f1;border-left:3px solid #fca5a5;cursor:default;opacity:.85}
 .mc-player.dead-pick .mc-name{color:#b91c1c;text-decoration:line-through;font-size:12px}
 .mc-seed-inline{font-size:8.5px;font-weight:700;color:#b91c1c;background:#fee2e2;border-radius:3px;padding:1px 4px;margin-right:2px}
+/* Inline dead pick — shown inside winner row */
+.mc-name-wrap{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mc-name-wrap .mc-name{flex:none}
+.mc-dead-badge{font-size:10px;font-weight:600;color:rgba(255,255,255,.55);
+  background:rgba(0,0,0,.15);border-radius:4px;padding:1px 6px;
+  display:inline-flex;align-items:center;gap:3px;width:fit-content;
+  text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .mc-odds{font-family:var(--font-m);font-size:11px;font-weight:600;padding:2px 8px;border-radius:var(--r-pill);flex-shrink:0;white-space:nowrap;cursor:default}
 .mc-odds.fav{background:#e8f4e8;color:var(--court);border:1px solid #b4ddb4}
 .mc-odds.dog{background:var(--sand);color:var(--ink-m);border:1px solid var(--sand-d)}
@@ -1505,21 +1512,6 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
   h+=`<div class="mc-strip"><div class="mc-num">${label}</div><div style="display:flex;align-items:center;gap:6px">${statusTxt}${getCourtLabel(m.id)?`<span class="mc-court">${getCourtLabel(m.id)}</span>`:''}${h2hBtn}</div></div>`;
   h+=`<div class="mc-players">`;
 
-  // Show dead picks (wrong user picks that didn't advance) 
-  if(!isBye){
-    // Check if this slot has dead picks to display
-    const dp1=m.deadPick1,dp2=m.deadPick2;
-    if(dp1&&m.p1?.n!==dp1.n){
-      // Real winner is p1, dead pick was different
-      const dpSeed=dp1.s?`<div class="mc-seed">${dp1.s}</div>`:`<div class="mc-seed"></div>`;
-      h+=`<div class="mc-player dead-pick locked"><div class="mc-seed"></div><div class="mc-name">${dp1.s?`<span class="mc-seed-inline">${dp1.s}</span> `:''}${dp1.n}</div><div class="mc-icon x">✗</div></div>`;
-    }
-    if(dp2&&m.p2?.n!==dp2.n){
-      const dp2Seed=dp2.s?`<div class="mc-seed">${dp2.s}</div>`:`<div class="mc-seed"></div>`;
-      h+=`<div class="mc-player dead-pick locked"><div class="mc-seed"></div><div class="mc-name">${dp2.s?`<span class="mc-seed-inline">${dp2.s}</span> `:''}${dp2.n}</div><div class="mc-icon x">✗</div></div>`;
-    }
-  }
-
   if(isBye){
     const seed=m.p1?.n!=='BYE'?m.p1:m.p2;
     const sdN=seed?.s?`<div class="mc-seed">${seed.s}</div>`:`<div class="mc-seed"></div>`;
@@ -1535,6 +1527,10 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const isSrv=isLiveM&&lv.serving===(pi===0?'p1':'p2');
       const sets=fmtSets(pi===0?lv.p1Sets:lv.p2Sets);
       const showSets=(done||isLiveM)&&sets;
+
+      // Dead pick for this slot — shown inline inside winner's row
+      const dp=pi===0?m.deadPick1:m.deadPick2;
+      const hasDeadPick=!isBye&&dp&&pl.n!==dp.n&&isW&&done;
 
       let rowCls='mc-player';
       if(tbd)rowCls+=' tbd locked';
@@ -1554,35 +1550,38 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
       else if(isMy&&!done)iconEl='<div class="mc-icon chk">✓</div>';
 
+      // Dead pick badge shown inside winner row
+      const deadBadge=hasDeadPick
+        ?`<div class="mc-dead-badge" title="You picked ${dp.n}">✗ ${dp.n}</div>`
+        :'';
+
       // Get odds for this player
       let oddsEl='';
-      if(!done&&!isLiveM&&!tbd&&pi===0&&m.p1?.n&&m.p2?.n&&m.p1.n!=='TBD'&&m.p2.n!=='TBD'){
+      if(!done&&!isLiveM&&!tbd&&m.p1?.n&&m.p2?.n&&m.p1.n!=='TBD'&&m.p2.n!=='TBD'){
         const od=getOdds(m.p1.n,m.p2.n);
         if(od){
           const o=pi===0?od.p1_odds:od.p2_odds;
           const prob=pi===0?od.p1_prob:od.p2_prob;
           if(o)oddsEl=`<div class="mc-odds ${Number(o.replace('+',''))<0?'fav':'dog'}" title="${prob} implied (${od.book})">${o}</div>`;
         }
-      } else if(!done&&!isLiveM&&!tbd&&pi===1&&m.p1?.n&&m.p2?.n&&m.p1.n!=='TBD'&&m.p2.n!=='TBD'){
-        const od=getOdds(m.p1.n,m.p2.n);
-        if(od){
-          const o=od.p2_odds;
-          const prob=od.p2_prob;
-          if(o)oddsEl=`<div class="mc-odds ${Number(o.replace('+',''))<0?'fav':'dog'}" title="${prob} implied (${od.book})">${o}</div>`;
-        }
       }
-      // Build right slot: always same width — score if available, odds if not, empty otherwise
+      // Build right slot
       let rightSlot='';
       if(showSets){
         rightSlot=`<div class="mc-score">${sets}${iconEl}</div>`;
-        iconEl=''; // consumed inside score
-      } else if((done||isLiveM)){
+        iconEl='';
+      } else if(done||isLiveM){
         rightSlot=`<div class="mc-score-empty"></div>`;
       } else if(oddsEl){
         rightSlot=oddsEl;
         oddsEl='';
       }
-      h+=`<div class="${rowCls}" ${click}>${sdEl}${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}</div>${rightSlot}${iconEl}</div>`;
+      // Name cell — if there's a dead badge, stack them
+      const nameCell=hasDeadPick
+        ?`<div class="mc-name-wrap"><div class="mc-name">${tbd?'TBD':pl.n}</div>${deadBadge}</div>`
+        :`<div class="mc-name">${tbd?'TBD':pl.n}</div>`;
+
+      h+=`<div class="${rowCls}" ${click}>${sdEl}${flagEl}${srvEl}${nameCell}${rightSlot}${iconEl}</div>`;
     });
   }
   h+=`</div>`;
@@ -2049,11 +2048,13 @@ function renderTicker(){
   };
 
   // Collect live and finished, attach match IDs
+  // live matches always shown first; finished limited to 10 most recent
   const liveItems=[];
   const finItems=[];
   S.rounds.forEach(rnd=>{
     rnd.matches.forEach(m=>{
       const lv=S.live[m.id]||{};
+      // Use full names from live data if available, else fall back to draw names
       const p1=lv.p1||m.p1?.n||'?';
       const p2=lv.p2||m.p2?.n||'?';
       if(lv.live&&!(lv.completed||lv.state==='post')){
@@ -2066,7 +2067,11 @@ function renderTicker(){
 
   if(!liveItems.length&&!finItems.length)return;
 
-  // Limit finished to 10 most recent (last in array = most recent from ESPN)
+  // Full name from draw data — strip trailing initial abbreviation artifacts
+  // e.g. "Humbert U." stays as-is since that's what we have
+  const fullName=n=>n||'?';
+
+  // 10 most recent finished (last in array = most recently stored)
   const finShow=finItems.slice(-10).reverse();
 
   function liveCard(m){
@@ -2081,12 +2086,12 @@ function renderTicker(){
     return `<div class="ticker-card live-card" onclick="jumpToMatch('${m.id}')">
       <div class="ticker-card-player">
         <span class="tk-flag">${f1}</span>${srv1}
-        <span class="tk-name">${shortName(m.p1)}</span>
+        <span class="tk-name">${fullName(m.p1)}</span>
         <span class="tk-score">${scoreStr1}</span>
       </div>
       <div class="ticker-card-player">
         <span class="tk-flag">${f2}</span>${srv2}
-        <span class="tk-name">${shortName(m.p2)}</span>
+        <span class="tk-name">${fullName(m.p2)}</span>
         <span class="tk-score">${scoreStr2}</span>
       </div>
     </div>`;
@@ -2100,12 +2105,12 @@ function renderTicker(){
     return `<div class="ticker-card" onclick="jumpToMatch('${m.id}')">
       <div class="ticker-card-player">
         <span class="tk-flag">${wFlag}</span>
-        <span class="tk-name winner">${shortName(winner)}</span>
+        <span class="tk-name winner">${fullName(winner)}</span>
         <span class="tk-check">✓</span>
       </div>
       <div class="ticker-card-player">
         <span class="tk-flag">${lFlag}</span>
-        <span class="tk-name loser">${shortName(loser)}</span>
+        <span class="tk-name loser">${fullName(loser)}</span>
       </div>
     </div>`;
   }
