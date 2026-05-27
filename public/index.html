@@ -1671,8 +1671,9 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
 
   if(isBye){
     const seed=m.p1?.n!=='BYE'?m.p1:m.p2;
-    const bLivePhoto=lv.p1Photo||lv.p2Photo||'';
-    const bPhotoUrl=seed?.n?(bLivePhoto||getPhoto(seed.n)||null):null;
+    const bWikiUrl=seed?.n?getPhoto(seed.n):null;
+    const bEspnUrl=lv.p1Photo||lv.p2Photo||'';
+    const bPhotoUrl=bWikiUrl||(bEspnUrl||null);
     const bInitials=getInitials(seed?.n||'');
     const bPhotoEl=bPhotoUrl
       ?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n||''}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`+
@@ -1712,14 +1713,20 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const seedSpan=pl.s?`<span class="mc-name-seed">(${pl.s})</span>`:'';
       const flagEl=(!tbd&&pl.n)?`<div class="mc-flag">${getFlag(pl.n)}</div>`:'';
       const srvEl=isSrv?'<div class="srv"></div>':'';
-      // Photo priority: 1) ESPN URL from live data  2) Wikimedia map  3) initials
-      const livePhoto=!tbd?((pi===0?lv.p1Photo:lv.p2Photo)||''):null;
-      const photoUrl=!tbd?(livePhoto||getPhoto(pl.n)||null):null;
+      // Photo: Wikimedia (curated, reliable) first, ESPN fallback, then initials
+      const wikiUrl=!tbd?getPhoto(pl.n):null;
+      const espnUrl=!tbd?((pi===0?lv.p1Photo:lv.p2Photo)||''):null;
+      const primaryUrl=wikiUrl||(espnUrl||null);
       const initials=getInitials(pl.n);
       const isWinnerRow=hasDeadPick||(isW&&done);
       const initCls=isWinnerRow?'mc-photo-init mc-photo-init-w':'mc-photo-init';
-      const photoEl=photoUrl
-        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`+
+      // If ESPN url exists as backup, try it on wiki failure; otherwise fall to initials
+      const fallbackSrc=(!wikiUrl&&espnUrl)?'':espnUrl?espnUrl:'';
+      const onerrorAttr=fallbackSrc
+        ?`onerror="this.src='${fallbackSrc}';this.onerror=function(){this.style.display='none';this.nextSibling.style.display='flex'}"`
+        :`onerror="this.style.display='none';this.nextSibling.style.display='flex'"`;
+      const photoEl=primaryUrl
+        ?`<img class="mc-photo" src="${primaryUrl}" alt="${pl.n}" ${onerrorAttr}>`+
          `<div class="${initCls}" style="display:none">${initials}</div>`
         :`<div class="${initCls}">${initials}</div>`;
       let iconEl='';
