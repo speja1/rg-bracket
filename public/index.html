@@ -618,6 +618,16 @@ const ATP_R1 = [
   {id:'m64',p1:{n:'Bonzi B.',s:null},            p2:{n:'Zverev A.',s:2},              bye:false},
 ];
 
+// Global photo fallback — called by onerror on img tags
+function imgFallback(img, initials){
+  const div=document.createElement('div');
+  div.className='mc-photo-init';
+  // Copy winner class if present on parent row
+  if(img.closest('.mc-player.winner'))div.classList.add('winner-init');
+  div.textContent=initials||'?';
+  img.parentNode.replaceChild(div,img);
+}
+
 const S={tab:'bracket',draw:'mens',user:null,uid:null,userName:null,bracketLocked:false,odds:{},simResults:{},
   isAdmin:false,isGuest:false,viewingUid:null,viewingName:null,
   locked:false,all:[],live:{},picks:{},rounds:[],screenIdx:0,
@@ -1675,7 +1685,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
     const bPhotoUrl=seed?.n?(bLivePhoto||getPhoto(seed.n)||null):null;
     const bInitials=getInitials(seed?.n||'');
     const bPhotoEl=bPhotoUrl
-      ?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n||''}" loading="lazy" onerror="this.outerHTML='<div class=mc-photo-init>${bInitials}</div>'">`
+      ?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n||''}" loading="lazy" onerror="imgFallback(this,'${bInitials.replace(/'/g,"\\'")}')">`
       :`<div class="mc-photo-init">${bInitials}</div>`;
     const bFlag=seed?.n?`<div class="mc-flag">${getFlag(seed.n)}</div>`:'';
     h+=`<div class="mc-player winner locked">${bPhotoEl}${bFlag}<div class="mc-name">${seed?.n}${seed?.s?`<span class="mc-name-seed">(${seed.s})</span>`:''}</div></div>`;
@@ -1712,11 +1722,11 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const flagEl=(!tbd&&pl.n)?`<div class="mc-flag">${getFlag(pl.n)}</div>`:'';
       const srvEl=isSrv?'<div class="srv"></div>':'';
       // Photo priority: 1) ESPN URL from live data  2) Wikimedia map  3) initials
-      const livePhoto=!tbd?(pi===0?lv.p1Photo:lv.p2Photo)||'':null;
+      const livePhoto=!tbd?((pi===0?lv.p1Photo:lv.p2Photo)||''):null;
       const photoUrl=!tbd?(livePhoto||getPhoto(pl.n)||null):null;
       const initials=getInitials(pl.n);
       const photoEl=photoUrl
-        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" loading="lazy" onerror="this.outerHTML='<div class=mc-photo-init>${initials}</div>'">`
+        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" loading="lazy" onerror="imgFallback(this,'${initials.replace(/'/g,"\\'")}')">`
         :`<div class="mc-photo-init">${initials}</div>`;
       let iconEl='';
       if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
