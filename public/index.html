@@ -286,8 +286,109 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 /* col-lg and col-xl: no overrides — same size as base */
 .col-matches{flex:1;padding:.9rem;display:flex;flex-direction:column;gap:.8rem}
 .col-matches.right-col{position:relative}
+/* Locked bracket visual */
+.bracket-locked-mode .mc-strip{position:relative}
+.bracket-locked-mode .mc-strip::after{content:'🔒';position:absolute;right:36px;top:50%;transform:translateY(-50%);font-size:9px;opacity:.3}
 
-/* ── BOTTOM NAV ── */
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 600px) {
+  /* Header compact */
+  .hdr{height:50px;padding:0 1rem}
+  .hdr-eyebrow{display:none}
+  .hdr-title{font-size:15px}
+  .user-chip{padding:5px 10px 5px 8px;font-size:11px}
+
+  /* Nav tabs */
+  .nav{top:50px;height:38px}
+  .tab{padding:0 .9rem;font-size:8.5px;letter-spacing:1px}
+
+  /* Root offset */
+  #root{margin-top:88px;min-height:calc(100vh - 88px)}
+  #root.has-ticker-1{margin-top:160px}
+  #root.has-ticker-2{margin-top:232px}
+
+  /* Bracket topbar — stack on mobile */
+  .bkt-topbar{flex-direction:column;align-items:flex-start;gap:.5rem;padding:.6rem 1rem;top:88px}
+  .bkt-actions{width:100%;flex-wrap:wrap;gap:6px}
+  .bkt-user{font-size:17px}
+
+  /* Stepper — smaller */
+  .stepper{padding:.4rem .75rem;top:88px}
+  .step-btn{padding:.25rem .5rem}
+  .step-pip{width:20px;height:20px;font-size:8px}
+  .step-lbl{font-size:7.5px}
+
+  /* Bracket viewport — horizontal scroll with snap */
+  .bkt-screen{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    display:flex;width:100%;scrollbar-width:none}
+  .bkt-screen::-webkit-scrollbar{display:none}
+  .col-wrap{min-width:calc(100vw - 24px);scroll-snap-align:start;flex-shrink:0}
+  .col-gutter{display:none} /* hide connectors on mobile — too narrow */
+
+  /* Match cards — reduce padding and font on mobile */
+  .mc-player{padding:.6rem .75rem;min-height:58px;gap:.5rem}
+  .mc-name{font-size:14px}
+  .mc-name-seed{font-size:11px}
+  .mc-photo,.mc-photo-init{width:38px;height:38px;font-size:14px}
+  .mc-flag{font-size:18px;width:22px}
+  .mc-score{font-size:15px}
+  .mc-score-set{width:22px}
+  .mc-score-empty{width:66px;min-width:66px}
+  .mc-icon{font-size:14px;width:18px}
+  .mc-strip{padding:.4rem .75rem}
+  .mc-num{font-size:8px}
+
+  /* Column header compact */
+  .col-header{padding:.75rem 1rem .5rem}
+  .col-rnd-title{font-size:20px}
+  .col-matches{padding:.6rem;gap:.6rem}
+
+  /* Bottom nav — compact */
+  .bkt-nav{padding:.65rem 1rem;gap:.5rem}
+  .nav-btn{padding:9px 14px;font-size:12px}
+  .nav-btn.primary{padding:10px 18px;font-size:13px}
+  .nav-prog-bar{width:100px}
+
+  /* Leaderboard — compact columns */
+  .lb-page{padding:1rem}
+  .lb-hdr{grid-template-columns:36px 1fr 60px 50px 50px;padding:8px 12px;font-size:8px}
+  .lb-hdr .lb-exp,.lb-hdr .lb-win{display:none}
+  .lb-row{grid-template-columns:36px 1fr 60px 50px 50px;padding:12px 12px}
+  .lb-row .lb-exp,.lb-row .lb-win{display:none}
+  .lb-pts{font-size:16px}
+  .lb-name{font-size:13px}
+  .lb-rank.medal{font-size:15px}
+
+  /* Ticker — horizontal scroll */
+  .ticker-cards{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .ticker-cards::-webkit-scrollbar{display:none}
+  .ticker-card{scroll-snap-align:start;min-width:150px}
+  .ticker-wrap{top:88px}
+
+  /* Minimap — smaller, higher up */
+  #minimap-nav{bottom:80px;right:10px;width:110px;padding:8px}
+
+  /* Info page */
+  .info-page{padding:1rem}
+  .card-hd .ttl{font-size:18px}
+
+  /* H2H modal full screen on mobile */
+  .h2h-overlay{padding:.5rem}
+  .h2h-modal{max-height:95vh;border-radius:16px}
+
+  /* Tiebreaker modal */
+  .tb-modal{border-radius:16px}
+  .tb-title{font-size:22px}
+
+  /* Score pills wrap */
+  .score-pill{font-size:10px;padding:4px 10px}
+
+  /* Legend bar — scrollable */
+  .legend-bar{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;
+    padding:.4rem 1rem;gap:.75rem;scrollbar-width:none}
+  .legend-bar::-webkit-scrollbar{display:none}
+  .leg{font-size:10px;white-space:nowrap}
+}
 .bkt-nav{position:sticky;bottom:0;z-index:200;background:rgba(255,255,255,.96);
   backdrop-filter:blur(12px);border-top:1px solid var(--sand);
   box-shadow:0 -6px 24px rgba(22,12,6,.08);padding:.9rem 1.5rem;
@@ -320,13 +421,17 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .lb-row{display:grid;grid-template-columns:50px 1fr 90px 70px 70px 70px 70px;
   padding:15px 18px;border-bottom:1px solid var(--sand);align-items:center;
   cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.lb-row::after{content:'→';position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:11px;color:var(--ink-l);opacity:0;transition:.18s}
+.lb-row:hover::after{opacity:.6}
 .lb-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;
   background:linear-gradient(90deg,var(--clay-ghost),transparent);transition:width .25s var(--ease)}
 .lb-row:hover::before{width:100%}
 .lb-row:hover{background:transparent}
 .lb-row:last-child{border-bottom:none}
 .lb-row.me{background:var(--clay-ghost)}
-.lb-row.me::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+.lb-row.me::after{content:'you';opacity:.5;font-weight:600;font-size:10px}
+.lb-row.me::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
   background:linear-gradient(180deg,var(--clay-l),var(--clay-d));border-radius:0 2px 2px 0}
 .lb-rank{font-size:13px;font-weight:800;color:var(--ink-l);position:relative;z-index:1}
 .lb-rank.medal{font-size:18px}
@@ -846,6 +951,18 @@ async function savePicks(quiet=false){
   if(i>=0)S.all[i]={id:S.uid,...entry};else S.all.push({id:S.uid,...entry});
   if(!quiet)toast('Saved ✓');
 }
+// Auto-save visual indicator — brief "Saved ✓" near save button
+let _saveIndTimer;
+function showSaveIndicator(){
+  clearTimeout(_saveIndTimer);
+  let ind=document.getElementById('save-ind');
+  if(!ind){ind=document.createElement('div');ind.id='save-ind';
+    ind.style.cssText='position:fixed;bottom:5.5rem;right:1.5rem;z-index:9998;background:var(--court);color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:var(--r-pill);opacity:0;transition:opacity .2s;pointer-events:none';
+    document.body.appendChild(ind);}
+  ind.textContent='Saving…';ind.style.opacity='1';
+  _saveIndTimer=setTimeout(()=>{ind.textContent='Saved ✓';setTimeout(()=>{ind.style.opacity='0';},800);},1200);
+}
+
 let _st;function debounceSave(){
   clearTimeout(_st);
   _st=setTimeout(()=>{
@@ -943,11 +1060,36 @@ function showApp(){
   document.getElementById('nav').classList.add('visible');
   const tabs=['bracket','lb','how',...(S.isAdmin?['admin']:[])];
   const labels=['My Bracket','Leaderboard','How to Score',...(S.isAdmin?['Admin']:[])];
+  // Restore tab from hash on first load
+  const hash=location.hash.replace('#','');
+  if(hash&&tabs.includes(hash)&&S.tab==='bracket')S.tab=hash;
   document.getElementById('tabs-inner').innerHTML=tabs.map((t,i)=>`<div class="tab ${S.tab===t?'active':''}" id="tab-${t}" onclick="setTab('${t}')">${labels[i]}</div>`).join('');
   renderTicker();
   renderTab();
 }
-function setTab(t){S.tab=t;document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${t}`));renderTab();}
+function setTab(t){
+  S.tab=t;
+  // Update URL hash so refresh restores the tab
+  history.replaceState(null,'','#'+t);
+  document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${t}`));
+  // Remove minimap if leaving bracket tab
+  if(t!=='bracket'){const m=document.getElementById('minimap-nav');if(m)m.remove();}
+  // Remove ticker from non-bracket tabs
+  const ticker=document.getElementById('ticker-wrap');
+  if(ticker)ticker.style.display=t==='bracket'?'':'none';
+  renderTab();
+}
+// Handle browser back/forward
+window.addEventListener('popstate',()=>{
+  const hash=location.hash.replace('#','');
+  const tabs=['bracket','lb','how','admin'];
+  if(hash&&tabs.includes(hash)&&S.uid){
+    S.tab=hash;
+    document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${hash}`));
+    if(hash!=='bracket'){const m=document.getElementById('minimap-nav');if(m)m.remove();}
+    renderTab();
+  }
+});
 function renderTab(){if(S.tab==='bracket')renderBracket();else if(S.tab==='lb')renderLB();else if(S.tab==='how')renderHow();else if(S.tab==='admin')renderAdmin();}
 
 function renderAuth(){
@@ -1386,20 +1528,24 @@ function renderBracket(){
   const allPickable=S.rounds.reduce((acc,rnd)=>acc+rnd.matches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')).length,0);
   const allPicked=Object.keys(vp).length;
 
-  let html=`<div id="bkt-root">`;
+  let html=`<div id="bkt-root"${S.bracketLocked&&!S.viewingUid?' class="bracket-locked-mode"':''}>`;
 
   if(S.viewingUid) html+=`<div class="viewing-bar"><span>👁 Viewing <strong>${S.viewingName}</strong></span><button class="btn sm ghost" onclick="S.viewingUid=null;S.viewingName=null;renderBracket()" style="margin-left:auto">← Mine</button></div>`;
 
-  if(S.bracketLocked&&!S.viewingUid){
-    html+=`<div style="padding:.5rem 1.5rem;background:#dcfce7;border-bottom:2px solid #86efac;font-size:12px;color:#15803d;display:flex;align-items:center;gap:.5rem">
-      🏆 <strong>Your bracket is locked and submitted.</strong> No further changes allowed.
-    </div>`;
-  }
+  // Bracket topbar — lock indicator inline, no redundant banner
+  const lockedBadge=S.bracketLocked&&!S.viewingUid?`<span class="score-pill" style="background:#dcfce7;border-color:#86efac;color:#15803d">🏆 Submitted</span>`:'';
+  const actionBtns=S.viewingUid?''
+    :S.bracketLocked
+      ?`<button class="btn sm" onclick="doShare()">Share</button><button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker">${S.tiebreaker?`🎯 ${S.tiebreaker}g`:'🎯 TB'}</button>`
+      :`<button class="btn sm primary" onclick="savePicks()">Save</button><button class="btn sm" onclick="doShare()">Share</button><button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker: guess total games in the Final">${S.tiebreaker?`🎯 ${S.tiebreaker} games`:'🎯 Tiebreaker'}</button>`;
+
   html+=`<div class="bkt-topbar">
     <div class="bkt-user">${S.viewingUid?S.viewingName:S.userName}</div>
     <div class="bkt-actions">
+      ${lockedBadge}
       ${hasRes?`<span class="score-pill">${pts} pts</span><span class="score-pill ok">${correct} correct</span><span class="score-pill grey">${total} picks</span>`:''}
-      ${!S.viewingUid?`<button class="btn sm primary" onclick="savePicks()">Save</button><button class="btn sm" onclick="doShare()">Share</button><button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker: guess total games in the Final">${S.tiebreaker?`🎯 ${S.tiebreaker} games`:'🎯 Tiebreaker'}</button>`:''}    </div>
+      ${actionBtns}
+    </div>
   </div>
   <div class="legend-bar">
     <div class="leg"><div class="leg-sw" style="background:var(--clay-ghost);border:2px solid var(--clay-l)"></div>Your pick</div>
@@ -1985,6 +2131,8 @@ function pick(mid,name){
   if(S.viewingUid){toast("Viewing someone else's bracket");return;}
   if(S.locked){toast('Picks are locked');return;}
   if(S.bracketLocked){toast('Your bracket is locked — you already submitted!');return;}
+  // Preserve scroll position
+  const scrollY=window.scrollY;
   if(S.picks[mid]===name)delete S.picks[mid];else S.picks[mid]=name;
   buildDisplay();
   // Fast re-render using quadrant-aware state
@@ -2009,7 +2157,11 @@ function pick(mid,name){
   if(qsi===2)drawConnectors(leftIdx,rightIdx,vp);
   else drawConnectorsFiltered(leftIdx,rightIdx,vp,q);
   renderMinimap();
+  // Restore scroll position after DOM update
+  requestAnimationFrame(()=>window.scrollTo(0,scrollY));
   debounceSave();
+  // Show brief auto-save indicator
+  showSaveIndicator();
 }
 
 function doShare(){
