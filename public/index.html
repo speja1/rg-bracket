@@ -262,7 +262,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
   font-size:15px;font-weight:800;color:var(--clay-d);border:2px solid var(--clay-p);
   font-family:var(--font-d);letter-spacing:-0.5px}
-.mc-player.winner .mc-photo-init{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.2)}
+.mc-player.winner .mc-photo-init,.mc-photo-init-w{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.2)}
 
 .srv{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;animation:sp 1.2s ease-in-out infinite}
 @keyframes sp{0%,100%{opacity:1}50%{opacity:.2}}
@@ -617,16 +617,6 @@ const ATP_R1 = [
   {id:'m63',p1:{n:'Machac T.',s:null},           p2:{n:'Bergs Z.',s:null},            bye:false},
   {id:'m64',p1:{n:'Bonzi B.',s:null},            p2:{n:'Zverev A.',s:2},              bye:false},
 ];
-
-// Global photo fallback — called by onerror on img tags
-function imgFallback(img, initials){
-  const div=document.createElement('div');
-  div.className='mc-photo-init';
-  // Copy winner class if present on parent row
-  if(img.closest('.mc-player.winner'))div.classList.add('winner-init');
-  div.textContent=initials||'?';
-  img.parentNode.replaceChild(div,img);
-}
 
 const S={tab:'bracket',draw:'mens',user:null,uid:null,userName:null,bracketLocked:false,odds:{},simResults:{},
   isAdmin:false,isGuest:false,viewingUid:null,viewingName:null,
@@ -1685,8 +1675,9 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
     const bPhotoUrl=seed?.n?(bLivePhoto||getPhoto(seed.n)||null):null;
     const bInitials=getInitials(seed?.n||'');
     const bPhotoEl=bPhotoUrl
-      ?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n||''}" loading="lazy" onerror="imgFallback(this,'${bInitials.replace(/'/g,"\\'")}')">`
-      :`<div class="mc-photo-init">${bInitials}</div>`;
+      ?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n||''}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`+
+       `<div class="mc-photo-init mc-photo-init-w" style="display:none">${bInitials}</div>`
+      :`<div class="mc-photo-init mc-photo-init-w">${bInitials}</div>`;
     const bFlag=seed?.n?`<div class="mc-flag">${getFlag(seed.n)}</div>`:'';
     h+=`<div class="mc-player winner locked">${bPhotoEl}${bFlag}<div class="mc-name">${seed?.n}${seed?.s?`<span class="mc-name-seed">(${seed.s})</span>`:''}</div></div>`;
     h+=`<div class="mc-bye-row">BYE</div>`;
@@ -1725,9 +1716,12 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const livePhoto=!tbd?((pi===0?lv.p1Photo:lv.p2Photo)||''):null;
       const photoUrl=!tbd?(livePhoto||getPhoto(pl.n)||null):null;
       const initials=getInitials(pl.n);
+      const isWinnerRow=hasDeadPick||(isW&&done);
+      const initCls=isWinnerRow?'mc-photo-init mc-photo-init-w':'mc-photo-init';
       const photoEl=photoUrl
-        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" loading="lazy" onerror="imgFallback(this,'${initials.replace(/'/g,"\\'")}')">`
-        :`<div class="mc-photo-init">${initials}</div>`;
+        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`+
+         `<div class="${initCls}" style="display:none">${initials}</div>`
+        :`<div class="${initCls}">${initials}</div>`;
       let iconEl='';
       if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
