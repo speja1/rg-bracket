@@ -260,8 +260,8 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-photo-init{width:52px;height:52px;border-radius:50%;
   background:linear-gradient(135deg,var(--clay-p),var(--sand));
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  font-size:20px;font-weight:800;color:var(--clay-d);border:2px solid var(--clay-p);
-  font-family:var(--font-d)}
+  font-size:15px;font-weight:800;color:var(--clay-d);border:2px solid var(--clay-p);
+  font-family:var(--font-d);letter-spacing:-0.5px}
 .mc-player.winner .mc-photo-init{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.2)}
 
 .srv{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;animation:sp 1.2s ease-in-out infinite}
@@ -1134,43 +1134,113 @@ const CLAY_ELO = {
 };
 
 // ── PLAYER PHOTOS ────────────────────────────────────────────────────────────
-// Using Wikimedia Commons thumbnails (public domain / CC licensed)
+// Wikimedia Commons thumbnails — public domain / CC licensed
+const W='https://upload.wikimedia.org/wikipedia/commons/thumb/';
 const PLAYER_PHOTOS = {
-  'Sinner J.':'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Jannik_Sinner_2023_Roland_Garros_%281%29.jpg/100px-Jannik_Sinner_2023_Roland_Garros_%281%29.jpg',
-  'Zverev A.':'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Alexander_Zverev_2023_Roland_Garros_1.jpg/100px-Alexander_Zverev_2023_Roland_Garros_1.jpg',
-  'Djokovic N.':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Novak_Djokovic_2023_Roland_Garros.jpg/100px-Novak_Djokovic_2023_Roland_Garros.jpg',
-  'Medvedev D.':'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Daniil_Medvedev_2023_Roland_Garros.jpg/100px-Daniil_Medvedev_2023_Roland_Garros.jpg',
-  'Fritz T.':'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Taylor_Fritz_2022_%28cropped%29.jpg/100px-Taylor_Fritz_2022_%28cropped%29.jpg',
-  'Ruud C.':'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Casper_Ruud_2023_Roland_Garros.jpg/100px-Casper_Ruud_2023_Roland_Garros.jpg',
-  'Rublev A.':'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Andrey_Rublev_2022_Roland_Garros.jpg/100px-Andrey_Rublev_2022_Roland_Garros.jpg',
-  'Tsitsipas S.':'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Stefanos_Tsitsipas_2023_Roland_Garros.jpg/100px-Stefanos_Tsitsipas_2023_Roland_Garros.jpg',
-  'Shelton B.':'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Ben_Shelton_2023_US_Open.jpg/100px-Ben_Shelton_2023_US_Open.jpg',
-  'Auger-Aliassime F.':'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/F%C3%A9lix_Auger-Aliassime_2022_Roland_Garros.jpg/100px-F%C3%A9lix_Auger-Aliassime_2022_Roland_Garros.jpg',
-  'De Minaur A.':'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Alex_de_Minaur_2023.jpg/100px-Alex_de_Minaur_2023.jpg',
-  'Hurkacz H.':'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Hubert_Hurkacz_2022_Roland_Garros_%28cropped%29.jpg/100px-Hubert_Hurkacz_2022_Roland_Garros_%28cropped%29.jpg',
-  'Paul T.':'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Tommy_Paul_2023_%28cropped%29.jpg/100px-Tommy_Paul_2023_%28cropped%29.jpg',
-  'Berrettini M.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Matteo_Berrettini_2022_Roland_Garros_%28cropped%29.jpg/100px-Matteo_Berrettini_2022_Roland_Garros_%28cropped%29.jpg',
-  'Khachanov K.':'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Karen_Khachanov_2023.jpg/100px-Karen_Khachanov_2023.jpg',
-  'Humbert U.':'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Ugo_Humbert_2022.jpg/100px-Ugo_Humbert_2022.jpg',
-  'Shapovalov D.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Denis_Shapovalov_2022_Roland_Garros.jpg/100px-Denis_Shapovalov_2022_Roland_Garros.jpg',
-  'Norrie C.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Cameron_Norrie_2022_Roland_Garros_%28cropped%29.jpg/100px-Cameron_Norrie_2022_Roland_Garros_%28cropped%29.jpg',
-  'Tiafoe F.':'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Frances_Tiafoe_2022_Roland_Garros.jpg/100px-Frances_Tiafoe_2022_Roland_Garros.jpg',
-  'Cerundolo F.':'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Francisco_Cerundolo_2022_%28cropped%29.jpg/100px-Francisco_Cerundolo_2022_%28cropped%29.jpg',
-  'Sonego L.':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Lorenzo_Sonego_2022_%28cropped%29.jpg/100px-Lorenzo_Sonego_2022_%28cropped%29.jpg',
-  'Wawrinka S.':'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Stan_Wawrinka_2017_Roland_Garros.jpg/100px-Stan_Wawrinka_2017_Roland_Garros.jpg',
-  'Monfils G.':'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Gael_Monfils_2019_Roland_Garros_R2_%28cropped%29.jpg/100px-Gael_Monfils_2019_Roland_Garros_R2_%28cropped%29.jpg',
-  'Cilic M.':'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Marin_Cilic_2022_Roland_Garros.jpg/100px-Marin_Cilic_2022_Roland_Garros.jpg',
-  'Cobolli F.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Flavio_Cobolli_2024_Roland_Garros.jpg/100px-Flavio_Cobolli_2024_Roland_Garros.jpg',
-  'Moutet C.':'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Corentin_Moutet_2022_%28cropped%29.jpg/100px-Corentin_Moutet_2022_%28cropped%29.jpg',
-  'Mpetshi Perricard G.':'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Giovanni_Mpetshi_Perricard_2024_Roland_Garros.jpg/100px-Giovanni_Mpetshi_Perricard_2024_Roland_Garros.jpg',
-  'Tabilo A.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Alejandro_Tabilo_2024_%28cropped%29.jpg/100px-Alejandro_Tabilo_2024_%28cropped%29.jpg',
+  // Top seeds — well documented
+  'Sinner J.':W+'6/60/Jannik_Sinner_2023_Roland_Garros_%281%29.jpg/100px-Jannik_Sinner_2023_Roland_Garros_%281%29.jpg',
+  'Zverev A.':W+'e/e3/Alexander_Zverev_2023_Roland_Garros_1.jpg/100px-Alexander_Zverev_2023_Roland_Garros_1.jpg',
+  'Djokovic N.':W+'4/44/Novak_Djokovic_2023_Roland_Garros.jpg/100px-Novak_Djokovic_2023_Roland_Garros.jpg',
+  'Medvedev D.':W+'8/8a/Daniil_Medvedev_2023_Roland_Garros.jpg/100px-Daniil_Medvedev_2023_Roland_Garros.jpg',
+  'Fritz T.':W+'a/a1/Taylor_Fritz_2022_%28cropped%29.jpg/100px-Taylor_Fritz_2022_%28cropped%29.jpg',
+  'Ruud C.':W+'2/2e/Casper_Ruud_2023_Roland_Garros.jpg/100px-Casper_Ruud_2023_Roland_Garros.jpg',
+  'Rublev A.':W+'b/ba/Andrey_Rublev_2022_Roland_Garros.jpg/100px-Andrey_Rublev_2022_Roland_Garros.jpg',
+  'Tsitsipas S.':W+'5/5d/Stefanos_Tsitsipas_2023_Roland_Garros.jpg/100px-Stefanos_Tsitsipas_2023_Roland_Garros.jpg',
+  'Shelton B.':W+'7/7c/Ben_Shelton_2023_US_Open.jpg/100px-Ben_Shelton_2023_US_Open.jpg',
+  'Auger-Aliassime F.':W+'5/5c/F%C3%A9lix_Auger-Aliassime_2022_Roland_Garros.jpg/100px-F%C3%A9lix_Auger-Aliassime_2022_Roland_Garros.jpg',
+  'De Minaur A.':W+'7/7f/Alex_de_Minaur_2023.jpg/100px-Alex_de_Minaur_2023.jpg',
+  'Hurkacz H.':W+'c/c1/Hubert_Hurkacz_2022_Roland_Garros_%28cropped%29.jpg/100px-Hubert_Hurkacz_2022_Roland_Garros_%28cropped%29.jpg',
+  'Paul T.':W+'d/d6/Tommy_Paul_2023_%28cropped%29.jpg/100px-Tommy_Paul_2023_%28cropped%29.jpg',
+  'Berrettini M.':W+'9/97/Matteo_Berrettini_2022_Roland_Garros_%28cropped%29.jpg/100px-Matteo_Berrettini_2022_Roland_Garros_%28cropped%29.jpg',
+  'Khachanov K.':W+'e/e0/Karen_Khachanov_2023.jpg/100px-Karen_Khachanov_2023.jpg',
+  'Humbert U.':W+'a/a3/Ugo_Humbert_2022.jpg/100px-Ugo_Humbert_2022.jpg',
+  'Shapovalov D.':W+'9/97/Denis_Shapovalov_2022_Roland_Garros.jpg/100px-Denis_Shapovalov_2022_Roland_Garros.jpg',
+  'Norrie C.':W+'9/9b/Cameron_Norrie_2022_Roland_Garros_%28cropped%29.jpg/100px-Cameron_Norrie_2022_Roland_Garros_%28cropped%29.jpg',
+  'Tiafoe F.':W+'e/ec/Frances_Tiafoe_2022_Roland_Garros.jpg/100px-Frances_Tiafoe_2022_Roland_Garros.jpg',
+  'Cerundolo F.':W+'6/64/Francisco_Cerundolo_2022_%28cropped%29.jpg/100px-Francisco_Cerundolo_2022_%28cropped%29.jpg',
+  'Sonego L.':W+'4/42/Lorenzo_Sonego_2022_%28cropped%29.jpg/100px-Lorenzo_Sonego_2022_%28cropped%29.jpg',
+  'Wawrinka S.':W+'3/3f/Stan_Wawrinka_2017_Roland_Garros.jpg/100px-Stan_Wawrinka_2017_Roland_Garros.jpg',
+  'Monfils G.':W+'a/a0/Gael_Monfils_2019_Roland_Garros_R2_%28cropped%29.jpg/100px-Gael_Monfils_2019_Roland_Garros_R2_%28cropped%29.jpg',
+  'Cilic M.':W+'3/38/Marin_Cilic_2022_Roland_Garros.jpg/100px-Marin_Cilic_2022_Roland_Garros.jpg',
+  'Cobolli F.':W+'9/9d/Flavio_Cobolli_2024_Roland_Garros.jpg/100px-Flavio_Cobolli_2024_Roland_Garros.jpg',
+  'Moutet C.':W+'b/b4/Corentin_Moutet_2022_%28cropped%29.jpg/100px-Corentin_Moutet_2022_%28cropped%29.jpg',
+  'Mpetshi Perricard G.':W+'2/20/Giovanni_Mpetshi_Perricard_2024_Roland_Garros.jpg/100px-Giovanni_Mpetshi_Perricard_2024_Roland_Garros.jpg',
+  'Tabilo A.':W+'9/9e/Alejandro_Tabilo_2024_%28cropped%29.jpg/100px-Alejandro_Tabilo_2024_%28cropped%29.jpg',
+  // Extended coverage
+  'Bublik A.':W+'0/04/Alexander_Bublik_2022_%28cropped%29.jpg/100px-Alexander_Bublik_2022_%28cropped%29.jpg',
+  'Etcheverry T.':W+'5/53/Tomas_Martin_Etcheverry_2022_%28cropped%29.jpg/100px-Tomas_Martin_Etcheverry_2022_%28cropped%29.jpg',
+  'Machac T.':W+'6/6e/Tom%C3%A1%C5%A1_Mach%C3%A1%C4%8D_2024_Roland_Garros.jpg/100px-Tom%C3%A1%C5%A1_Mach%C3%A1%C4%8D_2024_Roland_Garros.jpg',
+  'Mensik J.':W+'c/c9/Jakub_Men%C5%A1%C3%ADk_2024_Roland_Garros.jpg/100px-Jakub_Men%C5%A1%C3%ADk_2024_Roland_Garros.jpg',
+  'Darderi L.':W+'e/e4/Luciano_Darderi_2024_Roland_Garros.jpg/100px-Luciano_Darderi_2024_Roland_Garros.jpg',
+  'Fonseca J.':W+'9/92/Jo%C3%A3o_Fonseca_2025_Australian_Open.jpg/100px-Jo%C3%A3o_Fonseca_2025_Australian_Open.jpg',
+  'Rinderknech A.':W+'3/35/Arthur_Rinderknech_2022_%28cropped%29.jpg/100px-Arthur_Rinderknech_2022_%28cropped%29.jpg',
+  'Griekspoor T.':W+'f/fd/Tallon_Griekspoor_2022_%28cropped%29.jpg/100px-Tallon_Griekspoor_2022_%28cropped%29.jpg',
+  'Nakashima B.':W+'d/dd/Brandon_Nakashima_2022_%28cropped%29.jpg/100px-Brandon_Nakashima_2022_%28cropped%29.jpg',
+  'Kecmanovic M.':W+'4/4e/Miomir_Kecmanovic_2022_%28cropped%29.jpg/100px-Miomir_Kecmanovic_2022_%28cropped%29.jpg',
+  'Gaston H.':W+'4/4e/Hugo_Gaston_2022_%28cropped%29.jpg/100px-Hugo_Gaston_2022_%28cropped%29.jpg',
+  'Navone M.':W+'7/71/Mariano_Navone_2024_Roland_Garros.jpg/100px-Mariano_Navone_2024_Roland_Garros.jpg',
+  'Borges N.':W+'5/53/Nuno_Borges_2024_Roland_Garros.jpg/100px-Nuno_Borges_2024_Roland_Garros.jpg',
+  'Lehecka J.':W+'2/2c/Jiri_Lehecka_2023_%28cropped%29.jpg/100px-Jiri_Lehecka_2023_%28cropped%29.jpg',
+  'Popyrin A.':W+'5/5e/Alexei_Popyrin_2022_%28cropped%29.jpg/100px-Alexei_Popyrin_2022_%28cropped%29.jpg',
+  'Munar J.':W+'8/8d/Jaume_Munar_2022_%28cropped%29.jpg/100px-Jaume_Munar_2022_%28cropped%29.jpg',
+  'Struff J.':W+'1/16/Jan-Lennard_Struff_2022_%28cropped%29.jpg/100px-Jan-Lennard_Struff_2022_%28cropped%29.jpg',
+  'Halys Q.':W+'f/f5/Quentin_Halys_2022_%28cropped%29.jpg/100px-Quentin_Halys_2022_%28cropped%29.jpg',
+  'Bonzi B.':W+'2/2d/Benjamin_Bonzi_2022_%28cropped%29.jpg/100px-Benjamin_Bonzi_2022_%28cropped%29.jpg',
+  'Kokkinakis T.':W+'6/64/Thanasi_Kokkinakis_2022_%28cropped%29.jpg/100px-Thanasi_Kokkinakis_2022_%28cropped%29.jpg',
+  'Baez S.':W+'8/8e/Sebastian_Baez_2022_%28cropped%29.jpg/100px-Sebastian_Baez_2022_%28cropped%29.jpg',
+  'Carreno Busta P.':W+'5/52/Pablo_Carre%C3%B1o_Busta_2022_Roland_Garros_%28cropped%29.jpg/100px-Pablo_Carre%C3%B1o_Busta_2022_Roland_Garros_%28cropped%29.jpg',
+  'Davidovich Fokina A.':W+'a/a2/Alejandro_Davidovich_Fokina_2022_%28cropped%29.jpg/100px-Alejandro_Davidovich_Fokina_2022_%28cropped%29.jpg',
+  'Fearnley J.':W+'9/92/Jacob_Fearnley_2024_Wimbledon.jpg/100px-Jacob_Fearnley_2024_Wimbledon.jpg',
+  'Fucsovics M.':W+'4/47/M%C3%A1rton_Fucsovics_2022_%28cropped%29.jpg/100px-M%C3%A1rton_Fucsovics_2022_%28cropped%29.jpg',
+  'Opelka R.':W+'8/8e/Reilly_Opelka_2022_%28cropped%29.jpg/100px-Reilly_Opelka_2022_%28cropped%29.jpg',
+  'Bautista Agut R.':W+'0/01/Roberto_Bautista_Agut_2022_Roland_Garros_%28cropped%29.jpg/100px-Roberto_Bautista_Agut_2022_Roland_Garros_%28cropped%29.jpg',
+  'Muller A.':W+'f/fc/Alexandre_M%C3%BCller_2023_Roland_Garros.jpg/100px-Alexandre_M%C3%BCller_2023_Roland_Garros.jpg',
+  'Marozsan F.':W+'8/8e/Fabian_Marozsan_2024_Roland_Garros.jpg/100px-Fabian_Marozsan_2024_Roland_Garros.jpg',
+  'Mannarino A.':W+'5/5d/Adrian_Mannarino_2022_%28cropped%29.jpg/100px-Adrian_Mannarino_2022_%28cropped%29.jpg',
+  'Michelsen A.':W+'4/4e/Alex_Michelsen_2024_Roland_Garros.jpg/100px-Alex_Michelsen_2024_Roland_Garros.jpg',
+  'Tien L.':W+'8/89/Learner_Tien_2025_Australian_Open.jpg/100px-Learner_Tien_2025_Australian_Open.jpg',
+  'Van de Zandschulp B.':W+'8/86/Botic_van_de_Zandschulp_2022_%28cropped%29.jpg/100px-Botic_van_de_Zandschulp_2022_%28cropped%29.jpg',
+  'Vacherot V.':W+'7/76/Valentin_Vacherot_2024_Roland_Garros.jpg/100px-Valentin_Vacherot_2024_Roland_Garros.jpg',
+  'Herbert P.':W+'d/dc/Pierre-Hugues_Herbert_2022_%28cropped%29.jpg/100px-Pierre-Hugues_Herbert_2022_%28cropped%29.jpg',
+  'Garin C.':W+'9/9c/Cristian_Garin_2022_%28cropped%29.jpg/100px-Cristian_Garin_2022_%28cropped%29.jpg',
+  'Cerundolo J.':W+'5/5c/Juan_Manuel_Cerundolo_2022_%28cropped%29.jpg/100px-Juan_Manuel_Cerundolo_2022_%28cropped%29.jpg',
+  'Tabur C.':W+'6/68/Cl%C3%A9ment_Tabur_2024_Roland_Garros.jpg/100px-Cl%C3%A9ment_Tabur_2024_Roland_Garros.jpg',
+  'Atmane T.':W+'9/9c/Terence_Atmane_2024_Roland_Garros.jpg/100px-Terence_Atmane_2024_Roland_Garros.jpg',
+  'Prizmic D.':W+'d/d8/Dino_Prizmi%C4%87_2024_Roland_Garros.jpg/100px-Dino_Prizmi%C4%87_2024_Roland_Garros.jpg',
+  'Van Assche L.':W+'3/39/Luca_Van_Assche_2023_Roland_Garros.jpg/100px-Luca_Van_Assche_2023_Roland_Garros.jpg',
+  'Bergs Z.':W+'7/74/Zizou_Bergs_2024_Roland_Garros.jpg/100px-Zizou_Bergs_2024_Roland_Garros.jpg',
+  'Vukic A.':W+'7/71/Aleksandar_Vukic_2023_%28cropped%29.jpg/100px-Aleksandar_Vukic_2023_%28cropped%29.jpg',
+  'Safiullin R.':W+'c/c1/Roman_Safiullin_2023_%28cropped%29.jpg/100px-Roman_Safiullin_2023_%28cropped%29.jpg',
+  'Hanfmann Y.':W+'c/c0/Yannick_Hanfmann_2022_%28cropped%29.jpg/100px-Yannick_Hanfmann_2022_%28cropped%29.jpg',
+  'Ofner S.':W+'2/2d/Sebastian_Ofner_2023_%28cropped%29.jpg/100px-Sebastian_Ofner_2023_%28cropped%29.jpg',
+  'Dzumhur D.':W+'4/47/Damir_D%C5%BEumhur_2022_%28cropped%29.jpg/100px-Damir_D%C5%BEumhur_2022_%28cropped%29.jpg',
+  'Bellucci M.':W+'3/36/Mattia_Bellucci_2024_Roland_Garros.jpg/100px-Mattia_Bellucci_2024_Roland_Garros.jpg',
+  'Medjedovic H.':W+'7/7f/Hamad_Medjedovic_2024_Roland_Garros.jpg/100px-Hamad_Medjedovic_2024_Roland_Garros.jpg',
+  'Hijikata R.':W+'8/81/Rinky_Hijikata_2023_%28cropped%29.jpg/100px-Rinky_Hijikata_2023_%28cropped%29.jpg',
+  'Comesana F.':W+'2/2e/Francisco_Comesa%C3%B1a_2022_%28cropped%29.jpg/100px-Francisco_Comesa%C3%B1a_2022_%28cropped%29.jpg',
+  'Diaz Acosta F.':W+'0/0e/Facundo_D%C3%ADaz_Acosta_2024_Roland_Garros.jpg/100px-Facundo_D%C3%ADaz_Acosta_2024_Roland_Garros.jpg',
+  'Tirante T.':W+'b/b5/Tom%C3%A1s_Tirante_2023_%28cropped%29.jpg/100px-Tom%C3%A1s_Tirante_2023_%28cropped%29.jpg',
+  'Shevchenko A.':W+'7/70/Alexander_Shevchenko_2023_%28cropped%29.jpg/100px-Alexander_Shevchenko_2023_%28cropped%29.jpg',
+  'Kovacevic A.':W+'c/c5/Aleksandar_Kovacevic_2023_%28cropped%29.jpg/100px-Aleksandar_Kovacevic_2023_%28cropped%29.jpg',
+  'Duckworth J.':W+'0/05/James_Duckworth_2022_%28cropped%29.jpg/100px-James_Duckworth_2022_%28cropped%29.jpg',
+  'Pavlovic L.':W+'e/e6/Luca_Pavlovic_2024_Roland_Garros.jpg/100px-Luca_Pavlovic_2024_Roland_Garros.jpg',
+  'Landaluce M.':W+'3/35/Mart%C3%ADn_Landaluce_2024_Roland_Garros.jpg/100px-Mart%C3%ADn_Landaluce_2024_Roland_Garros.jpg',
 };
 function getPhoto(name){ return PLAYER_PHOTOS[name]||null; }
-// Initials fallback avatar
+
+// Initials fallback — show first initial + last initial e.g. "Jan Sinner" → "JS"
+// Draw names are "Sinner J." format → extract last name + first initial
 function getInitials(name){
   if(!name||name==='TBD')return'?';
-  const p=name.replace(/\./g,'').trim().split(/\s+/);
-  return p.length>1?(p[1][0]||'?').toUpperCase():(p[0][0]||'?').toUpperCase();
+  // Format: "Lastname F." or "Lastname-Compound F." or just "Lastname"
+  const clean=name.replace(/\.$/, '').trim();
+  const parts=clean.split(/\s+/);
+  if(parts.length===1) return parts[0][0].toUpperCase();
+  // Last part is the first initial (e.g. "J" from "Sinner J.")
+  // First part(s) are the last name
+  const lastNameInitial=parts[0][0].toUpperCase();
+  const firstInitial=parts[parts.length-1][0].toUpperCase();
+  return firstInitial+lastNameInitial;
 }
 const PLAYER_FLAGS = {
   'Sinner J.':'🇮🇹','Zverev A.':'🇩🇪','Djokovic N.':'🇷🇸','Auger-Aliassime F.':'🇨🇦',
