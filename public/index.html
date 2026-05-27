@@ -192,7 +192,8 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-status{font-size:10px;font-weight:600;color:var(--ink-l)}
 .mc-status.live{color:#16a34a}.mc-status.done{color:var(--court)}
 .mc-players{display:flex;flex-direction:column}
-.mc-player{display:flex;align-items:center;gap:.6rem;padding:.8rem .9rem;cursor:pointer;transition:background .12s;user-select:none;min-height:50px}
+.mc-player{display:flex;align-items:center;gap:.7rem;padding:.9rem 1rem;cursor:pointer;
+  transition:background .12s;user-select:none;min-height:58px}
 .mc-player:first-of-type{border-bottom:1px solid var(--sand)}
 .mc-player.tbd{cursor:default;opacity:.5}
 .mc-player.locked{cursor:default}
@@ -204,32 +205,56 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.correct{background:var(--court-pale);border-left:3px solid var(--court)}
 .mc-player.wrong{background:#fff1f1;border-left:3px solid #fca5a5}
 .mc-player.live-p{border-left:3px solid #f59e0b}
-.mc-seed{width:20px;font-size:9px;font-weight:700;color:var(--gold);text-align:center;flex-shrink:0}
-.mc-player.winner .mc-seed{color:rgba(255,255,255,.55)}
-.mc-name{flex:1;font-size:14.5px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mc-player.winner .mc-name{color:#fff;font-weight:700}
-.mc-player.my-pick .mc-name{color:var(--clay-d);font-weight:700}
-.mc-player.correct .mc-name{color:var(--court);font-weight:700}
+
+/* Seed is now INLINE after the name, not a separate column */
+.mc-seed{display:none} /* hidden — seed shown inline in name instead */
+.mc-name{flex:1;font-size:16px;font-weight:500;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;gap:6px}
+.mc-name-seed{font-size:12px;font-weight:600;color:var(--ink-l);flex-shrink:0}
+.mc-player.winner .mc-name{color:#fff;font-weight:600}
+.mc-player.winner .mc-name-seed{color:rgba(255,255,255,.55)}
+.mc-player.my-pick .mc-name{color:var(--clay-d);font-weight:600}
+.mc-player.correct .mc-name{color:var(--court);font-weight:600}
 .mc-player.wrong .mc-name{color:#b91c1c;text-decoration:line-through}
 .mc-player.tbd .mc-name{font-style:italic;color:var(--ink-l)}
-.mc-score{font-family:var(--font-m);font-size:13.5px;font-weight:500;color:var(--ink-m);letter-spacing:1.2px;white-space:nowrap;flex-shrink:0;width:76px;min-width:76px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:5px}
-.mc-score-set{display:inline-block;width:20px;text-align:center;line-height:1}
-.mc-player.winner .mc-score{color:rgba(255,255,255,.85);font-weight:600}
+
+/* Scores: larger, bolder, fixed-width columns per set */
+.mc-score{font-family:var(--font-m);font-size:17px;font-weight:700;color:var(--ink-m);
+  white-space:nowrap;flex-shrink:0;width:auto;min-width:0;
+  text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:2px}
+.mc-score-set{display:inline-block;width:24px;text-align:center;line-height:1;
+  font-variant-numeric:tabular-nums}
+.mc-player.winner .mc-score{color:rgba(255,255,255,.92);font-weight:700}
 .mc-player.wrong .mc-score,.mc-player.correct .mc-score{color:inherit}
-.mc-score-empty{width:76px;min-width:76px;flex-shrink:0}
-.mc-right{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-shrink:0;min-width:80px}
-.mc-icon{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
-.mc-icon.chk{background:var(--clay);color:#fff}.mc-icon.ok{background:var(--court);color:#fff}.mc-icon.x{background:#ef4444;color:#fff}
+.mc-score-empty{width:0;min-width:0;flex-shrink:0}
+
+/* Winner checkmark: simple green ✓ text, not a circle badge */
+.mc-icon{flex-shrink:0;font-size:15px;font-weight:700;width:20px;text-align:center;
+  border-radius:0;background:none;display:flex;align-items:center;justify-content:center}
+.mc-icon.chk{color:var(--clay);background:none}
+.mc-icon.ok{color:#4ade80;background:none}
+.mc-icon.x{color:#ef4444;background:none}
+.mc-player.winner .mc-icon.ok{color:rgba(255,255,255,.7)}
+
 .srv{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;animation:sp 1.2s ease-in-out infinite}
 @keyframes sp{0%,100%{opacity:1}50%{opacity:.2}}
-.mc-time{padding:.45rem .9rem;background:var(--sand-l);border-top:1px solid var(--sand);font-size:11px;color:var(--ink-l);display:flex;align-items:center;gap:5px}
+.mc-time{padding:.45rem 1rem;background:var(--sand-l);border-top:1px solid var(--sand);font-size:11px;color:var(--ink-l);display:flex;align-items:center;gap:5px}
 .mc.bye .mc-player.winner{opacity:.82}
-.mc-bye-row{padding:.8rem .9rem;background:var(--sand-l);border-top:1px solid var(--sand);font-size:12px;font-style:italic;color:var(--ink-l);opacity:.45}
-/* Larger cards for later rounds */
-.col-lg .mc-name{font-size:16px}
-.col-lg .mc-player{padding:.9rem 1rem;min-height:54px}
-.col-xl .mc-name{font-size:18px}
-.col-xl .mc-player{padding:1.1rem 1.15rem;min-height:58px}
+.mc-bye-row{padding:.8rem 1rem;background:var(--sand-l);border-top:1px solid var(--sand);font-size:12px;font-style:italic;color:var(--ink-l);opacity:.45}
+
+/* Flag: slightly larger */
+.mc-flag{font-size:18px;line-height:1;flex-shrink:0;width:24px;text-align:center}
+
+/* Later rounds scale up */
+.col-lg .mc-name{font-size:17px}
+.col-lg .mc-player{padding:1rem 1.1rem;min-height:62px}
+.col-lg .mc-score{font-size:18px}
+.col-lg .mc-score-set{width:26px}
+.col-xl .mc-name{font-size:19px}
+.col-xl .mc-player{padding:1.1rem 1.2rem;min-height:66px}
+.col-xl .mc-score{font-size:20px}
+.col-xl .mc-score-set{width:28px}
 
 /* ── BOTTOM NAV ── */
 .bkt-nav{position:sticky;bottom:0;z-index:200;background:rgba(255,255,255,.96);
@@ -1513,8 +1538,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
 
   if(isBye){
     const seed=m.p1?.n!=='BYE'?m.p1:m.p2;
-    const sdN=seed?.s?`<div class="mc-seed">${seed.s}</div>`:`<div class="mc-seed"></div>`;
-    h+=`<div class="mc-player winner locked">${sdN}<div class="mc-name">${seed?.n}</div></div>`;
+    h+=`<div class="mc-player winner locked"><div class="mc-flag">${getFlag(seed?.n||'')}</div><div class="mc-name">${seed?.n}${seed?.s?`<span class="mc-name-seed">(${seed.s})</span>`:''}</div></div>`;
     h+=`<div class="mc-bye-row">BYE</div>`;
   }else{
     [m.p1,m.p2].forEach((pl,pi)=>{
@@ -1543,7 +1567,8 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       if(isLiveM&&!tbd)rowCls+=' live-p';
 
       const click=(!tbd&&!done&&!S.viewingUid)?`onclick="pick('${m.id}','${pl.n.replace(/'/g,"\\'")}')"`:'';
-      const sdEl=pl.s?`<div class="mc-seed">${pl.s}</div>`:`<div class="mc-seed"></div>`;
+      // Seed is now inline with the name
+      const seedSpan=pl.s?`<span class="mc-name-seed">(${pl.s})</span>`:'';
       const flagEl=(!tbd&&pl.n)?`<div class="mc-flag">${getFlag(pl.n)}</div>`:'';
       const srvEl=isSrv?'<div class="srv"></div>':'';
       let iconEl='';
@@ -1580,15 +1605,15 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
         const dpFlag=getFlag(dp.n);
         const dpSd=dp.s?`<span class="mc-dead-seed">${dp.s}</span>`:'';
         h+=`<div class="${rowCls}" ${click}>
-          ${sdEl}${flagEl}${srvEl}
+          ${flagEl}${srvEl}
           <div class="mc-name-stack">
-            <div class="mc-name">${pl.n}</div>
+            <div class="mc-name">${pl.n}${seedSpan}</div>
             <div class="mc-dead-line">${dpFlag} ${dpSd}${dp.n}</div>
           </div>
           ${rightSlot}${iconEl}
         </div>`;
       } else {
-        h+=`<div class="${rowCls}" ${click}>${sdEl}${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}</div>${rightSlot}${iconEl}</div>`;
+        h+=`<div class="${rowCls}" ${click}>${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}${tbd?'':seedSpan}</div>${rightSlot}${iconEl}</div>`;
       }
     });
   }
