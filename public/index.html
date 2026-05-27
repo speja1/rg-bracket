@@ -192,8 +192,8 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-status{font-size:10px;font-weight:600;color:var(--ink-l)}
 .mc-status.live{color:#16a34a}.mc-status.done{color:var(--court)}
 .mc-players{display:flex;flex-direction:column}
-.mc-player{display:flex;align-items:center;gap:.7rem;padding:.9rem 1rem;cursor:pointer;
-  transition:background .12s;user-select:none;min-height:58px}
+.mc-player{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;cursor:pointer;
+  transition:background .12s;user-select:none;min-height:62px}
 .mc-player:first-of-type{border-bottom:1px solid var(--sand)}
 .mc-player.tbd{cursor:default;opacity:.5}
 .mc-player.locked{cursor:default}
@@ -248,11 +248,11 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 
 /* Later rounds scale up */
 .col-lg .mc-name{font-size:17px}
-.col-lg .mc-player{padding:1rem 1.1rem;min-height:62px}
+.col-lg .mc-player{padding:.8rem 1.1rem;min-height:70px}
 .col-lg .mc-score{font-size:18px}
 .col-lg .mc-score-set{width:26px}
 .col-xl .mc-name{font-size:19px}
-.col-xl .mc-player{padding:1.1rem 1.2rem;min-height:66px}
+.col-xl .mc-player{padding:.9rem 1.2rem;min-height:78px}
 .col-xl .mc-score{font-size:20px}
 .col-xl .mc-score-set{width:28px}
 
@@ -394,6 +394,16 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .h2h-stat-lbl{font-size:8.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-l)}
 .h2h-stat-val{font-size:12px;font-weight:600;color:var(--ink)}
 
+/* Player photo avatar */
+.mc-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:top center;
+  flex-shrink:0;background:var(--sand);border:2px solid rgba(255,255,255,.3)}
+.mc-player.winner .mc-photo{border-color:rgba(255,255,255,.4)}
+.mc-photo-placeholder{width:40px;height:40px;border-radius:50%;background:var(--sand);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--ink-l);border:2px solid var(--sand-d)}
+/* Scale up for later rounds */
+.col-lg .mc-photo,.col-lg .mc-photo-placeholder{width:46px;height:46px}
+.col-xl .mc-photo,.col-xl .mc-photo-placeholder{width:52px;height:52px}
 /* Dead pick shown inline inside winner row as a stacked sub-name */
 .mc-name-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .mc-name-stack .mc-name{flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1111,7 +1121,32 @@ const CLAY_ELO = {
   'Tsitsipas S.':2090,
 };
 
-// ── PLAYER FLAGS ─────────────────────────────────────────────────────────────
+// ── PLAYER PHOTOS (ESPN CDN headshots) ───────────────────────────────────────
+// Format: https://a.espncdn.com/i/headshots/tennis/players/full/{id}.png
+const PLAYER_PHOTOS = {
+  'Sinner J.':'3067906','Zverev A.':'3067979','Djokovic N.':'558','Medvedev D.':'3067961',
+  'Shelton B.':'4874300','Fritz T.':'3067929','Auger-Aliassime F.':'4027988','De Minaur A.':'4210497',
+  'Ruud C.':'3067964','Rublev A.':'3067958','Paul T.':'3067942','Khachanov K.':'3067935',
+  'Hurkacz H.':'3067934','Cobolli F.':'4419714','Tsitsipas S.':'3067971','Humbert U.':'3067933',
+  'Mensik J.':'5114178','Mpetshi Perricard G.':'4874304','Berrettini M.':'3067916',
+  'Machac T.':'4212268','Etcheverry T.':'4419706','Cerundolo F.':'4419707','Shapovalov D.':'3067966',
+  'Fonseca J.':'5079440','Tabilo A.':'3671064','Nakashima B.':'4305670','Kecmanovic M.':'3067936',
+  'Norrie C.':'3067941','Tiafoe F.':'3067970','Griekspoor T.':'3670992','Sonego L.':'3067968',
+  'Moutet C.':'3067940','Bublik A.':'3067918','Carreno Busta P.':'3067921','Wawrinka S.':'1009','Monfils G.':'3067939',
+  'Popyrin A.':'4210496','Van de Zandschulp B.':'3938720','Marozsan F.':'4419712','Darderi L.':'4874299',
+  'Navone M.':'4874302','Borges N.':'4419704','Gaston H.':'4305668','Cilic M.':'3067922',
+  'Munar J.':'4210494','Vukic A.':'4210499','Halys Q.':'3670996','Bonzi B.':'3938718',
+  'Kokkinakis T.':'3938715','Struff J.':'3067969','Bellucci M.':'5079441','Baez S.':'4419703',
+  'Fearnley J.':'5153800','Rinderknech A.':'4210495','Davidovich Fokina A.':'4419705',
+  'Lehecka J.':'4419711','Muller A.':'4419713','Van Assche L.':'5079443','Tien L.':'5079442',
+  'Rublev A.':'3067958','Prizmic D.':'5079439','Atmane T.':'5153801','Opelka R.':'3938716',
+  'Kwon S.':'3067937','Garin C.':'3938714','Wu Y.':'4874303','Zhang Z.':'4419715',
+};
+function getPhoto(name){
+  const id=PLAYER_PHOTOS[name];
+  if(!id)return null;
+  return `https://a.espncdn.com/i/headshots/tennis/players/full/${id}.png`;
+}
 const PLAYER_FLAGS = {
   'Sinner J.':'🇮🇹','Zverev A.':'🇩🇪','Djokovic N.':'🇷🇸','Auger-Aliassime F.':'🇨🇦',
   'Shelton B.':'🇺🇸','De Minaur A.':'🇦🇺','Medvedev D.':'🇷🇺','Bublik A.':'🇰🇿',
@@ -1538,7 +1573,10 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
 
   if(isBye){
     const seed=m.p1?.n!=='BYE'?m.p1:m.p2;
-    h+=`<div class="mc-player winner locked"><div class="mc-flag">${getFlag(seed?.n||'')}</div><div class="mc-name">${seed?.n}${seed?.s?`<span class="mc-name-seed">(${seed.s})</span>`:''}</div></div>`;
+    const bPhotoUrl=seed?.n?getPhoto(seed.n):null;
+    const bPhotoEl=bPhotoUrl?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n}" onerror="this.style.display='none'">`:`<div class="mc-photo-placeholder">${getFlag(seed?.n||'')||'?'}</div>`;
+    const bFlag=seed?.n?`<div class="mc-flag">${getFlag(seed.n)}</div>`:'';
+    h+=`<div class="mc-player winner locked">${bPhotoEl}${bFlag}<div class="mc-name">${seed?.n}${seed?.s?`<span class="mc-name-seed">(${seed.s})</span>`:''}</div></div>`;
     h+=`<div class="mc-bye-row">BYE</div>`;
   }else{
     [m.p1,m.p2].forEach((pl,pi)=>{
@@ -1571,6 +1609,10 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const seedSpan=pl.s?`<span class="mc-name-seed">(${pl.s})</span>`:'';
       const flagEl=(!tbd&&pl.n)?`<div class="mc-flag">${getFlag(pl.n)}</div>`:'';
       const srvEl=isSrv?'<div class="srv"></div>':'';
+      const photoUrl=!tbd?getPhoto(pl.n):null;
+      const photoEl=photoUrl
+        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" onerror="this.style.display='none'">`
+        :`<div class="mc-photo-placeholder">${flagEl?'':getFlag(pl.n)||'?'}</div>`;
       let iconEl='';
       if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
@@ -1605,7 +1647,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
         const dpFlag=getFlag(dp.n);
         const dpSd=dp.s?`<span class="mc-dead-seed">${dp.s}</span>`:'';
         h+=`<div class="${rowCls}" ${click}>
-          ${flagEl}${srvEl}
+          ${photoEl}${flagEl}${srvEl}
           <div class="mc-name-stack">
             <div class="mc-name">${pl.n}${seedSpan}</div>
             <div class="mc-dead-line">${dpFlag} ${dpSd}${dp.n}</div>
@@ -1613,7 +1655,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
           ${rightSlot}${iconEl}
         </div>`;
       } else {
-        h+=`<div class="${rowCls}" ${click}>${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}${tbd?'':seedSpan}</div>${rightSlot}${iconEl}</div>`;
+        h+=`<div class="${rowCls}" ${click}>${photoEl}${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}${tbd?'':seedSpan}</div>${rightSlot}${iconEl}</div>`;
       }
     });
   }
