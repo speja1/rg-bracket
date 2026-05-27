@@ -181,80 +181,132 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .col-gutter{width:52px;flex-shrink:0;position:relative;background:linear-gradient(90deg,var(--sand-l),var(--sand-l));border-left:1px solid var(--sand-m);border-right:1px solid var(--sand-m)}
 .col-gutter svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 
-/* ── MATCH CARD (bracket — keep geometry) ── */
-.mc{background:var(--white);border:1.5px solid var(--sand);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);transition:border-color .15s,box-shadow .15s;display:flex;flex-direction:column}
-.mc.picked{border-color:rgba(184,64,48,.35)}
-.mc.has-live{border-color:#fde68a}
-.mc-strip{padding:.5rem .9rem;background:var(--sand-l);border-bottom:1px solid var(--sand);display:flex;align-items:center;justify-content:space-between}
-.h2h-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--sand-d);color:var(--ink-l);background:var(--white);cursor:pointer;transition:.15s;text-decoration:none;flex-shrink:0}
+/* ── MATCH CARD (bracket) ── */
+.mc{background:#fff;border:1.5px solid var(--sand);border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--sh);transition:border-color .15s,box-shadow .15s;display:flex;flex-direction:column}
+.mc.picked{border-color:rgba(184,64,48,.4);box-shadow:0 2px 16px rgba(184,64,48,.1)}
+.mc.has-live{border-color:#f59e0b;box-shadow:0 2px 12px rgba(245,158,11,.15)}
+.mc-strip{padding:.5rem 1rem;background:var(--sand);border-bottom:1px solid var(--sand-d);
+  display:flex;align-items:center;justify-content:space-between}
+.h2h-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
+  border-radius:50%;border:1.5px solid var(--sand-d);color:var(--ink-l);background:var(--white);
+  cursor:pointer;transition:.15s;text-decoration:none;flex-shrink:0}
 .h2h-btn:hover{background:var(--clay);border-color:var(--clay);color:#fff;transform:scale(1.1)}
-.mc-num{font-size:9px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--ink-l)}
+.mc-num{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink-m)}
 .mc-status{font-size:10px;font-weight:600;color:var(--ink-l)}
 .mc-status.live{color:#16a34a}.mc-status.done{color:var(--court)}
+
 .mc-players{display:flex;flex-direction:column}
-.mc-player{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;cursor:pointer;
-  transition:background .12s;user-select:none;min-height:62px}
-.mc-player:first-of-type{border-bottom:1px solid var(--sand)}
-.mc-player.tbd{cursor:default;opacity:.5}
+.mc-player{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;
+  cursor:pointer;transition:background .12s;user-select:none;min-height:64px}
+.mc-player:first-of-type{border-bottom:1.5px solid var(--sand)}
+.mc-player.tbd{cursor:default;opacity:.45}
 .mc-player.locked{cursor:default}
 .mc-player:hover:not(.locked):not(.tbd){background:var(--clay-ghost)}
-.mc-player.winner{background:var(--court);color:#fff}
-.mc-player.winner:first-of-type{border-bottom-color:var(--court-l)}
-.mc-player.winner:hover{background:var(--court-l)}
-.mc-player.my-pick{background:var(--clay-ghost);border-left:3px solid var(--clay)}
-.mc-player.correct{background:var(--court-pale);border-left:3px solid var(--court)}
-.mc-player.wrong{background:#fff1f1;border-left:3px solid #fca5a5}
-.mc-player.live-p{border-left:3px solid #f59e0b}
 
-/* Seed is now INLINE after the name, not a separate column */
-.mc-seed{display:none} /* hidden — seed shown inline in name instead */
-.mc-name{flex:1;font-size:16px;font-weight:500;color:var(--ink);
+/* Winner — richer green for readability */
+.mc-player.winner{background:linear-gradient(135deg,#1a5220 0%,#236428 100%);color:#fff}
+.mc-player.winner:first-of-type{border-bottom-color:rgba(255,255,255,.12)}
+.mc-player.winner:hover{background:linear-gradient(135deg,#1e6226 0%,#2a7530 100%)}
+
+/* My pick — warm clay tint, visible border */
+.mc-player.my-pick{background:linear-gradient(135deg,#fef3ef 0%,#fde8e0 100%);
+  border-left:4px solid var(--clay)}
+.mc-player.correct{background:linear-gradient(135deg,#edfaee 0%,#d6f5d8 100%);
+  border-left:4px solid var(--court-l)}
+.mc-player.wrong{background:linear-gradient(135deg,#fff4f4 0%,#ffe4e4 100%);
+  border-left:4px solid #ef4444}
+.mc-player.live-p{border-left:4px solid #f59e0b}
+
+/* Seed hidden — shown inline */
+.mc-seed{display:none}
+.mc-name{flex:1;font-size:15.5px;font-weight:600;color:#2a1808;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  display:flex;align-items:center;gap:6px}
-.mc-name-seed{font-size:12px;font-weight:600;color:var(--ink-l);flex-shrink:0}
-.mc-player.winner .mc-name{color:#fff;font-weight:600}
-.mc-player.winner .mc-name-seed{color:rgba(255,255,255,.55)}
-.mc-player.my-pick .mc-name{color:var(--clay-d);font-weight:600}
-.mc-player.correct .mc-name{color:var(--court);font-weight:600}
-.mc-player.wrong .mc-name{color:#b91c1c;text-decoration:line-through}
-.mc-player.tbd .mc-name{font-style:italic;color:var(--ink-l)}
+  display:flex;align-items:center;gap:6px;min-width:0}
+.mc-name-seed{font-size:11.5px;font-weight:500;color:var(--ink-l);flex-shrink:0}
+.mc-player.winner .mc-name{color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+.mc-player.winner .mc-name-seed{color:rgba(255,255,255,.5)}
+.mc-player.my-pick .mc-name{color:var(--clay-d);font-weight:700}
+.mc-player.correct .mc-name{color:#155a18;font-weight:700}
+.mc-player.wrong .mc-name{color:#b91c1c;text-decoration:line-through;font-weight:400}
+.mc-player.tbd .mc-name{font-style:italic;color:var(--ink-l);font-weight:400}
 
-/* Scores: larger, bolder, fixed-width columns per set */
-.mc-score{font-family:var(--font-m);font-size:17px;font-weight:700;color:var(--ink-m);
-  white-space:nowrap;flex-shrink:0;width:auto;min-width:0;
-  text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:2px}
-.mc-score-set{display:inline-block;width:24px;text-align:center;line-height:1;
+/* Scores — tabular, exact same width per set in both rows */
+.mc-score{font-family:var(--font-m);font-size:17px;font-weight:700;
+  color:#3a2010;letter-spacing:0;white-space:nowrap;flex-shrink:0;
+  display:flex;align-items:center;justify-content:flex-end;gap:0}
+.mc-score-set{display:inline-block;width:26px;text-align:center;line-height:1;
   font-variant-numeric:tabular-nums}
-.mc-player.winner .mc-score{color:rgba(255,255,255,.92);font-weight:700}
-.mc-player.wrong .mc-score,.mc-player.correct .mc-score{color:inherit}
-.mc-score-empty{width:0;min-width:0;flex-shrink:0}
+.mc-player.winner .mc-score{color:rgba(255,255,255,.95);font-weight:800}
+.mc-player.wrong .mc-score{color:#c0392b}
+.mc-player.correct .mc-score{color:#155a18;font-weight:700}
+/* Empty placeholder — exactly same total width as a 3-set score (3×26=78px) */
+.mc-score-empty{width:78px;min-width:78px;flex-shrink:0;display:block}
 
-/* Winner checkmark: simple green ✓ text, not a circle badge */
-.mc-icon{flex-shrink:0;font-size:15px;font-weight:700;width:20px;text-align:center;
-  border-radius:0;background:none;display:flex;align-items:center;justify-content:center}
-.mc-icon.chk{color:var(--clay);background:none}
-.mc-icon.ok{color:#4ade80;background:none}
-.mc-icon.x{color:#ef4444;background:none}
-.mc-player.winner .mc-icon.ok{color:rgba(255,255,255,.7)}
+/* Icon */
+.mc-icon{flex-shrink:0;font-size:16px;font-weight:700;width:22px;text-align:center;
+  display:flex;align-items:center;justify-content:center;background:none;border-radius:0}
+.mc-icon.chk{color:var(--clay)}
+.mc-icon.ok{color:#4ade80}
+.mc-icon.x{color:#ef4444}
+.mc-player.winner .mc-icon.ok{color:rgba(255,255,255,.75)}
 
-.srv{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;animation:sp 1.2s ease-in-out infinite}
+/* Flag — 25% bigger: was 18px → now 23px */
+.mc-flag{font-size:23px;line-height:1;flex-shrink:0;width:28px;text-align:center}
+
+/* Photo */
+.mc-photo{width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:top center;
+  flex-shrink:0;background:var(--sand);border:2px solid rgba(0,0,0,.08)}
+.mc-player.winner .mc-photo{border-color:rgba(255,255,255,.3)}
+.mc-photo-init{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--clay-p),var(--sand));
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;color:var(--clay-d);border:2px solid var(--clay-p);
+  font-family:var(--font-d)}
+.mc-player.winner .mc-photo-init{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.2)}
+
+.srv{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;
+  animation:sp 1.2s ease-in-out infinite}
 @keyframes sp{0%,100%{opacity:1}50%{opacity:.2}}
-.mc-time{padding:.45rem 1rem;background:var(--sand-l);border-top:1px solid var(--sand);font-size:11px;color:var(--ink-l);display:flex;align-items:center;gap:5px}
+.mc-time{padding:.45rem 1rem;background:var(--sand-l);border-top:1px solid var(--sand);
+  font-size:11px;color:var(--ink-l);display:flex;align-items:center;gap:5px}
 .mc.bye .mc-player.winner{opacity:.82}
-.mc-bye-row{padding:.8rem 1rem;background:var(--sand-l);border-top:1px solid var(--sand);font-size:12px;font-style:italic;color:var(--ink-l);opacity:.45}
+.mc-bye-row{padding:.8rem 1rem;background:var(--sand-l);border-top:1px solid var(--sand);
+  font-size:12px;font-style:italic;color:var(--ink-l);opacity:.45}
 
-/* Flag: slightly larger */
-.mc-flag{font-size:18px;line-height:1;flex-shrink:0;width:24px;text-align:center}
+/* Dead pick stacked inside winner row */
+.mc-name-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mc-name-stack .mc-name{flex:none}
+.mc-dead-line{font-size:10px;color:rgba(255,255,255,.45);text-decoration:line-through;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400;
+  display:flex;align-items:center;gap:3px}
+.mc-dead-seed{font-size:8px;font-weight:700;background:rgba(255,255,255,.12);
+  border-radius:3px;padding:0 3px;text-decoration:none}
+.mc-seed-inline{font-size:8px;font-weight:700;color:#b91c1c;background:#fee2e2;
+  border-radius:3px;padding:1px 4px;margin-right:3px}
 
-/* Later rounds scale up */
-.col-lg .mc-name{font-size:17px}
-.col-lg .mc-player{padding:.8rem 1.1rem;min-height:70px}
+/* Later rounds — scale up smoothly */
+.col-lg .mc-player{padding:.8rem 1.1rem;min-height:72px}
+.col-lg .mc-name{font-size:16.5px}
 .col-lg .mc-score{font-size:18px}
-.col-lg .mc-score-set{width:26px}
-.col-xl .mc-name{font-size:19px}
-.col-xl .mc-player{padding:.9rem 1.2rem;min-height:78px}
+.col-lg .mc-score-set{width:28px}
+.col-lg .mc-score-empty{width:84px;min-width:84px}
+.col-lg .mc-photo,.col-lg .mc-photo-init{width:48px;height:48px}
+.col-lg .mc-photo-init{font-size:17px}
+.col-lg .mc-flag{font-size:25px;width:30px}
+
+.col-xl .mc-player{padding:.9rem 1.2rem;min-height:80px}
+.col-xl .mc-name{font-size:18px}
 .col-xl .mc-score{font-size:20px}
-.col-xl .mc-score-set{width:28px}
+.col-xl .mc-score-set{width:30px}
+.col-xl .mc-score-empty{width:90px;min-width:90px}
+.col-xl .mc-photo,.col-xl .mc-photo-init{width:54px;height:54px}
+.col-xl .mc-photo-init{font-size:19px}
+.col-xl .mc-flag{font-size:27px;width:32px}
+
+/* Right column — don't stretch to fill parent height */
+.col-matches{flex:1;padding:.9rem;display:flex;flex-direction:column;gap:.75rem}
+.col-matches.right-col{display:flex;flex-direction:column;justify-content:space-around;
+  height:100%;box-sizing:border-box}
 
 /* ── BOTTOM NAV ── */
 .bkt-nav{position:sticky;bottom:0;z-index:200;background:rgba(255,255,255,.96);
@@ -394,25 +446,6 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .h2h-stat-lbl{font-size:8.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-l)}
 .h2h-stat-val{font-size:12px;font-weight:600;color:var(--ink)}
 
-/* Player photo avatar */
-.mc-photo{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:top center;
-  flex-shrink:0;background:var(--sand);border:2px solid rgba(255,255,255,.3)}
-.mc-player.winner .mc-photo{border-color:rgba(255,255,255,.4)}
-.mc-photo-placeholder{width:40px;height:40px;border-radius:50%;background:var(--sand);
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  font-size:14px;color:var(--ink-l);border:2px solid var(--sand-d)}
-/* Scale up for later rounds */
-.col-lg .mc-photo,.col-lg .mc-photo-placeholder{width:46px;height:46px}
-.col-xl .mc-photo,.col-xl .mc-photo-placeholder{width:52px;height:52px}
-/* Dead pick shown inline inside winner row as a stacked sub-name */
-.mc-name-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
-.mc-name-stack .mc-name{flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mc-dead-line{font-size:10.5px;color:rgba(255,255,255,.5);text-decoration:line-through;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400;
-  display:flex;align-items:center;gap:3px}
-.mc-dead-seed{font-size:8px;font-weight:700;background:rgba(255,255,255,.15);
-  border-radius:3px;padding:0 3px;margin-right:1px;text-decoration:none}
-.mc-seed-inline{font-size:8px;font-weight:700;color:#b91c1c;background:#fee2e2;border-radius:3px;padding:1px 4px;margin-right:3px}
 .mc-odds{font-family:var(--font-m);font-size:11px;font-weight:600;padding:2px 8px;border-radius:var(--r-pill);flex-shrink:0;white-space:nowrap;cursor:default}
 .mc-odds.fav{background:#e8f4e8;color:var(--court);border:1px solid #b4ddb4}
 .mc-odds.dog{background:var(--sand);color:var(--ink-m);border:1px solid var(--sand-d)}
@@ -1121,31 +1154,44 @@ const CLAY_ELO = {
   'Tsitsipas S.':2090,
 };
 
-// ── PLAYER PHOTOS (ESPN CDN headshots) ───────────────────────────────────────
-// Format: https://a.espncdn.com/i/headshots/tennis/players/full/{id}.png
+// ── PLAYER PHOTOS ────────────────────────────────────────────────────────────
+// Using Wikimedia Commons thumbnails (public domain / CC licensed)
 const PLAYER_PHOTOS = {
-  'Sinner J.':'3067906','Zverev A.':'3067979','Djokovic N.':'558','Medvedev D.':'3067961',
-  'Shelton B.':'4874300','Fritz T.':'3067929','Auger-Aliassime F.':'4027988','De Minaur A.':'4210497',
-  'Ruud C.':'3067964','Rublev A.':'3067958','Paul T.':'3067942','Khachanov K.':'3067935',
-  'Hurkacz H.':'3067934','Cobolli F.':'4419714','Tsitsipas S.':'3067971','Humbert U.':'3067933',
-  'Mensik J.':'5114178','Mpetshi Perricard G.':'4874304','Berrettini M.':'3067916',
-  'Machac T.':'4212268','Etcheverry T.':'4419706','Cerundolo F.':'4419707','Shapovalov D.':'3067966',
-  'Fonseca J.':'5079440','Tabilo A.':'3671064','Nakashima B.':'4305670','Kecmanovic M.':'3067936',
-  'Norrie C.':'3067941','Tiafoe F.':'3067970','Griekspoor T.':'3670992','Sonego L.':'3067968',
-  'Moutet C.':'3067940','Bublik A.':'3067918','Carreno Busta P.':'3067921','Wawrinka S.':'1009','Monfils G.':'3067939',
-  'Popyrin A.':'4210496','Van de Zandschulp B.':'3938720','Marozsan F.':'4419712','Darderi L.':'4874299',
-  'Navone M.':'4874302','Borges N.':'4419704','Gaston H.':'4305668','Cilic M.':'3067922',
-  'Munar J.':'4210494','Vukic A.':'4210499','Halys Q.':'3670996','Bonzi B.':'3938718',
-  'Kokkinakis T.':'3938715','Struff J.':'3067969','Bellucci M.':'5079441','Baez S.':'4419703',
-  'Fearnley J.':'5153800','Rinderknech A.':'4210495','Davidovich Fokina A.':'4419705',
-  'Lehecka J.':'4419711','Muller A.':'4419713','Van Assche L.':'5079443','Tien L.':'5079442',
-  'Rublev A.':'3067958','Prizmic D.':'5079439','Atmane T.':'5153801','Opelka R.':'3938716',
-  'Kwon S.':'3067937','Garin C.':'3938714','Wu Y.':'4874303','Zhang Z.':'4419715',
+  'Sinner J.':'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Jannik_Sinner_2023_Roland_Garros_%281%29.jpg/100px-Jannik_Sinner_2023_Roland_Garros_%281%29.jpg',
+  'Zverev A.':'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Alexander_Zverev_2023_Roland_Garros_1.jpg/100px-Alexander_Zverev_2023_Roland_Garros_1.jpg',
+  'Djokovic N.':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Novak_Djokovic_2023_Roland_Garros.jpg/100px-Novak_Djokovic_2023_Roland_Garros.jpg',
+  'Medvedev D.':'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Daniil_Medvedev_2023_Roland_Garros.jpg/100px-Daniil_Medvedev_2023_Roland_Garros.jpg',
+  'Fritz T.':'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Taylor_Fritz_2022_%28cropped%29.jpg/100px-Taylor_Fritz_2022_%28cropped%29.jpg',
+  'Ruud C.':'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Casper_Ruud_2023_Roland_Garros.jpg/100px-Casper_Ruud_2023_Roland_Garros.jpg',
+  'Rublev A.':'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Andrey_Rublev_2022_Roland_Garros.jpg/100px-Andrey_Rublev_2022_Roland_Garros.jpg',
+  'Tsitsipas S.':'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Stefanos_Tsitsipas_2023_Roland_Garros.jpg/100px-Stefanos_Tsitsipas_2023_Roland_Garros.jpg',
+  'Shelton B.':'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Ben_Shelton_2023_US_Open.jpg/100px-Ben_Shelton_2023_US_Open.jpg',
+  'Auger-Aliassime F.':'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/F%C3%A9lix_Auger-Aliassime_2022_Roland_Garros.jpg/100px-F%C3%A9lix_Auger-Aliassime_2022_Roland_Garros.jpg',
+  'De Minaur A.':'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Alex_de_Minaur_2023.jpg/100px-Alex_de_Minaur_2023.jpg',
+  'Hurkacz H.':'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Hubert_Hurkacz_2022_Roland_Garros_%28cropped%29.jpg/100px-Hubert_Hurkacz_2022_Roland_Garros_%28cropped%29.jpg',
+  'Paul T.':'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Tommy_Paul_2023_%28cropped%29.jpg/100px-Tommy_Paul_2023_%28cropped%29.jpg',
+  'Berrettini M.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Matteo_Berrettini_2022_Roland_Garros_%28cropped%29.jpg/100px-Matteo_Berrettini_2022_Roland_Garros_%28cropped%29.jpg',
+  'Khachanov K.':'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Karen_Khachanov_2023.jpg/100px-Karen_Khachanov_2023.jpg',
+  'Humbert U.':'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Ugo_Humbert_2022.jpg/100px-Ugo_Humbert_2022.jpg',
+  'Shapovalov D.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Denis_Shapovalov_2022_Roland_Garros.jpg/100px-Denis_Shapovalov_2022_Roland_Garros.jpg',
+  'Norrie C.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Cameron_Norrie_2022_Roland_Garros_%28cropped%29.jpg/100px-Cameron_Norrie_2022_Roland_Garros_%28cropped%29.jpg',
+  'Tiafoe F.':'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Frances_Tiafoe_2022_Roland_Garros.jpg/100px-Frances_Tiafoe_2022_Roland_Garros.jpg',
+  'Cerundolo F.':'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Francisco_Cerundolo_2022_%28cropped%29.jpg/100px-Francisco_Cerundolo_2022_%28cropped%29.jpg',
+  'Sonego L.':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Lorenzo_Sonego_2022_%28cropped%29.jpg/100px-Lorenzo_Sonego_2022_%28cropped%29.jpg',
+  'Wawrinka S.':'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Stan_Wawrinka_2017_Roland_Garros.jpg/100px-Stan_Wawrinka_2017_Roland_Garros.jpg',
+  'Monfils G.':'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Gael_Monfils_2019_Roland_Garros_R2_%28cropped%29.jpg/100px-Gael_Monfils_2019_Roland_Garros_R2_%28cropped%29.jpg',
+  'Cilic M.':'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Marin_Cilic_2022_Roland_Garros.jpg/100px-Marin_Cilic_2022_Roland_Garros.jpg',
+  'Cobolli F.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Flavio_Cobolli_2024_Roland_Garros.jpg/100px-Flavio_Cobolli_2024_Roland_Garros.jpg',
+  'Moutet C.':'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Corentin_Moutet_2022_%28cropped%29.jpg/100px-Corentin_Moutet_2022_%28cropped%29.jpg',
+  'Mpetshi Perricard G.':'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Giovanni_Mpetshi_Perricard_2024_Roland_Garros.jpg/100px-Giovanni_Mpetshi_Perricard_2024_Roland_Garros.jpg',
+  'Tabilo A.':'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Alejandro_Tabilo_2024_%28cropped%29.jpg/100px-Alejandro_Tabilo_2024_%28cropped%29.jpg',
 };
-function getPhoto(name){
-  const id=PLAYER_PHOTOS[name];
-  if(!id)return null;
-  return `https://a.espncdn.com/i/headshots/tennis/players/full/${id}.png`;
+function getPhoto(name){ return PLAYER_PHOTOS[name]||null; }
+// Initials fallback avatar
+function getInitials(name){
+  if(!name||name==='TBD')return'?';
+  const p=name.replace(/\./g,'').trim().split(/\s+/);
+  return p.length>1?(p[1][0]||'?').toUpperCase():(p[0][0]||'?').toUpperCase();
 }
 const PLAYER_FLAGS = {
   'Sinner J.':'🇮🇹','Zverev A.':'🇩🇪','Djokovic N.':'🇷🇸','Auger-Aliassime F.':'🇨🇦',
@@ -1514,7 +1560,10 @@ function renderColumnFiltered(rndIdx,vp,side,quadrant){
   const filteredMatches=getQuadrantMatches(rndIdx,quadrant);
   if(!filteredMatches.length)return '';
   const sz=['','','col-lg','col-lg','col-xl','col-xl','col-xl'][rndIdx]||'';
-  const rightStyle=side==='right'||side==='mid'?'display:flex;flex-direction:column;justify-content:space-around;':'';
+  // Right column uses space-around to stagger cards between left column feeders
+  // but height is controlled by JS connector drawing, not CSS flex stretch
+  const matchesStyle=side==='right'||side==='mid'?'position:relative;':'';
+  const matchesClass=side==='right'||side==='mid'?'col-matches right-col':'col-matches';
   const filteredDone=filteredMatches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&(vp[m.id]||S.live[m.id]?.winner)).length;
   const filteredTotal=filteredMatches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')).length;
 
@@ -1527,7 +1576,7 @@ function renderColumnFiltered(rndIdx,vp,side,quadrant){
         ${filteredTotal>0?`<span class="picks-note">${filteredDone}/${filteredTotal} picks</span>`:''}
       </div>
     </div>
-    <div class="col-matches" id="matches-${side}-${rndIdx}" style="${rightStyle}">`;
+    <div class="${matchesClass}" id="matches-${side}-${rndIdx}" style="${matchesStyle}">`;
   filteredMatches.forEach((m,mi)=>{h+=renderCard(m,mi,rnd.key,vp,side,rndIdx);});
   h+=`</div></div>`;
   return h;
@@ -1574,7 +1623,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
   if(isBye){
     const seed=m.p1?.n!=='BYE'?m.p1:m.p2;
     const bPhotoUrl=seed?.n?getPhoto(seed.n):null;
-    const bPhotoEl=bPhotoUrl?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n}" onerror="this.style.display='none'">`:`<div class="mc-photo-placeholder">${getFlag(seed?.n||'')||'?'}</div>`;
+    const bPhotoEl=bPhotoUrl?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n}" onerror="this.outerHTML='<div class=mc-photo-init>${getInitials(seed?.n||'')}</div>'">`:`<div class="mc-photo-init">${getInitials(seed?.n||'')}</div>`;
     const bFlag=seed?.n?`<div class="mc-flag">${getFlag(seed.n)}</div>`:'';
     h+=`<div class="mc-player winner locked">${bPhotoEl}${bFlag}<div class="mc-name">${seed?.n}${seed?.s?`<span class="mc-name-seed">(${seed.s})</span>`:''}</div></div>`;
     h+=`<div class="mc-bye-row">BYE</div>`;
@@ -1611,8 +1660,8 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const srvEl=isSrv?'<div class="srv"></div>':'';
       const photoUrl=!tbd?getPhoto(pl.n):null;
       const photoEl=photoUrl
-        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" onerror="this.style.display='none'">`
-        :`<div class="mc-photo-placeholder">${flagEl?'':getFlag(pl.n)||'?'}</div>`;
+        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" onerror="this.outerHTML='<div class=mc-photo-init>${getInitials(pl.n)}</div>'">`
+        :`<div class="mc-photo-init">${getInitials(pl.n)}</div>`;
       let iconEl='';
       if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
