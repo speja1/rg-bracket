@@ -197,116 +197,95 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-status.live{color:#16a34a}.mc-status.done{color:var(--court)}
 
 .mc-players{display:flex;flex-direction:column}
-.mc-player{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;
-  cursor:pointer;transition:background .12s;user-select:none;min-height:64px}
+/* Single universal size — same for all rounds */
+.mc-player{display:flex;align-items:center;gap:.85rem;padding:.85rem 1.1rem;
+  cursor:pointer;transition:background .12s;user-select:none;min-height:76px}
 .mc-player:first-of-type{border-bottom:1.5px solid var(--sand)}
 .mc-player.tbd{cursor:default;opacity:.45}
 .mc-player.locked{cursor:default}
 .mc-player:hover:not(.locked):not(.tbd){background:var(--clay-ghost)}
 
-/* Winner — richer green for readability */
+/* Winner */
 .mc-player.winner{background:linear-gradient(135deg,#1a5220 0%,#236428 100%);color:#fff}
 .mc-player.winner:first-of-type{border-bottom-color:rgba(255,255,255,.12)}
 .mc-player.winner:hover{background:linear-gradient(135deg,#1e6226 0%,#2a7530 100%)}
 
-/* My pick — warm clay tint, visible border */
-.mc-player.my-pick{background:linear-gradient(135deg,#fef3ef 0%,#fde8e0 100%);
-  border-left:4px solid var(--clay)}
-.mc-player.correct{background:linear-gradient(135deg,#edfaee 0%,#d6f5d8 100%);
-  border-left:4px solid var(--court-l)}
-.mc-player.wrong{background:linear-gradient(135deg,#fff4f4 0%,#ffe4e4 100%);
-  border-left:4px solid #ef4444}
+/* States */
+.mc-player.my-pick{background:linear-gradient(135deg,#fef3ef,#fde8e0);border-left:4px solid var(--clay)}
+.mc-player.correct{background:linear-gradient(135deg,#edfaee,#d6f5d8);border-left:4px solid var(--court-l)}
+.mc-player.wrong{background:linear-gradient(135deg,#fff4f4,#ffe4e4);border-left:4px solid #ef4444}
 .mc-player.live-p{border-left:4px solid #f59e0b}
 
-/* Seed hidden — shown inline */
+/* Seed hidden — shown inline in name */
 .mc-seed{display:none}
-.mc-name{flex:1;font-size:15.5px;font-weight:600;color:#2a1808;
+
+/* Name */
+.mc-name{flex:1;font-size:18px;font-weight:600;color:#2a1808;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  display:flex;align-items:center;gap:6px;min-width:0}
-.mc-name-seed{font-size:11.5px;font-weight:500;color:var(--ink-l);flex-shrink:0}
-.mc-player.winner .mc-name{color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+  display:flex;align-items:center;gap:7px;min-width:0}
+.mc-name-seed{font-size:12.5px;font-weight:500;color:var(--ink-l);flex-shrink:0}
+.mc-player.winner .mc-name{color:#fff;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.25)}
 .mc-player.winner .mc-name-seed{color:rgba(255,255,255,.5)}
 .mc-player.my-pick .mc-name{color:var(--clay-d);font-weight:700}
 .mc-player.correct .mc-name{color:#155a18;font-weight:700}
 .mc-player.wrong .mc-name{color:#b91c1c;text-decoration:line-through;font-weight:400}
 .mc-player.tbd .mc-name{font-style:italic;color:var(--ink-l);font-weight:400}
 
-/* Scores — tabular, exact same width per set in both rows */
-.mc-score{font-family:var(--font-m);font-size:17px;font-weight:700;
-  color:#3a2010;letter-spacing:0;white-space:nowrap;flex-shrink:0;
+/* Score — uniform 19px, 28px per set, empty = 3×28 = 84px */
+.mc-score{font-family:var(--font-m);font-size:19px;font-weight:700;
+  color:#3a2010;white-space:nowrap;flex-shrink:0;
   display:flex;align-items:center;justify-content:flex-end;gap:0}
-.mc-score-set{display:inline-block;width:26px;text-align:center;line-height:1;
+.mc-score-set{display:inline-block;width:28px;text-align:center;line-height:1;
   font-variant-numeric:tabular-nums}
+.mc-score-empty{width:84px;min-width:84px;flex-shrink:0;display:block}
 .mc-player.winner .mc-score{color:rgba(255,255,255,.95);font-weight:800}
 .mc-player.wrong .mc-score{color:#c0392b}
 .mc-player.correct .mc-score{color:#155a18;font-weight:700}
-/* Empty placeholder — exactly same total width as a 3-set score (3×26=78px) */
-.mc-score-empty{width:78px;min-width:78px;flex-shrink:0;display:block}
 
 /* Icon */
-.mc-icon{flex-shrink:0;font-size:16px;font-weight:700;width:22px;text-align:center;
+.mc-icon{flex-shrink:0;font-size:18px;font-weight:700;width:24px;text-align:center;
   display:flex;align-items:center;justify-content:center;background:none;border-radius:0}
 .mc-icon.chk{color:var(--clay)}
 .mc-icon.ok{color:#4ade80}
 .mc-icon.x{color:#ef4444}
 .mc-player.winner .mc-icon.ok{color:rgba(255,255,255,.75)}
 
-/* Flag — 25% bigger: was 18px → now 23px */
+/* Flag — 23px everywhere */
 .mc-flag{font-size:23px;line-height:1;flex-shrink:0;width:28px;text-align:center}
 
-/* Photo */
-.mc-photo{width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:top center;
-  flex-shrink:0;background:var(--sand);border:2px solid rgba(0,0,0,.08)}
+/* Photo — 52px everywhere */
+.mc-photo{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top center;
+  flex-shrink:0;background:var(--sand);border:2px solid rgba(0,0,0,.07)}
 .mc-player.winner .mc-photo{border-color:rgba(255,255,255,.3)}
-.mc-photo-init{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--clay-p),var(--sand));
+.mc-photo-init{width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--clay-p),var(--sand));
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  font-size:15px;font-weight:800;color:var(--clay-d);border:2px solid var(--clay-p);
+  font-size:20px;font-weight:800;color:var(--clay-d);border:2px solid var(--clay-p);
   font-family:var(--font-d)}
 .mc-player.winner .mc-photo-init{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.2)}
 
-.srv{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;
-  animation:sp 1.2s ease-in-out infinite}
+.srv{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;animation:sp 1.2s ease-in-out infinite}
 @keyframes sp{0%,100%{opacity:1}50%{opacity:.2}}
-.mc-time{padding:.45rem 1rem;background:var(--sand-l);border-top:1px solid var(--sand);
-  font-size:11px;color:var(--ink-l);display:flex;align-items:center;gap:5px}
+.mc-time{padding:.5rem 1.1rem;background:var(--sand-l);border-top:1px solid var(--sand);
+  font-size:12px;color:var(--ink-l);display:flex;align-items:center;gap:5px}
 .mc.bye .mc-player.winner{opacity:.82}
-.mc-bye-row{padding:.8rem 1rem;background:var(--sand-l);border-top:1px solid var(--sand);
-  font-size:12px;font-style:italic;color:var(--ink-l);opacity:.45}
+.mc-bye-row{padding:.85rem 1.1rem;background:var(--sand-l);border-top:1px solid var(--sand);
+  font-size:13px;font-style:italic;color:var(--ink-l);opacity:.45}
 
-/* Dead pick stacked inside winner row */
-.mc-name-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+/* Dead pick */
+.mc-name-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .mc-name-stack .mc-name{flex:none}
-.mc-dead-line{font-size:10px;color:rgba(255,255,255,.45);text-decoration:line-through;
+.mc-dead-line{font-size:11px;color:rgba(255,255,255,.45);text-decoration:line-through;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400;
   display:flex;align-items:center;gap:3px}
-.mc-dead-seed{font-size:8px;font-weight:700;background:rgba(255,255,255,.12);
+.mc-dead-seed{font-size:9px;font-weight:700;background:rgba(255,255,255,.12);
   border-radius:3px;padding:0 3px;text-decoration:none}
-.mc-seed-inline{font-size:8px;font-weight:700;color:#b91c1c;background:#fee2e2;
+.mc-seed-inline{font-size:9px;font-weight:700;color:#b91c1c;background:#fee2e2;
   border-radius:3px;padding:1px 4px;margin-right:3px}
 
-/* Later rounds — scale up smoothly */
-.col-lg .mc-player{padding:.8rem 1.1rem;min-height:72px}
-.col-lg .mc-name{font-size:16.5px}
-.col-lg .mc-score{font-size:18px}
-.col-lg .mc-score-set{width:28px}
-.col-lg .mc-score-empty{width:84px;min-width:84px}
-.col-lg .mc-photo,.col-lg .mc-photo-init{width:48px;height:48px}
-.col-lg .mc-photo-init{font-size:17px}
-.col-lg .mc-flag{font-size:25px;width:30px}
-
-.col-xl .mc-player{padding:.9rem 1.2rem;min-height:80px}
-.col-xl .mc-name{font-size:18px}
-.col-xl .mc-score{font-size:20px}
-.col-xl .mc-score-set{width:30px}
-.col-xl .mc-score-empty{width:90px;min-width:90px}
-.col-xl .mc-photo,.col-xl .mc-photo-init{width:54px;height:54px}
-.col-xl .mc-photo-init{font-size:19px}
-.col-xl .mc-flag{font-size:27px;width:32px}
-
-/* Right column — don't stretch to fill parent height */
-.col-matches{flex:1;padding:.9rem;display:flex;flex-direction:column;gap:.75rem}
-.col-matches.right-col{display:flex;flex-direction:column;justify-content:space-around;
-  height:100%;box-sizing:border-box}
+/* col-lg and col-xl: no overrides — same size as base */
+.col-matches{flex:1;padding:.9rem;display:flex;flex-direction:column;gap:.8rem}
+.col-matches.right-col{position:relative}
 
 /* ── BOTTOM NAV ── */
 .bkt-nav{position:sticky;bottom:0;z-index:200;background:rgba(255,255,255,.96);
@@ -1622,8 +1601,12 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
 
   if(isBye){
     const seed=m.p1?.n!=='BYE'?m.p1:m.p2;
-    const bPhotoUrl=seed?.n?getPhoto(seed.n):null;
-    const bPhotoEl=bPhotoUrl?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n}" onerror="this.outerHTML='<div class=mc-photo-init>${getInitials(seed?.n||'')}</div>'">`:`<div class="mc-photo-init">${getInitials(seed?.n||'')}</div>`;
+    const bLivePhoto=lv.p1Photo||lv.p2Photo||'';
+    const bPhotoUrl=seed?.n?(bLivePhoto||getPhoto(seed.n)||null):null;
+    const bInitials=getInitials(seed?.n||'');
+    const bPhotoEl=bPhotoUrl
+      ?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n||''}" loading="lazy" onerror="this.outerHTML='<div class=mc-photo-init>${bInitials}</div>'">`
+      :`<div class="mc-photo-init">${bInitials}</div>`;
     const bFlag=seed?.n?`<div class="mc-flag">${getFlag(seed.n)}</div>`:'';
     h+=`<div class="mc-player winner locked">${bPhotoEl}${bFlag}<div class="mc-name">${seed?.n}${seed?.s?`<span class="mc-name-seed">(${seed.s})</span>`:''}</div></div>`;
     h+=`<div class="mc-bye-row">BYE</div>`;
@@ -1658,10 +1641,13 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const seedSpan=pl.s?`<span class="mc-name-seed">(${pl.s})</span>`:'';
       const flagEl=(!tbd&&pl.n)?`<div class="mc-flag">${getFlag(pl.n)}</div>`:'';
       const srvEl=isSrv?'<div class="srv"></div>':'';
-      const photoUrl=!tbd?getPhoto(pl.n):null;
+      // Photo priority: 1) ESPN URL from live data  2) Wikimedia map  3) initials
+      const livePhoto=!tbd?(pi===0?lv.p1Photo:lv.p2Photo)||'':null;
+      const photoUrl=!tbd?(livePhoto||getPhoto(pl.n)||null):null;
+      const initials=getInitials(pl.n);
       const photoEl=photoUrl
-        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" onerror="this.outerHTML='<div class=mc-photo-init>${getInitials(pl.n)}</div>'">`
-        :`<div class="mc-photo-init">${getInitials(pl.n)}</div>`;
+        ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" loading="lazy" onerror="this.outerHTML='<div class=mc-photo-init>${initials}</div>'">`
+        :`<div class="mc-photo-init">${initials}</div>`;
       let iconEl='';
       if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
