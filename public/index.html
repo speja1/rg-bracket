@@ -229,11 +229,14 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.my-pick .mc-name{color:var(--clay-d);font-weight:700}
 .mc-player.correct .mc-name{color:#155a18;font-weight:700}
 .mc-player.wrong .mc-name{color:#b91c1c;text-decoration:line-through;font-weight:400}
+/* Loser row (not user's pick) — just muted, no strikethrough */
+.mc-player.locked:not(.winner):not(.wrong):not(.correct):not(.my-pick):not(.tbd) .mc-name{color:var(--ink-l);font-weight:400}
 .mc-player.tbd .mc-name{font-style:italic;color:var(--ink-l);font-weight:400}
 
 /* Score — uniform 19px, 28px per set, empty = 3×28 = 84px */
 .mc-score{font-family:var(--font-m);font-size:19px;font-weight:700;
   color:#3a2010;white-space:nowrap;flex-shrink:0;
+  width:84px;min-width:84px;
   display:flex;align-items:center;justify-content:flex-end;gap:0}
 .mc-score-set{display:inline-block;width:28px;text-align:center;line-height:1;
   font-variant-numeric:tabular-nums}
@@ -242,8 +245,8 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.wrong .mc-score{color:#c0392b}
 .mc-player.correct .mc-score{color:#155a18;font-weight:700}
 
-/* Icon */
-.mc-icon{flex-shrink:0;font-size:18px;font-weight:700;width:24px;text-align:center;
+/* Icon — always 28px so it never shifts the score column */
+.mc-icon{flex-shrink:0;font-size:18px;font-weight:700;width:28px;min-width:28px;text-align:center;
   display:flex;align-items:center;justify-content:center;background:none;border-radius:0}
 .mc-icon.chk{color:var(--clay)}
 .mc-icon.ok{color:#4ade80}
@@ -1736,7 +1739,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
   if(isBye){
     const seed=m.p1?.n!=='BYE'?m.p1:m.p2;
     const bEspnUrl=lv.p1Photo||lv.p2Photo||null;
-    const bPhotoUrl=bEspnUrl||null;
+    const bPhotoUrl=bEspnUrl||getPlayerPhoto(seed?.n||'')||null;
     const bInitials=getInitials(seed?.n||'');
     const bPhotoEl=bPhotoUrl
       ?`<img class="mc-photo" src="${bPhotoUrl}" alt="${seed?.n||''}" onerror="this.style.display='none';this.parentElement.querySelector('.mc-photo-init').style.display='flex'">`+
@@ -1776,9 +1779,9 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const seedSpan=pl.s?`<span class="mc-name-seed">(${pl.s})</span>`:'';
       const flagEl=(!tbd&&pl.n)?`<div class="mc-flag">${getFlag(pl.n)}</div>`:'';
       const srvEl=isSrv?'<div class="srv"></div>':'';
-      // ESPN from live data first (reliable when available), Wikimedia backup, then initials
+      // ESPN from live data first, then scan all live matches for this player, then initials
       const espnUrl=!tbd?((pi===0?lv.p1Photo:lv.p2Photo)||null):null;
-      const photoUrl=espnUrl||null;
+      const photoUrl=espnUrl||(!tbd?getPlayerPhoto(pl.n):null)||null;
       const initials=getInitials(pl.n);
       const isWinnerRow=hasDeadPick||(isW&&done);
       const initCls=isWinnerRow?'mc-photo-init mc-photo-init-w':'mc-photo-init';
@@ -1816,15 +1819,25 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       }
 
       if(hasDeadPick){
-        // Show: real winner row (green) with dead pick name crossed out below it
+        // 1. Show user's wrong pick first — crossed out with ✗
+        const dpPhoto=getPlayerPhoto(dp.n);
+        const dpInitials=getInitials(dp.n);
+        const dpPhotoEl=dpPhoto
+          ?`<img class="mc-photo" src="${dpPhoto}" alt="${dp.n}" onerror="this.style.display='none';this.parentElement.querySelector('.mc-photo-init').style.display='flex'">`+
+           `<div class="mc-photo-init" style="display:none">${dpInitials}</div>`
+          :`<div class="mc-photo-init">${dpInitials}</div>`;
         const dpFlag=getFlag(dp.n);
-        const dpSd=dp.s?`<span class="mc-dead-seed">${dp.s}</span>`:'';
+        const dpSeed=dp.s?`<span class="mc-name-seed">(${dp.s})</span>`:'';
+        h+=`<div class="mc-player wrong locked">
+          ${dpPhotoEl}<div class="mc-flag">${dpFlag}</div>
+          <div class="mc-name">${dp.n}${dpSeed}</div>
+          <div class="mc-score-empty"></div>
+          <div class="mc-icon x">✗</div>
+        </div>`;
+        // 2. Show real winner below in green
         h+=`<div class="${rowCls}" ${click}>
           ${photoEl}${flagEl}${srvEl}
-          <div class="mc-name-stack">
-            <div class="mc-name">${pl.n}${seedSpan}</div>
-            <div class="mc-dead-line">${dpFlag} ${dpSd}${dp.n}</div>
-          </div>
+          <div class="mc-name">${pl.n}${seedSpan}</div>
           ${rightSlot}${iconEl}
         </div>`;
       } else {
