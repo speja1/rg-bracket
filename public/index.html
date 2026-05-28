@@ -1695,8 +1695,10 @@ function renderBracket(){
   requestAnimationFrame(()=>{
     if(qsi===0){
       const q=QUADRANTS[S.quadrant];
-      drawConnectorsFiltered(0,1,vp,q);
-      drawConnectorsFiltered(1,2,vp,q);
+      // left→mid: R128(left) feeds R64(mid)
+      drawConnectorsFiltered(0,1,vp,q,'left','mid');
+      // mid→right: R64(mid) feeds R32(right)
+      drawConnectorsFiltered(1,2,vp,q,'mid','right');
     } else {
       drawConnectors(3,4,vp);
       drawConnectors(4,5,vp);
@@ -1736,8 +1738,7 @@ function renderColumnFiltered(rndIdx,vp,side,quadrant){
   // Right column uses space-around to stagger cards between left column feeders
   // but height is controlled by JS connector drawing, not CSS flex stretch
   const matchesStyle=side==='right'||side==='mid'?'position:relative;':'';
-  const matchesClass=side==='right'||side==='mid'?'col-matches right-col':'col-matches';
-  const filteredDone=filteredMatches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&(vp[m.id]||S.live[m.id]?.winner)).length;
+  const matchesClass=side==='right'||side==='mid'?'col-matches right-col':'col-matches';  const filteredDone=filteredMatches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&(vp[m.id]||S.live[m.id]?.winner)).length;
   const filteredTotal=filteredMatches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')).length;
 
   let h=`<div class="col-wrap ${sz}" id="col-${side}-${rndIdx}">
@@ -1903,7 +1904,9 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
 }
 
 // Quadrant-aware connector drawing
-function drawConnectorsFiltered(leftIdx,rightIdx,vp,quadrant){
+function drawConnectorsFiltered(leftIdx,rightIdx,vp,quadrant,leftSide,rightSide){
+  leftSide=leftSide||'left';
+  rightSide=rightSide||'right';
   const svg=document.getElementById(`svg-${leftIdx}`);
   const gutter=document.getElementById(`gutter-${leftIdx}`);
   if(!svg||!gutter)return;
@@ -1916,8 +1919,8 @@ function drawConnectorsFiltered(leftIdx,rightIdx,vp,quadrant){
 
   svg.innerHTML='';
   const gr=gutter.getBoundingClientRect();
-  const leftMatchesContainer=document.getElementById(`matches-left-${leftIdx}`);
-  const rightMatchesContainer=document.getElementById(`matches-right-${rightIdx}`);
+  const leftMatchesContainer=document.getElementById(`matches-${leftSide}-${leftIdx}`);
+  const rightMatchesContainer=document.getElementById(`matches-${rightSide}-${rightIdx}`);
   if(!leftMatchesContainer||!rightMatchesContainer)return;
 
   const leftCards=leftMatches.map(m=>document.getElementById(`mc-${m.id}`));
@@ -2225,8 +2228,8 @@ function pick(mid,name){
     const allPickable=S.rounds.reduce((acc,rnd)=>acc+rnd.matches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')).length,0);
     np.textContent=`${Object.keys(S.picks).length}/${allPickable} total picks`;
   }
-  drawConnectorsFiltered(0,1,vp,q);
-  drawConnectorsFiltered(1,2,vp,q);
+  drawConnectorsFiltered(0,1,vp,q,'left','mid');
+  drawConnectorsFiltered(1,2,vp,q,'mid','right');
   renderMinimap();
   requestAnimationFrame(()=>window.scrollTo(0,scrollY));
   debounceSave();
