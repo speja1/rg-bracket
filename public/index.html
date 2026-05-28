@@ -1759,13 +1759,15 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const sets=fmtSets(pi===0?lv.p1Sets:lv.p2Sets);
       const showSets=(done||isLiveM)&&sets;
 
-      // Dead pick: user picked someone who lost a prior round — show even if this match not yet played
+      // Dead pick: user picked someone who lost a prior round — dp is set by buildDisplay
+      // Show whenever dp exists for this slot (p1 slot has deadPick1, p2 slot has deadPick2)
       const dp=pi===0?m.deadPick1:m.deadPick2;
-      const hasDeadPick=!!(dp&&!tbd&&isW);
+      const hasDeadPick=!!(dp&&!tbd);
 
       let rowCls='mc-player';
       if(tbd)rowCls+=' tbd locked';
-      else if(hasDeadPick)rowCls+=' winner locked'; // real winner still green
+      else if(hasDeadPick&&isW&&done)rowCls+=' winner locked';
+      else if(hasDeadPick)rowCls+=' locked'; // real player shown but match not yet done
       else if(isW&&done)rowCls+=' winner locked';
       else if(isCorr)rowCls+=' correct locked';
       else if(isWrong)rowCls+=' wrong locked';
@@ -1792,7 +1794,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
       else if(isMy&&!done)iconEl='<div class="mc-icon chk">✓</div>';
-      else if(hasDeadPick)iconEl='<div class="mc-icon ok">✓</div>';
+      else if(hasDeadPick&&isW&&done)iconEl='<div class="mc-icon ok">✓</div>';
 
       // Get odds for this player
       let oddsEl='';

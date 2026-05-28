@@ -154,10 +154,20 @@ async function fetchDate(date){
           // Filter out qualifying rounds — only keep main draw matches
           const roundName=((comp.round&&comp.round.displayName)||grp?.grouping?.displayName||'').toLowerCase();
           if(roundName.includes('qualify')||roundName.includes('q1')||roundName.includes('q2')||roundName.includes('q3'))continue;
+          // Extract ESPN headshot URL from athlete player card link
+          function espnPhoto(athlete){
+            if(!athlete)return'';
+            const link=(athlete.links||[]).find(l=>(l.href||'').includes('/player/_/id/'));
+            if(!link)return'';
+            const m=(link.href||'').match(/\/player\/_\/id\/(\d+)/);
+            return m?`https://a.espncdn.com/i/headshots/tennis/players/full/${m[1]}.png`:'';
+          }
           out.push({
             espnId:comp.id,
             p1Short:(c1.athlete&&c1.athlete.shortName)||'',p1Full:(c1.athlete&&c1.athlete.fullName)||'',
             p2Short:(c2.athlete&&c2.athlete.shortName)||'',p2Full:(c2.athlete&&c2.athlete.fullName)||'',
+            p1Photo:espnPhoto(c1.athlete),
+            p2Photo:espnPhoto(c2.athlete),
             winnerShort:winnerComp?(winnerComp.athlete&&winnerComp.athlete.shortName)||null:null,
             winnerFull:winnerComp?(winnerComp.athlete&&winnerComp.athlete.fullName)||null:null,
             c1Score:c1.score||'',c2Score:c2.score||'',c1Sets,c2Sets,
@@ -274,9 +284,12 @@ async function main(){
       }
       const p1Sets=p1IsC1?(em.c1Sets.length?em.c1Sets:parseScore(em.c1Score)):(em.c2Sets.length?em.c2Sets:parseScore(em.c2Score));
       const p2Sets=p1IsC1?(em.c2Sets.length?em.c2Sets:parseScore(em.c2Score)):(em.c1Sets.length?em.c1Sets:parseScore(em.c1Score));
+      const p1Photo=p1IsC1?em.p1Photo:em.p2Photo;
+      const p2Photo=p1IsC1?em.p2Photo:em.p1Photo;
       live[slot.id]={p1:slot.p1,p2:slot.p2,winner,state:em.state,completed:em.completed,live:em.live,scheduled:em.scheduled,
         p1Sets,p2Sets,serving:em.serving==='p1'?(p1IsC1?'p1':'p2'):em.serving==='p2'?(p1IsC1?'p2':'p1'):null,
-        scheduledTime:em.scheduledTime,timeValid:em.timeValid,round:roundKey,updatedAt:Date.now()};
+        scheduledTime:em.scheduledTime,timeValid:em.timeValid,round:roundKey,updatedAt:Date.now(),
+        p1Photo:p1Photo||'',p2Photo:p2Photo||''};
       console.log(`  ✓ ${roundKey} ${slot.id}: ${slot.p1} vs ${slot.p2} → ${winner||'TBD (scheduled)'}`);
     }
   }
