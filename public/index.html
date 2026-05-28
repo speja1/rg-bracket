@@ -577,7 +577,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .ticker-card-player .tk-name{font-size:12px;font-weight:600;color:#d4c0a8;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
 .ticker-card-player .tk-name.winner{color:#fff}
-.ticker-card-player .tk-name.loser{color:#555;text-decoration:line-through}
+.ticker-card-player .tk-name.loser{color:#555}
 .ticker-card-player .tk-score{font-family:var(--font-m);font-size:12px;font-weight:700;
   color:#fff;flex-shrink:0;white-space:nowrap}
 .ticker-card-player .tk-srv{width:5px;height:5px;border-radius:50%;background:#f59e0b;
@@ -1759,10 +1759,9 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const sets=fmtSets(pi===0?lv.p1Sets:lv.p2Sets);
       const showSets=(done||isLiveM)&&sets;
 
-      // Dead pick for this slot: user picked someone who lost a prior round
-      // They appear in this slot (strikethrough), real winner shown in their own row
+      // Dead pick: user picked someone who lost a prior round — show even if this match not yet played
       const dp=pi===0?m.deadPick1:m.deadPick2;
-      const hasDeadPick=!!(dp&&!tbd&&isW&&done);
+      const hasDeadPick=!!(dp&&!tbd&&isW);
 
       let rowCls='mc-player';
       if(tbd)rowCls+=' tbd locked';
@@ -1789,11 +1788,10 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
         ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" onerror="this.style.display='none';this.parentElement.querySelector('.mc-photo-init').style.display='flex'">`+
          `<div class="${initCls}" style="display:none">${initials}</div>`
         :`<div class="${initCls}">${initials}</div>`;
-      let iconEl='';
+      let iconEl='<div class="mc-icon"></div>'; // always 28px placeholder
       if(isCorr)iconEl='<div class="mc-icon ok">✓</div>';
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
       else if(isMy&&!done)iconEl='<div class="mc-icon chk">✓</div>';
-      // Winner row with a dead pick still gets a ✓
       else if(hasDeadPick)iconEl='<div class="mc-icon ok">✓</div>';
 
       // Get odds for this player
@@ -1833,8 +1831,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
           <div class="mc-name">${dp.n}${dpSeed}</div>
           <div class="mc-score-empty"></div>
           <div class="mc-icon x">✗</div>
-        </div>`;
-        // 2. Show real winner below in green
+        </div>`;        // 2. Show real winner below in green
         h+=`<div class="${rowCls}" ${click}>
           ${photoEl}${flagEl}${srvEl}
           <div class="mc-name">${pl.n}${seedSpan}</div>
