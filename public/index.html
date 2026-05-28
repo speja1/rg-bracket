@@ -127,7 +127,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 /* ── BRACKET CHROME ── */
 .bkt-topbar{display:flex;align-items:center;justify-content:space-between;
   padding:.7rem 1.5rem;background:var(--white);border-bottom:1px solid var(--sand);
-  gap:1rem;flex-wrap:wrap;position:sticky;top:100px;z-index:190;
+  gap:1rem;flex-wrap:wrap;position:sticky;top:var(--nav-h,100px);z-index:190;
   box-shadow:0 2px 12px rgba(22,12,6,.05)}
 .bkt-user{font-family:var(--font-d);font-size:20px;font-weight:700;font-style:italic;color:var(--ink)}
 .bkt-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -149,7 +149,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 /* ── STEPPER ── */
 .stepper{display:flex;align-items:center;overflow-x:auto;padding:.6rem 1.5rem;
   background:var(--white);border-bottom:1px solid var(--sand);
-  position:sticky;top:100px;z-index:191;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  position:sticky;top:var(--nav-h,100px);z-index:191;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .step{display:flex;align-items:center;flex-shrink:0}
 .step-btn{display:flex;flex-direction:column;align-items:center;gap:4px;
   padding:.35rem .9rem;border:none;background:none;cursor:pointer;
@@ -559,8 +559,8 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .ticker-wrap{position:fixed;top:100px;left:0;right:0;z-index:298;
   background:#13100d;border-bottom:2px solid #2a2218}
 .tracker-grid{display:grid;grid-template-columns:repeat(10,1fr);
-  gap:5px;padding:6px 10px 5px}
-.tracker-grid+.tracker-grid{padding-top:0;padding-bottom:6px}
+  gap:4px;padding:5px 8px 4px}
+.tracker-grid+.tracker-grid{padding-top:0;padding-bottom:5px}
 
 /* Player card */
 .player-card{border-radius:8px;padding:7px 10px;cursor:pointer;
@@ -2433,9 +2433,9 @@ function renderTicker(){
     const initials=getInitials(playerName);
     const matchId=lm?.id||nm?.id||'';
 
-    // Photo element
+    // Photo element — safe onerror using data attribute
     const photoEl=photo
-      ?`<img class="player-card-photo" src="${photo}" alt="${playerName}" onerror="this.outerHTML='<div class=player-card-photo-init>${initials}</div>'">`
+      ?`<img class="player-card-photo" src="${photo}" alt="${playerName}" onerror="this.style.display='none'">`
       :`<div class="player-card-photo-init">${initials}</div>`;
 
     // Card state class
@@ -2522,8 +2522,13 @@ function renderTicker(){
   const root=document.getElementById('root');
   if(root){
     root.classList.add('has-ticker-1');
-    const h=wrap.getBoundingClientRect().height||172;
-    root.style.marginTop=(100+h)+'px';
+    requestAnimationFrame(()=>{
+      const h=wrap.getBoundingClientRect().height;
+      const total=100+h;
+      root.style.marginTop=total+'px';
+      // Update sticky top for bracket topbar and stepper
+      document.documentElement.style.setProperty('--nav-h', total+'px');
+    });
   }
 }
 
