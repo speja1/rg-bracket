@@ -57,8 +57,8 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .tab:hover:not(.active){color:rgba(255,255,255,.72);background:rgba(255,255,255,.04)}
 
 #root{margin-top:100px;min-height:calc(100vh - 100px)}
-#root.has-ticker-1{margin-top:272px}
-#root.has-ticker-2{margin-top:272px}
+
+
 
 /* ── LOADING ── */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:14px}
@@ -127,7 +127,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 /* ── BRACKET CHROME ── */
 .bkt-topbar{display:flex;align-items:center;justify-content:space-between;
   padding:.7rem 1.5rem;background:var(--white);border-bottom:1px solid var(--sand);
-  gap:1rem;flex-wrap:wrap;position:sticky;top:var(--nav-h,100px);z-index:190;
+  gap:1rem;flex-wrap:wrap;position:sticky;top:100px;z-index:190;
   box-shadow:0 2px 12px rgba(22,12,6,.05)}
 .bkt-user{font-family:var(--font-d);font-size:20px;font-weight:700;font-style:italic;color:var(--ink)}
 .bkt-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -149,7 +149,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 /* ── STEPPER ── */
 .stepper{display:flex;align-items:center;overflow-x:auto;padding:.6rem 1.5rem;
   background:var(--white);border-bottom:1px solid var(--sand);
-  position:sticky;top:var(--nav-h,100px);z-index:191;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  position:sticky;top:100px;z-index:191;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .step{display:flex;align-items:center;flex-shrink:0}
 .step-btn{display:flex;flex-direction:column;align-items:center;gap:4px;
   padding:.35rem .9rem;border:none;background:none;cursor:pointer;
@@ -310,8 +310,6 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 
   /* Root offset */
   #root{margin-top:88px;min-height:calc(100vh - 88px)}
-  #root.has-ticker-1{margin-top:160px}
-  #root.has-ticker-2{margin-top:232px}
 
   /* Bracket topbar — stack on mobile */
   .bkt-topbar{flex-direction:column;align-items:flex-start;gap:.5rem;padding:.6rem 1rem;top:88px}
@@ -368,12 +366,6 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   .lb-champ-flag{font-size:12px}
   .lb-champ-cell{gap:4px}
   .lb-rank.medal{font-size:14px}
-
-  .ticker-wrap{top:88px}
-  .tracker-grid{grid-template-columns:repeat(5,1fr);gap:3px;padding:4px 6px 3px}
-  .player-card{padding:5px 7px}
-  .player-card-name{font-size:9.5px}
-  .player-card-result,.player-card-next{font-size:8px}
 
   /* Minimap — smaller, higher up */
   #minimap-nav{bottom:80px;right:10px;width:110px;padding:8px}
@@ -555,64 +547,6 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.winner .mc-odds{display:none}
 .mc-flag{font-size:14px;line-height:1;flex-shrink:0;width:20px;text-align:center}
 .mc-court{font-size:8px;font-weight:700;letter-spacing:.6px;color:var(--ink-l);background:var(--sand);border-radius:var(--r-pill);padding:1px 6px;flex-shrink:0}
-/* ── PLAYER TRACKER BAR — 2 rows of 10, no scroll ── */
-.ticker-wrap{position:fixed;top:100px;left:0;right:0;z-index:298;
-  background:#13100d;border-bottom:2px solid #2a2218}
-.tracker-grid{display:grid;grid-template-columns:repeat(10,1fr);
-  gap:4px;padding:5px 8px 4px}
-.tracker-grid+.tracker-grid{padding-top:0;padding-bottom:5px}
-
-/* Player card */
-.player-card{border-radius:8px;padding:7px 10px;cursor:pointer;
-  transition:border-color .15s,background .15s;
-  display:flex;flex-direction:column;gap:3px;position:relative;min-width:0}
-.player-card.alive{background:#182016;border:1px solid #243020}
-.player-card.alive:hover{border-color:#4ade80;background:#1c2820}
-.player-card.live{background:#141e14;border:1.5px solid #3a6035}
-.player-card.live:hover{border-color:#4ade80}
-.player-card.out{background:#1a1410;border:1px solid #28201a;opacity:.72}
-.player-card.out:hover{border-color:#c4503e}
-
-/* Live pulse */
-.player-card-live-dot{position:absolute;top:6px;right:7px;
-  width:5px;height:5px;border-radius:50%;background:#4ade80;
-  animation:lp 1.2s ease-in-out infinite}
-
-/* Row 1: photo + flag + name + seed */
-.player-card-top{display:flex;align-items:center;gap:4px;min-width:0}
-.player-card-photo{width:22px;height:22px;border-radius:50%;object-fit:cover;
-  object-position:top;flex-shrink:0;border:1.5px solid rgba(255,255,255,.1)}
-.player-card-photo-init{width:22px;height:22px;border-radius:50%;background:#2a2218;
-  display:flex;align-items:center;justify-content:center;
-  font-size:8px;font-weight:800;color:#a09080;flex-shrink:0;font-family:var(--font-d)}
-.player-card-flag{font-size:11px;flex-shrink:0}
-.player-card-name{font-size:11.5px;font-weight:700;color:#e0cdb8;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
-.player-card.out .player-card-name{text-decoration:line-through;color:#5a4a3a}
-.player-card.live .player-card-name{color:#b8e8b0}
-.player-card-seed{font-size:8px;font-weight:800;color:#555;
-  background:#1e1c18;border-radius:3px;padding:1px 3px;flex-shrink:0}
-
-/* Row 2: last result */
-.player-card-result{display:flex;align-items:center;gap:3px;min-width:0;
-  font-size:9.5px;line-height:1.2}
-.tk-beat-lbl{color:#4ade80;font-weight:700;font-size:8px;flex-shrink:0}
-.tk-lost-lbl{color:#c0392b;font-weight:700;font-size:8px;flex-shrink:0}
-.tk-live-lbl{color:#f59e0b;font-weight:800;font-size:8px;flex-shrink:0;
-  animation:lp 1s ease-in-out infinite}
-.tk-result-opp{color:#8a7a68;font-size:9.5px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
-.tk-result-score{font-family:var(--font-m);color:#6a5a48;font-size:9px;
-  flex-shrink:0;white-space:nowrap}
-
-/* Row 3: next match */
-.player-card-next{display:flex;align-items:center;gap:3px;min-width:0;
-  font-size:9px;line-height:1.2}
-.tk-next-lbl{color:#4a6a88;font-weight:700;font-size:8px;flex-shrink:0}
-.tk-next-opp{color:#7a8a9a;font-size:9px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
-.tk-next-time{color:#3a6888;font-size:8.5px;font-weight:600;
-  flex-shrink:0;white-space:nowrap}
 /* ── TIEBREAKER MODAL ── */
 .tb-overlay{position:fixed;inset:0;background:rgba(22,12,6,.55);backdrop-filter:blur(6px);
   z-index:1100;display:flex;align-items:center;justify-content:center;padding:1.5rem;
@@ -1111,7 +1045,7 @@ function showApp(){
   const hash=location.hash.replace('#','');
   if(hash&&tabs.includes(hash)&&S.tab==='bracket')S.tab=hash;
   document.getElementById('tabs-inner').innerHTML=tabs.map((t,i)=>`<div class="tab ${S.tab===t?'active':''}" id="tab-${t}" onclick="setTab('${t}')">${labels[i]}</div>`).join('');
-  renderTicker();
+
   renderTab();
 }
 function setTab(t){
@@ -1121,9 +1055,6 @@ function setTab(t){
   document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${t}`));
   // Remove minimap if leaving bracket tab
   if(t!=='bracket'){const m=document.getElementById('minimap-nav');if(m)m.remove();}
-  // Remove ticker from non-bracket tabs
-  const ticker=document.getElementById('ticker-wrap');
-  if(ticker)ticker.style.display=t==='bracket'?'':'none';
   renderTab();
 }
 // Handle browser back/forward
@@ -2378,160 +2309,6 @@ function jumpToMatch(matchId){
 }
 
 // ── PLAYER TRACKER BAR ──────────────────────────────────────────────────────
-const SEEDED_PLAYERS=[
-  {s:1,n:'Sinner J.'},{s:2,n:'Zverev A.'},{s:3,n:'Djokovic N.'},{s:4,n:'Auger-Aliassime F.'},
-  {s:5,n:'Shelton B.'},{s:6,n:'Medvedev D.'},{s:7,n:'De Minaur A.'},{s:8,n:'Ruud C.'},
-  {s:9,n:'Bublik A.'},{s:10,n:'Cobolli F.'},{s:11,n:'Rublev A.'},{s:12,n:'Khachanov K.'},
-  {s:13,n:'Mensik J.'},{s:14,n:'Darderi L.'},{s:15,n:'Tien L.'},{s:16,n:'Vacherot V.'},
-  {s:17,n:'Fritz T.'},{s:18,n:'Paul T.'},{s:19,n:'Tiafoe F.'},{s:20,n:'Norrie C.'},
-];
-
-function renderTicker(){
-  const old=document.getElementById('ticker-wrap');
-  if(old)old.remove();
-  document.getElementById('root')?.classList.remove('has-ticker-1','has-ticker-2');
-  if(!S.rounds||!S.rounds.length)return;
-
-  function getPlayerStatus(playerName){
-    let lastMatch=null,nextMatch=null,isLive=false;
-    for(let ri=0;ri<S.rounds.length;ri++){
-      for(const m of S.rounds[ri].matches){
-        const isP1=m.p1?.n===playerName,isP2=m.p2?.n===playerName;
-        if(!isP1&&!isP2)continue;
-        const lv=S.live[m.id]||{};
-        const opp=isP1?(m.p2?.n||'TBD'):(m.p1?.n||'TBD');
-        if(opp==='TBD'||opp==='BYE')continue;
-        if(lv.live&&!lv.completed){
-          isLive=true;
-          const mySets=isP1?lv.p1Sets:lv.p2Sets;
-          const oppSets=isP1?lv.p2Sets:lv.p1Sets;
-          lastMatch={id:m.id,opponent:opp,won:null,live:true,
-            myScore:(mySets||[]).map(s=>s.mine).join(' '),
-            oppScore:(oppSets||[]).map(s=>s.mine).join(' ')};
-        } else if(lv.winner){
-          const won=lv.winner===playerName;
-          const mySets=isP1?lv.p1Sets:lv.p2Sets;
-          const oppSets=isP1?lv.p2Sets:lv.p1Sets;
-          lastMatch={id:m.id,opponent:opp,won,
-            myScore:(mySets||[]).map(s=>s.mine).join(' '),
-            oppScore:(oppSets||[]).map(s=>s.mine).join(' ')};
-        } else if(!lv.winner&&!lv.live){
-          if(!nextMatch)nextMatch={id:m.id,opponent:opp,scheduledTime:lv.scheduledTime||null};
-        }
-      }
-      if(isLive)break;
-    }
-    const isAlive=isLive||lastMatch?.live||lastMatch?.won!==false||lastMatch===null;
-    return{lastMatch,nextMatch,isAlive,isLive};
-  }
-
-  function buildCard(seed,playerName){
-    const st=getPlayerStatus(playerName);
-    const {lastMatch:lm,nextMatch:nm,isAlive,isLive}=st;
-    const photo=getPlayerPhoto(playerName);
-    const flag=getFlag(playerName);
-    const initials=getInitials(playerName);
-    const matchId=lm?.id||nm?.id||'';
-
-    // Photo element — safe onerror using data attribute
-    const photoEl=photo
-      ?`<img class="player-card-photo" src="${photo}" alt="${playerName}" onerror="this.style.display='none'">`
-      :`<div class="player-card-photo-init">${initials}</div>`;
-
-    // Card state class
-    const cardCls=isLive?'player-card live':isAlive?'player-card alive':'player-card out';
-    const liveDot=isLive?'<div class="player-card-live-dot"></div>':'';
-    const click=matchId?`onclick="jumpToMatch('${matchId}')"`:''
-
-    // Row 1: photo + flag + name + seed
-    const topRow=`<div class="player-card-top">
-      ${photoEl}
-      <span class="player-card-flag">${flag}</span>
-      <span class="player-card-name">${playerName}</span>
-      <span class="player-card-seed">${seed}</span>
-    </div>`;
-
-    // Row 2: last result with score
-    let resultRow='';
-    if(isLive&&lm){
-      const oppFlag=getFlag(lm.opponent);
-      resultRow=`<div class="player-card-result">
-        <span class="tk-live-lbl">● LIVE</span>
-        <span class="tk-opp-flag">${oppFlag}</span>
-        <span class="tk-result-opp">${lm.opponent}</span>
-        <span class="tk-result-score">${lm.myScore||'0'}·${lm.oppScore||'0'}</span>
-      </div>`;
-    } else if(lm&&lm.won===true){
-      const oppFlag=getFlag(lm.opponent);
-      const scoreStr=lm.myScore&&lm.oppScore?` ${lm.myScore}–${lm.oppScore}`:'';
-      resultRow=`<div class="player-card-result">
-        <span class="tk-beat-lbl">WON</span>
-        <span class="tk-opp-flag">${oppFlag}</span>
-        <span class="tk-result-opp">${lm.opponent}</span>
-        <span class="tk-result-score">${scoreStr}</span>
-      </div>`;
-    } else if(lm&&lm.won===false){
-      const oppFlag=getFlag(lm.opponent);
-      const scoreStr=lm.oppScore&&lm.myScore?` ${lm.myScore}–${lm.oppScore}`:'';
-      resultRow=`<div class="player-card-result">
-        <span class="tk-lost-lbl">OUT</span>
-        <span class="tk-opp-flag">${oppFlag}</span>
-        <span class="tk-result-opp">${lm.opponent}</span>
-        <span class="tk-result-score">${scoreStr}</span>
-      </div>`;
-    } else {
-      resultRow=`<div class="player-card-result">
-        <span class="tk-next-lbl">R1</span>
-        <span class="tk-result-opp">Not yet played</span>
-      </div>`;
-    }
-
-    // Row 3: next match
-    let nextRow='';
-    if(!isLive&&isAlive&&nm&&nm.opponent&&nm.opponent!=='TBD'){
-      const nFlag=getFlag(nm.opponent);
-      const timeStr=nm.scheduledTime?formatMatchTime(nm.scheduledTime):'';
-      nextRow=`<div class="player-card-next">
-        <span class="tk-next-lbl">NEXT</span>
-        <span class="tk-opp-flag">${nFlag}</span>
-        <span class="tk-next-opp">${nm.opponent}</span>
-        ${timeStr?`<span class="tk-next-time">${timeStr}</span>`:''}
-      </div>`;
-    } else if(!isLive&&isAlive&&!nm){
-      nextRow=`<div class="player-card-next"><span class="tk-next-lbl">NEXT</span><span class="tk-next-opp">TBD</span></div>`;
-    }
-
-    return `<div class="${cardCls}" ${click}>${liveDot}${topRow}${resultRow}${nextRow}</div>`;
-  }
-
-  // Build 20 cards split into two rows of 10
-  const top10=SEEDED_PLAYERS.slice(0,10);
-  const bot10=SEEDED_PLAYERS.slice(10,20);
-
-  const row1=top10.map(({s,n})=>buildCard(s,n)).join('');
-  const row2=bot10.map(({s,n})=>buildCard(s,n)).join('');
-
-  const wrap=document.createElement('div');
-  wrap.id='ticker-wrap';
-  wrap.className='ticker-wrap';
-  wrap.innerHTML=`
-    <div class="tracker-grid">${row1}</div>
-    <div class="tracker-grid">${row2}</div>`;
-  document.body.appendChild(wrap);
-
-  const root=document.getElementById('root');
-  if(root){
-    root.classList.add('has-ticker-1');
-    requestAnimationFrame(()=>{
-      const h=wrap.getBoundingClientRect().height;
-      const total=100+h;
-      root.style.marginTop=total+'px';
-      // Update sticky top for bracket topbar and stepper
-      document.documentElement.style.setProperty('--nav-h', total+'px');
-    });
-  }
-}
-
 // ── TIEBREAKER ────────────────────────────────────────────────────────────────
 function openTiebreaker(){
   let ov=document.getElementById('tb-overlay');
