@@ -338,10 +338,43 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.winner .mc-dead-name{color:rgba(255,255,255,.4)}
 .mc-player.winner .mc-dead-arrow{color:rgba(255,255,255,.3)}
 
-/* col-lg and col-xl: no overrides — same size as base */
+/* col-sm: compact for R128/R64/R32 on 3-column screen */
+.col-sm .mc-player{padding:.45rem .7rem;min-height:48px;gap:.5rem}
+.col-sm .mc-name{font-size:13px}
+.col-sm .mc-name-seed{font-size:10px}
+.col-sm .mc-photo,.col-sm .mc-photo-init{width:36px;height:36px;font-size:13px}
+.col-sm .mc-flag{font-size:17px;width:22px}
+.col-sm .mc-score{font-size:14px}
+.col-sm .mc-score-set{width:21px}
+.col-sm .mc-score-empty{width:63px;min-width:63px}
+.col-sm .mc-icon{font-size:14px;width:22px;min-width:22px}
+.col-sm .mc-strip{padding:.35rem .7rem}
+.col-sm .mc-num{font-size:8px}
+.col-sm .mc-time{font-size:10px;padding:.35rem .7rem}
+.col-sm .col-header{padding:.6rem .9rem .5rem}
+.col-sm .col-rnd-title{font-size:18px}
+.col-sm .col-matches{padding:.55rem;gap:.55rem}
+.col-sm .mc-dead-name{font-size:11px}
+.col-sm .mc-dead-arrow{font-size:11px}
+.col-sm .mc-name-text{font-size:13px}
+
+/* col-lg: R16/QF on 4-column screen — same as base */
+/* col-xl: SF/Final on 4-column screen — bigger */
+.col-xl .mc-player{padding:1rem 1.1rem;min-height:86px}
+.col-xl .mc-name{font-size:19px}
+.col-xl .mc-photo,.col-xl .mc-photo-init{width:58px;height:58px;font-size:22px}
+.col-xl .mc-photo-init{font-size:22px}
+.col-xl .mc-flag{font-size:27px;width:32px}
+.col-xl .mc-score{font-size:21px}
+.col-xl .mc-score-set{width:30px}
+.col-xl .mc-score-empty{width:90px;min-width:90px}
+.col-xl .mc-icon{font-size:20px;width:30px;min-width:30px}
+.col-xl .col-header{padding:.9rem 1.2rem .7rem}
+.col-xl .col-rnd-title{font-size:28px}
+.col-xl .col-matches{padding:1rem;gap:1rem}
 .col-matches{flex:1;padding:.9rem;display:flex;flex-direction:column;gap:.8rem}
 .col-matches.right-col{position:relative}
-/* Locked bracket visual */
+/* Bracket locked visual */
 .bracket-locked-mode .mc-strip{position:relative}
 .bracket-locked-mode .mc-strip::after{content:'🔒';position:absolute;right:36px;top:50%;transform:translateY(-50%);font-size:9px;opacity:.3}
 
@@ -1597,45 +1630,46 @@ function renderBracket(){
     </div>
   </div>`;
 
-  // Quadrant round stepper (within quadrant: R128→R64, R64→R32, R32→R16, etc.)
-  // Each quadrant has 3 pair-of-rounds screens (showing 2 rounds at once):
-  // screen 0: rounds 0+1 (R128/R64→R64/R32), screen 1: rounds 2+3 (R32/R16), screen 2: rounds 4+5+6 (QF/SF/F)
-  const quadScreens=[[0,1],[2,3],[4,5]];// [leftRoundIdx, rightRoundIdx] within full rounds array
+  // Screen 0: R128 + R64 + R32 (3 compact columns, quadrant-filtered)
+  // Screen 1: R16 + QF + SF + Final (4 columns, normal→large, all quadrants)
+  const quadScreens=[[0,1,2],[3,4,5,6]];
   const qsi=Math.min(S.quadrantRndIdx,quadScreens.length-1);
-  const[leftIdx,rightIdx]=quadScreens[qsi];
-  const stepLabels=[['R128','R64'],['R32','R16'],['QF + SF + Final']];
+  const stepLabels=[['R128','R64','R32'],['R16','QF','SF','Final']];
   const stepHTML=stepLabels.map((lbl,i)=>{
     const isDone=i<qsi;
     const isCurr=i===qsi;
     return `<div class="step">
       <button class="step-btn ${isDone?'done':isCurr?'active':''}" onclick="jumpToQRnd(${i})">
         <div class="step-pip">${isDone?'✓':i+1}</div>
-        <div class="step-lbl">${Array.isArray(lbl)?lbl.join('→'):lbl}</div>
+        <div class="step-lbl">${lbl.join('→')}</div>
       </button>
       ${i<stepLabels.length-1?'<div class="step-arr">›</div>':''}
     </div>`;
   }).join('');
   html+=`<div class="stepper" id="stepper">${stepHTML}</div>`;
 
-  // Main bracket view — for screen 2 (QF+SF+F) render all 3 final rounds across quadrants
-  if(qsi===2){
-    // Show QF, SF, Final as 3 columns
-    html+=`<div class="bkt-viewport" id="bkt-viewport" style="opacity:1"><div class="bkt-screen" id="bkt-screen">`;
-    html+=renderColumnFiltered(4,vp,'left',null);   // QF (8 matches)
-    html+=renderGutter(4);
-    html+=renderColumnFiltered(5,vp,'mid',null);    // SF (4 matches)
-    html+=renderGutter(5);
-    html+=renderColumnFiltered(6,vp,'right',null);  // Final (2 matches)
-    html+=`</div></div>`;
-  } else {
-    // Quadrant-filtered view: only show matches belonging to active quadrant
+  html+=`<div class="bkt-viewport" id="bkt-viewport" style="opacity:1"><div class="bkt-screen" id="bkt-screen">`;
+
+  if(qsi===0){
+    // 3 compact columns: R128, R64, R32 — filtered to active quadrant
     const q=QUADRANTS[S.quadrant];
-    html+=`<div class="bkt-viewport" id="bkt-viewport" style="opacity:1"><div class="bkt-screen" id="bkt-screen">`;
-    html+=renderColumnFiltered(leftIdx,vp,'left',q);
-    html+=renderGutter(leftIdx);
-    html+=renderColumnFiltered(rightIdx,vp,'right',q);
-    html+=`</div></div>`;
+    html+=renderColumnFiltered(0,vp,'left',q);
+    html+=renderGutter(0);
+    html+=renderColumnFiltered(1,vp,'mid',q);
+    html+=renderGutter(1);
+    html+=renderColumnFiltered(2,vp,'right',q);
+  } else {
+    // 4 columns: R16, QF, SF, Final — all quadrants
+    html+=renderColumnFiltered(3,vp,'left',null);
+    html+=renderGutter(3);
+    html+=renderColumnFiltered(4,vp,'mid',null);
+    html+=renderGutter(4);
+    html+=renderColumnFiltered(5,vp,'mid2',null);
+    html+=renderGutter(5);
+    html+=renderColumnFiltered(6,vp,'right',null);
   }
+
+  html+=`</div></div>`;
 
   // Share
   html+=`<div id="share-panel" style="display:none;padding:.75rem 1.5rem"><div style="display:flex;gap:10px;background:var(--sand-l);border:1.5px solid var(--sand-d);border-radius:var(--r-sm);padding:10px 14px"><div id="share-url-txt" style="flex:1;font-family:var(--font-m);font-size:11px;color:var(--ink-m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div><button class="btn sm" onclick="copyShare()">Copy</button></div></div>`;
@@ -1643,7 +1677,7 @@ function renderBracket(){
   // Bottom nav
   html+=`<div class="bkt-nav">
     <button class="nav-btn" onclick="prevQRnd()" ${qsi===0?'disabled':''}>
-      ← <div class="nav-btn-inner"><span>Earlier rounds</span></div>
+      ← <div class="nav-btn-inner"><span>Early rounds</span></div>
     </button>
     <div class="nav-progress">
       <div class="nav-prog-text">${allPicked}/${allPickable} total picks</div>
@@ -1656,18 +1690,17 @@ function renderBracket(){
 
   document.getElementById('root').innerHTML=html;
 
-  // Render minimap navigator
   renderMinimap();
 
-  // Draw connectors
   requestAnimationFrame(()=>{
-    if(qsi===2){
-      drawConnectors(4,5,vp);
-      // Also draw SF→F connectors but using separate gutter
-      drawConnectors(5,6,vp);
-    } else {
+    if(qsi===0){
       const q=QUADRANTS[S.quadrant];
-      drawConnectorsFiltered(leftIdx,rightIdx,vp,q);
+      drawConnectorsFiltered(0,1,vp,q);
+      drawConnectorsFiltered(1,2,vp,q);
+    } else {
+      drawConnectors(3,4,vp);
+      drawConnectors(4,5,vp);
+      drawConnectors(5,6,vp);
     }
   });
 }
@@ -1698,7 +1731,8 @@ function renderColumnFiltered(rndIdx,vp,side,quadrant){
   if(!rnd)return '';
   const filteredMatches=getQuadrantMatches(rndIdx,quadrant);
   if(!filteredMatches.length)return '';
-  const sz=['','','col-lg','col-lg','col-xl','col-xl','col-xl'][rndIdx]||'';
+  // Size class: compact for early rounds (3-col screen), bigger for late rounds
+  const sz=['col-sm','col-sm','col-sm','','col-lg','col-xl','col-xl'][rndIdx]||'';
   // Right column uses space-around to stagger cards between left column feeders
   // but height is controlled by JS connector drawing, not CSS flex stretch
   const matchesStyle=side==='right'||side==='mid'?'position:relative;':'';
@@ -1951,9 +1985,9 @@ function renderMinimap(){
   const old=document.getElementById('minimap-nav');
   if(old)old.remove();
 
-  const qsi=Math.min(S.quadrantRndIdx,2);
-  // Don't show minimap on final screen (QF/SF/F shows all)
-  if(qsi===2)return;
+  const qsi=Math.min(S.quadrantRndIdx,1);
+  // Only show minimap on screen 0 (early rounds, quadrant-filtered)
+  if(qsi===1)return;
 
   const nav=document.createElement('div');
   nav.id='minimap-nav';
@@ -2014,7 +2048,7 @@ function renderMinimap(){
 
 // Quadrant navigation
 function nextQRnd(){
-  if(S.quadrantRndIdx>=2)return;
+  if(S.quadrantRndIdx>=1)return;
   debounceSave();
   animateTransition(1,()=>{S.quadrantRndIdx++;renderBracket();});
 }
@@ -2175,32 +2209,27 @@ function pick(mid,name){
   const scrollY=window.scrollY;
   if(S.picks[mid]===name)delete S.picks[mid];else S.picks[mid]=name;
   buildDisplay();
-  // Fast re-render using quadrant-aware state
-  const qsi=Math.min(S.quadrantRndIdx,2);
-  const quadScreens=[[0,1],[2,3],[4,5]];
-  const[leftIdx,rightIdx]=quadScreens[qsi];
+  // Fast re-render — on screen 0 update 3 columns, on screen 1 do full re-render
+  const qsi=Math.min(S.quadrantRndIdx,1);
+  if(qsi===1){renderBracket();return;}
+  // Screen 0: update left (R128) and mid (R64) and right (R32) columns
   const vp=S.picks;
-  const leftRnd=S.rounds[leftIdx];const rightRnd=S.rounds[rightIdx];
-  const lc=document.getElementById(`matches-left-${leftIdx}`);
-  const rc=document.getElementById(`matches-right-${rightIdx}`);
-  const q=qsi===2?null:QUADRANTS[S.quadrant];
-  const leftMatches=getQuadrantMatches(leftIdx,q);
-  const rightMatches=getQuadrantMatches(rightIdx,q);
-  if(lc)lc.innerHTML=leftMatches.map((m,mi)=>renderCard(m,mi,leftRnd.key,vp,'left',leftIdx)).join('');
-  if(rc)rc.innerHTML=rightMatches.map((m,mi)=>renderCard(m,mi,rightRnd.key,vp,'right',rightIdx)).join('');
+  const q=QUADRANTS[S.quadrant];
+  for(const[side,rndIdx] of [['left',0],['mid',1],['right',2]]){
+    const el=document.getElementById(`matches-${side}-${rndIdx}`);
+    const rnd=S.rounds[rndIdx];
+    if(el&&rnd)el.innerHTML=getQuadrantMatches(rndIdx,q).map((m,mi)=>renderCard(m,mi,rnd.key,vp,side,rndIdx)).join('');
+  }
   const np=document.querySelector('.nav-prog-text');
   if(np){
     const allPickable=S.rounds.reduce((acc,rnd)=>acc+rnd.matches.filter(m=>!(m.p2?.n==='BYE'||m.p1?.n==='BYE')&&!(m.p1?.n==='TBD'&&m.p2?.n==='TBD')).length,0);
-    const allPicked=Object.keys(S.picks).length;
-    np.textContent=`${allPicked}/${allPickable} total picks`;
+    np.textContent=`${Object.keys(S.picks).length}/${allPickable} total picks`;
   }
-  if(qsi===2)drawConnectors(leftIdx,rightIdx,vp);
-  else drawConnectorsFiltered(leftIdx,rightIdx,vp,q);
+  drawConnectorsFiltered(0,1,vp,q);
+  drawConnectorsFiltered(1,2,vp,q);
   renderMinimap();
-  // Restore scroll position after DOM update
   requestAnimationFrame(()=>window.scrollTo(0,scrollY));
   debounceSave();
-  // Show brief auto-save indicator
   showSaveIndicator();
 }
 
