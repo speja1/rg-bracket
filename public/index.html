@@ -58,6 +58,50 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 
 #root{margin-top:100px;min-height:calc(100vh - 100px)}
 
+/* ── TOP 20 TRACKER ── */
+#tracker{position:fixed;top:100px;left:0;right:0;z-index:298;
+  background:#13100d;border-bottom:2px solid #2a2218}
+#tracker .tr-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;padding:5px 8px}
+#tracker .tr-grid+.tr-grid{padding-top:0}
+/* card */
+.tc{border-radius:7px;padding:6px 9px;cursor:pointer;display:flex;flex-direction:column;
+  gap:2px;position:relative;min-width:0;transition:border-color .15s}
+.tc.alive{background:#182016;border:1px solid #243020}
+.tc.alive:hover{border-color:#4ade80}
+.tc.live{background:#141e14;border:1.5px solid #3a6035}
+.tc.live:hover{border-color:#4ade80}
+.tc.out{background:#1a1410;border:1px solid #28201a;opacity:.7}
+.tc.out:hover{border-color:#c4503e}
+/* live dot */
+.tc-dot{position:absolute;top:5px;right:6px;width:5px;height:5px;border-radius:50%;
+  background:#4ade80;animation:lp 1.2s ease-in-out infinite}
+/* row 1: photo flag name seed */
+.tc-top{display:flex;align-items:center;gap:3px;min-width:0}
+.tc-photo{width:20px;height:20px;border-radius:50%;object-fit:cover;object-position:top;
+  flex-shrink:0;border:1px solid rgba(255,255,255,.12)}
+.tc-init{width:20px;height:20px;border-radius:50%;background:#2a2218;
+  display:flex;align-items:center;justify-content:center;
+  font-size:7px;font-weight:800;color:#a09080;flex-shrink:0}
+.tc-flag{font-size:10px;flex-shrink:0}
+.tc-name{font-size:10.5px;font-weight:700;color:#e0cdb8;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.tc.out .tc-name{text-decoration:line-through;color:#5a4a3a}
+.tc.live .tc-name{color:#b8e8b0}
+.tc-seed{font-size:7.5px;font-weight:800;color:#555;background:#1e1c18;
+  border-radius:3px;padding:1px 3px;flex-shrink:0}
+/* row 2: last result */
+.tc-result{display:flex;align-items:center;gap:2px;min-width:0;font-size:9px;color:#7a6a58}
+.tc-won{color:#4ade80;font-weight:800;font-size:7.5px;flex-shrink:0}
+.tc-lost{color:#c0392b;font-weight:800;font-size:7.5px;flex-shrink:0}
+.tc-lv{color:#f59e0b;font-weight:800;font-size:7.5px;flex-shrink:0}
+.tc-opp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;font-size:9px;color:#7a6a58}
+.tc-score{font-family:var(--font-m);font-size:8.5px;color:#555;flex-shrink:0;white-space:nowrap}
+/* row 3: next match */
+.tc-next{display:flex;align-items:center;gap:2px;min-width:0;font-size:9px}
+.tc-nxt-lbl{color:#3a5a78;font-weight:800;font-size:7.5px;flex-shrink:0}
+.tc-nxt-opp{color:#5a7a8a;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.tc-nxt-time{color:#3a6888;font-size:8px;font-weight:600;flex-shrink:0;white-space:nowrap}
+
 
 
 /* ── LOADING ── */
@@ -310,6 +354,10 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 
   /* Root offset */
   #root{margin-top:88px;min-height:calc(100vh - 88px)}
+  /* Tracker on mobile: 4 per row */
+  #tracker{top:88px}
+  #tracker .tr-grid{grid-template-columns:repeat(4,1fr);gap:3px;padding:4px 5px}
+  #tracker .tr-grid+.tr-grid{padding-top:0}
 
   /* Bracket topbar — stack on mobile */
   .bkt-topbar{flex-direction:column;align-items:flex-start;gap:.5rem;padding:.6rem 1rem;top:88px}
@@ -1041,20 +1089,28 @@ function showApp(){
   document.getElementById('nav').classList.add('visible');
   const tabs=['bracket','lb','how',...(S.isAdmin?['admin']:[])];
   const labels=['My Bracket','Leaderboard','How to Score',...(S.isAdmin?['Admin']:[])];
-  // Restore tab from hash on first load
   const hash=location.hash.replace('#','');
   if(hash&&tabs.includes(hash)&&S.tab==='bracket')S.tab=hash;
   document.getElementById('tabs-inner').innerHTML=tabs.map((t,i)=>`<div class="tab ${S.tab===t?'active':''}" id="tab-${t}" onclick="setTab('${t}')">${labels[i]}</div>`).join('');
-
+  renderTracker();
   renderTab();
 }
 function setTab(t){
   S.tab=t;
-  // Update URL hash so refresh restores the tab
   history.replaceState(null,'','#'+t);
   document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${t}`));
-  // Remove minimap if leaving bracket tab
-  if(t!=='bracket'){const m=document.getElementById('minimap-nav');if(m)m.remove();}
+  if(t!=='bracket'){
+    const m=document.getElementById('minimap-nav');if(m)m.remove();
+    // Hide tracker on non-bracket tabs, restore root margin
+    const tr=document.getElementById('tracker');
+    if(tr)tr.style.display='none';
+    const root=document.getElementById('root');
+    if(root)root.style.marginTop='100px';
+  } else {
+    // Show tracker when returning to bracket
+    const tr=document.getElementById('tracker');
+    if(tr){tr.style.display='';renderTracker();}
+  }
   renderTab();
 }
 // Handle browser back/forward
@@ -2769,6 +2825,139 @@ function renderH2H(modal,p1,p2,data,prof1,prof2){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeH2H();});
 
+
+// ── TOP 20 TRACKER ────────────────────────────────────────────────────────────
+const SEEDED_PLAYERS=[
+  {s:1,n:'Sinner J.'},{s:2,n:'Zverev A.'},{s:3,n:'Djokovic N.'},{s:4,n:'Auger-Aliassime F.'},
+  {s:5,n:'Shelton B.'},{s:6,n:'Medvedev D.'},{s:7,n:'De Minaur A.'},{s:8,n:'Ruud C.'},
+  {s:9,n:'Bublik A.'},{s:10,n:'Cobolli F.'},{s:11,n:'Rublev A.'},{s:12,n:'Khachanov K.'},
+  {s:13,n:'Mensik J.'},{s:14,n:'Darderi L.'},{s:15,n:'Tien L.'},{s:16,n:'Vacherot V.'},
+  {s:17,n:'Fritz T.'},{s:18,n:'Paul T.'},{s:19,n:'Tiafoe F.'},{s:20,n:'Norrie C.'},
+];
+
+function renderTracker(){
+  // Requires S.rounds to be built by buildDisplay()
+  if(!S.rounds||!S.rounds.length)return;
+
+  // For each player, find their last completed match and next scheduled match
+  function getStatus(name){
+    let last=null,next=null,isLive=false;
+    for(let ri=0;ri<S.rounds.length;ri++){
+      for(const m of S.rounds[ri].matches){
+        const p1=(m.p1?.n===name),p2=(m.p2?.n===name);
+        if(!p1&&!p2)continue;
+        const opp=p1?(m.p2?.n||''):(m.p1?.n||'');
+        if(!opp||opp==='TBD'||opp==='BYE')continue;
+        const lv=S.live[m.id]||{};
+        if(lv.live&&!lv.completed){
+          isLive=true;
+          const ms=p1?lv.p1Sets:lv.p2Sets;
+          const os=p1?lv.p2Sets:lv.p1Sets;
+          last={id:m.id,opp,won:null,live:true,
+            myScore:(ms||[]).map(s=>s.mine).join(' '),
+            oppScore:(os||[]).map(s=>s.mine).join(' ')};
+        } else if(lv.winner){
+          const won=(lv.winner===name);
+          const ms=p1?lv.p1Sets:lv.p2Sets;
+          const os=p1?lv.p2Sets:lv.p1Sets;
+          last={id:m.id,opp,won,
+            myScore:(ms||[]).map(s=>s.mine).join(' '),
+            oppScore:(os||[]).map(s=>s.mine).join(' ')};
+        } else if(!lv.winner&&!lv.live&&!next){
+          next={id:m.id,opp,time:lv.scheduledTime||null};
+        }
+      }
+      if(isLive)break;
+    }
+    const alive=isLive||(last===null)||(last&&last.won!==false);
+    return{last,next,alive,isLive};
+  }
+
+  function fmtTime(iso){
+    if(!iso)return'';
+    try{
+      const d=new Date(iso),now=new Date();
+      if(d<now)return'';
+      const diff=(d-now)/3600000;
+      if(diff<24)return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      return d.toLocaleDateString([],{month:'short',day:'numeric'});
+    }catch{return'';}
+  }
+
+  function buildCard({s,n}){
+    const st=getStatus(n);
+    const photo=getPlayerPhoto(n);
+    const flag=getFlag(n);
+    const inits=getInitials(n);
+    const {last,next,alive,isLive}=st;
+
+    // Photo
+    const photoEl=photo
+      ?`<img class="tc-photo" src="${photo}" alt="${n}" onerror="this.style.display='none'">`
+      :`<div class="tc-init">${inits}</div>`;
+
+    // Card class
+    const cls=isLive?'tc live':alive?'tc alive':'tc out';
+    const dot=isLive?'<div class="tc-dot"></div>':'';
+    const clickId=(last?.id||next?.id||'');
+    const click=clickId?`onclick="jumpToMatch('${clickId}')"`:'' ;
+
+    // Row 1
+    const row1=`<div class="tc-top">${photoEl}<span class="tc-flag">${flag}</span><span class="tc-name">${n}</span><span class="tc-seed">${s}</span></div>`;
+
+    // Row 2 — last result
+    let row2='';
+    if(isLive&&last){
+      row2=`<div class="tc-result"><span class="tc-lv">●</span><span class="tc-opp">${last.opp}</span><span class="tc-score">${last.myScore}·${last.oppScore}</span></div>`;
+    } else if(last&&last.won===true){
+      const sc=last.myScore&&last.oppScore?` ${last.myScore}–${last.oppScore}`:'';
+      row2=`<div class="tc-result"><span class="tc-won">W</span><span class="tc-opp">${last.opp}</span><span class="tc-score">${sc}</span></div>`;
+    } else if(last&&last.won===false){
+      const sc=last.myScore&&last.oppScore?` ${last.myScore}–${last.oppScore}`:'';
+      row2=`<div class="tc-result"><span class="tc-lost">L</span><span class="tc-opp">${last.opp}</span><span class="tc-score">${sc}</span></div>`;
+    } else {
+      row2=`<div class="tc-result"><span class="tc-opp" style="color:#444">Not yet played</span></div>`;
+    }
+
+    // Row 3 — next match
+    let row3='';
+    if(!isLive&&alive&&next&&next.opp&&next.opp!=='TBD'){
+      const t=fmtTime(next.time);
+      row3=`<div class="tc-next"><span class="tc-nxt-lbl">vs</span><span class="tc-nxt-opp">${getFlag(next.opp)} ${next.opp}</span>${t?`<span class="tc-nxt-time">${t}</span>`:''}  </div>`;
+    }
+
+    return `<div class="${cls}" ${click}>${dot}${row1}${row2}${row3}</div>`;
+  }
+
+  const cards=SEEDED_PLAYERS.map(buildCard);
+  const top10=cards.slice(0,10).join('');
+  const bot10=cards.slice(10,20).join('');
+
+  // Create or update tracker element
+  let el=document.getElementById('tracker');
+  if(!el){
+    el=document.createElement('div');
+    el.id='tracker';
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`<div class="tr-grid">${top10}</div><div class="tr-grid">${bot10}</div>`;
+
+  // Set root margin to tracker bottom
+  const root=document.getElementById('root');
+  if(root){
+    requestAnimationFrame(()=>{
+      const trackerBottom=el.getBoundingClientRect().bottom;
+      root.style.marginTop=trackerBottom+'px';
+    });
+  }
+}
+
+function removeTracker(){
+  const el=document.getElementById('tracker');
+  if(el)el.remove();
+  const root=document.getElementById('root');
+  if(root)root.style.marginTop='100px';
+}
 
 init();
 
