@@ -276,15 +276,18 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   font-size:13px;font-style:italic;color:var(--ink-l);opacity:.45}
 
 /* Dead pick */
-.mc-name-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.mc-name-stack .mc-name{flex:none}
-.mc-dead-line{font-size:11px;color:rgba(255,255,255,.45);text-decoration:line-through;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400;
-  display:flex;align-items:center;gap:3px}
-.mc-dead-seed{font-size:9px;font-weight:700;background:rgba(255,255,255,.12);
-  border-radius:3px;padding:0 3px;text-decoration:none}
-.mc-seed-inline{font-size:9px;font-weight:700;color:#b91c1c;background:#fee2e2;
-  border-radius:3px;padding:1px 4px;margin-right:3px}
+/* Inline dead pick — ~~wrong pick~~ → correct player on same row */
+.mc-name-inline{flex:1;min-width:0;display:flex;align-items:center;gap:6px;overflow:hidden}
+.mc-dead-name{font-size:13px;font-weight:400;color:#c0392b;text-decoration:line-through;
+  white-space:nowrap;flex-shrink:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.mc-dead-arrow{font-size:13px;color:var(--ink-l);flex-shrink:0;margin:0 2px}
+.mc-name-text{font-size:16px;font-weight:600;color:#2a1808;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;flex-shrink:1;min-width:0;
+  display:flex;align-items:center;gap:6px}
+.mc-player.winner .mc-name-text{color:#fff;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.25)}
+.mc-player.winner .mc-name-text .mc-name-seed{color:rgba(255,255,255,.5)}
+.mc-player.winner .mc-dead-name{color:rgba(255,255,255,.4)}
+.mc-player.winner .mc-dead-arrow{color:rgba(255,255,255,.3)}
 
 /* col-lg and col-xl: no overrides — same size as base */
 .col-matches{flex:1;padding:.9rem;display:flex;flex-direction:column;gap:.8rem}
@@ -1819,24 +1822,16 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       }
 
       if(hasDeadPick){
-        // 1. Show user's wrong pick first — crossed out with ✗
-        const dpPhoto=getPlayerPhoto(dp.n);
-        const dpInitials=getInitials(dp.n);
-        const dpPhotoEl=dpPhoto
-          ?`<img class="mc-photo" src="${dpPhoto}" alt="${dp.n}" onerror="this.style.display='none';this.parentElement.querySelector('.mc-photo-init').style.display='flex'">`+
-           `<div class="mc-photo-init" style="display:none">${dpInitials}</div>`
-          :`<div class="mc-photo-init">${dpInitials}</div>`;
+        // Single row: wrong pick (crossed out) → real player inline
         const dpFlag=getFlag(dp.n);
         const dpSeed=dp.s?`<span class="mc-name-seed">(${dp.s})</span>`:'';
-        h+=`<div class="mc-player wrong locked">
-          ${dpPhotoEl}<div class="mc-flag">${dpFlag}</div>
-          <div class="mc-name">${dp.n}${dpSeed}</div>
-          <div class="mc-score-empty"></div>
-          <div class="mc-icon x">✗</div>
-        </div>`;        // 2. Show real winner below in green
         h+=`<div class="${rowCls}" ${click}>
           ${photoEl}${flagEl}${srvEl}
-          <div class="mc-name">${pl.n}${seedSpan}</div>
+          <div class="mc-name-inline">
+            <span class="mc-dead-name">${dpFlag} ${dp.n}${dpSeed}</span>
+            <span class="mc-dead-arrow">→</span>
+            <span class="mc-name-text">${pl.n}${seedSpan}</span>
+          </div>
           ${rightSlot}${iconEl}
         </div>`;
       } else {
