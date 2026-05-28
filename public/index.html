@@ -57,8 +57,8 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .tab:hover:not(.active){color:rgba(255,255,255,.72);background:rgba(255,255,255,.04)}
 
 #root{margin-top:100px;min-height:calc(100vh - 100px)}
-#root.has-ticker-1{margin-top:182px}
-#root.has-ticker-2{margin-top:264px}
+#root.has-ticker-1{margin-top:272px}
+#root.has-ticker-2{margin-top:272px}
 
 /* ── LOADING ── */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:14px}
@@ -370,11 +370,10 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   .lb-rank.medal{font-size:14px}
 
   .ticker-wrap{top:88px}
-  .tracker-row{height:72px;padding:0 6px;gap:4px}
-  .player-card{width:148px;height:58px;padding:6px 10px}
-  .player-card-name{font-size:11.5px}
-  .player-card-status{font-size:9px}
-  #root.has-ticker-1{margin-top:162px!important}
+  .tracker-grid{grid-template-columns:repeat(5,1fr);gap:3px;padding:4px 6px 3px}
+  .player-card{padding:5px 7px}
+  .player-card-name{font-size:9.5px}
+  .player-card-result,.player-card-next{font-size:8px}
 
   /* Minimap — smaller, higher up */
   #minimap-nav{bottom:80px;right:10px;width:110px;padding:8px}
@@ -556,59 +555,64 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.winner .mc-odds{display:none}
 .mc-flag{font-size:14px;line-height:1;flex-shrink:0;width:20px;text-align:center}
 .mc-court{font-size:8px;font-weight:700;letter-spacing:.6px;color:var(--ink-l);background:var(--sand);border-radius:var(--r-pill);padding:1px 6px;flex-shrink:0}
-/* ── PLAYER TRACKER BAR ── */
+/* ── PLAYER TRACKER BAR — 2 rows of 10, no scroll ── */
 .ticker-wrap{position:fixed;top:100px;left:0;right:0;z-index:298;
-  background:#14110e;border-bottom:2px solid #2a2218;
-  display:flex;flex-direction:column}
-.tracker-row{display:flex;align-items:center;height:80px;overflow:hidden;padding:0 8px;gap:6px}
-.tracker-label{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  flex-shrink:0;padding:0 12px 0 4px;gap:3px;border-right:1px solid #2a2218;margin-right:4px}
-.tracker-label .tk-section-name{font-size:7px;font-weight:800;letter-spacing:2px;
-  text-transform:uppercase;color:#888;white-space:nowrap}
-.tracker-label .tk-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;
-  animation:lp 1.2s ease-in-out infinite}
-.tracker-cards{display:flex;gap:6px;align-items:center;overflow-x:auto;flex:1;
-  -webkit-overflow-scrolling:touch;scrollbar-width:none;padding:8px 0}
-.tracker-cards::-webkit-scrollbar{display:none}
+  background:#13100d;border-bottom:2px solid #2a2218}
+.tracker-grid{display:grid;grid-template-columns:repeat(10,1fr);
+  gap:5px;padding:6px 10px 5px}
+.tracker-grid+.tracker-grid{padding-top:0;padding-bottom:6px}
 
 /* Player card */
-.player-card{flex-shrink:0;width:170px;height:64px;border-radius:10px;
-  padding:8px 12px;cursor:pointer;transition:border-color .15s,background .15s;
-  display:flex;flex-direction:column;justify-content:space-between;position:relative}
-.player-card.alive{background:#1a2218;border:1px solid #2a3828}
-.player-card.alive:hover{border-color:#4ade80;background:#1e2a1e}
-.player-card.live{background:#161e16;border:1.5px solid #3d6b3d}
+.player-card{border-radius:8px;padding:7px 10px;cursor:pointer;
+  transition:border-color .15s,background .15s;
+  display:flex;flex-direction:column;gap:3px;position:relative;min-width:0}
+.player-card.alive{background:#182016;border:1px solid #243020}
+.player-card.alive:hover{border-color:#4ade80;background:#1c2820}
+.player-card.live{background:#141e14;border:1.5px solid #3a6035}
 .player-card.live:hover{border-color:#4ade80}
-.player-card.out{background:#1c1614;border:1px solid #2a2018;opacity:.75}
-.player-card.out:hover{border-color:#c4503e;background:#201812}
+.player-card.out{background:#1a1410;border:1px solid #28201a;opacity:.72}
+.player-card.out:hover{border-color:#c4503e}
 
-/* Live pulse dot on card */
-.player-card-live-dot{position:absolute;top:7px;right:8px;
-  width:6px;height:6px;border-radius:50%;background:#4ade80;
+/* Live pulse */
+.player-card-live-dot{position:absolute;top:6px;right:7px;
+  width:5px;height:5px;border-radius:50%;background:#4ade80;
   animation:lp 1.2s ease-in-out infinite}
 
-/* Top line: seed + name */
-.player-card-top{display:flex;align-items:center;gap:5px}
-.player-card-seed{font-size:9px;font-weight:800;color:#666;
-  background:#222;border-radius:3px;padding:1px 4px;flex-shrink:0}
-.player-card-flag{font-size:13px;flex-shrink:0}
-.player-card-name{font-size:12.5px;font-weight:700;color:#e0cdb8;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
-.player-card.out .player-card-name{text-decoration:line-through;color:#666}
-.player-card.live .player-card-name{color:#c8e8c8}
+/* Row 1: photo + flag + name + seed */
+.player-card-top{display:flex;align-items:center;gap:4px;min-width:0}
+.player-card-photo{width:22px;height:22px;border-radius:50%;object-fit:cover;
+  object-position:top;flex-shrink:0;border:1.5px solid rgba(255,255,255,.1)}
+.player-card-photo-init{width:22px;height:22px;border-radius:50%;background:#2a2218;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:800;color:#a09080;flex-shrink:0;font-family:var(--font-d)}
+.player-card-flag{font-size:11px;flex-shrink:0}
+.player-card-name{font-size:11.5px;font-weight:700;color:#e0cdb8;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.player-card.out .player-card-name{text-decoration:line-through;color:#5a4a3a}
+.player-card.live .player-card-name{color:#b8e8b0}
+.player-card-seed{font-size:8px;font-weight:800;color:#555;
+  background:#1e1c18;border-radius:3px;padding:1px 3px;flex-shrink:0}
 
-/* Bottom line: status */
-.player-card-status{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  display:flex;align-items:center;gap:4px}
-.player-card-status .tk-beat{color:#4ade80;font-weight:700;font-size:9px}
-.player-card-status .tk-lost{color:#c0392b;font-weight:700;font-size:9px}
-.player-card-status .tk-vs{color:#666;font-size:9px}
-.player-card-status .tk-opp{color:#a09080;font-size:10px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player-card-status .tk-opp-flag{font-size:11px;flex-shrink:0}
-.player-card-status .tk-time{color:#555;font-size:9px;flex-shrink:0}
-.player-card-status .tk-score-sm{font-family:var(--font-m);font-size:9.5px;
-  color:#888;flex-shrink:0}
+/* Row 2: last result */
+.player-card-result{display:flex;align-items:center;gap:3px;min-width:0;
+  font-size:9.5px;line-height:1.2}
+.tk-beat-lbl{color:#4ade80;font-weight:700;font-size:8px;flex-shrink:0}
+.tk-lost-lbl{color:#c0392b;font-weight:700;font-size:8px;flex-shrink:0}
+.tk-live-lbl{color:#f59e0b;font-weight:800;font-size:8px;flex-shrink:0;
+  animation:lp 1s ease-in-out infinite}
+.tk-result-opp{color:#8a7a68;font-size:9.5px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.tk-result-score{font-family:var(--font-m);color:#6a5a48;font-size:9px;
+  flex-shrink:0;white-space:nowrap}
+
+/* Row 3: next match */
+.player-card-next{display:flex;align-items:center;gap:3px;min-width:0;
+  font-size:9px;line-height:1.2}
+.tk-next-lbl{color:#4a6a88;font-weight:700;font-size:8px;flex-shrink:0}
+.tk-next-opp{color:#7a8a9a;font-size:9px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.tk-next-time{color:#3a6888;font-size:8.5px;font-weight:600;
+  flex-shrink:0;white-space:nowrap}
 /* ── TIEBREAKER MODAL ── */
 .tb-overlay{position:fixed;inset:0;background:rgba(22,12,6,.55);backdrop-filter:blur(6px);
   z-index:1100;display:flex;align-items:center;justify-content:center;padding:1.5rem;
@@ -2371,174 +2375,145 @@ function jumpToMatch(matchId){
   });
 }
 
-// ── PLAYER TRACKER BAR ──────────────────────────────────────────────────────
-// Top 20 seeded players — shows latest result + next opponent or elimination
-const TOP20_SEEDS = [
-  'Sinner J.','Zverev A.','Djokovic N.','Auger-Aliassime F.','Shelton B.',
-  'Medvedev D.','De Minaur A.','Ruud C.','Bublik A.','Cobolli F.',
-  'Rublev A.','Khachanov K.','Mensik J.','Darderi L.','Tien L.',
-  'Vacherot V.','Auger-Aliassime F.','Mpetshi Perricard G.','Tsitsipas S.','Norrie C.',
-];
-// Correct seeded order from draw
-const SEEDED_PLAYERS=[
-  {s:1,n:'Sinner J.'},{s:2,n:'Zverev A.'},{s:3,n:'Djokovic N.'},{s:4,n:'Auger-Aliassime F.'},
-  {s:5,n:'Shelton B.'},{s:6,n:'Medvedev D.'},{s:7,n:'De Minaur A.'},{s:8,n:'Ruud C.'},
-  {s:9,n:'Bublik A.'},{s:10,n:'Cobolli F.'},{s:11,n:'Rublev A.'},{s:12,n:'Khachanov K.'},
-  {s:13,n:'Mensik J.'},{s:14,n:'Darderi L.'},{s:15,n:'Tien L.'},{s:16,n:'Vacherot V.'},
-  {s:17,n:'Fritz T.'},{s:18,n:'Paul T.'},{s:19,n:'Tiafoe F.'},{s:20,n:'Norrie C.'},
-];
-
 function renderTicker(){
   const old=document.getElementById('ticker-wrap');
   if(old)old.remove();
   document.getElementById('root')?.classList.remove('has-ticker-1','has-ticker-2');
-
   if(!S.rounds||!S.rounds.length)return;
 
-  // Build a lookup: playerName → {lastMatch, nextMatch, isAlive, isLive}
   function getPlayerStatus(playerName){
-    let lastMatch=null; // {id, opponent, won, score, sets}
-    let nextMatch=null; // {id, opponent, scheduledTime}
-    let isLive=false;
-
-    // Walk all rounds in order to find this player's matches
+    let lastMatch=null,nextMatch=null,isLive=false;
     for(let ri=0;ri<S.rounds.length;ri++){
-      const rnd=S.rounds[ri];
-      for(const m of rnd.matches){
-        const isP1=m.p1?.n===playerName;
-        const isP2=m.p2?.n===playerName;
+      for(const m of S.rounds[ri].matches){
+        const isP1=m.p1?.n===playerName,isP2=m.p2?.n===playerName;
         if(!isP1&&!isP2)continue;
         const lv=S.live[m.id]||{};
         const opp=isP1?(m.p2?.n||'TBD'):(m.p1?.n||'TBD');
-
+        if(opp==='TBD'||opp==='BYE')continue;
         if(lv.live&&!lv.completed){
-          // Currently playing
           isLive=true;
           const mySets=isP1?lv.p1Sets:lv.p2Sets;
           const oppSets=isP1?lv.p2Sets:lv.p1Sets;
-          const mySc=(mySets||[]).map(s=>s.mine).join(' ');
-          const oppSc=(oppSets||[]).map(s=>s.mine).join(' ');
-          lastMatch={id:m.id,opponent:opp,won:null,myScore:mySc,oppScore:oppSc,live:true};
-        } else if(lv.completed||lv.winner){
+          lastMatch={id:m.id,opponent:opp,won:null,live:true,
+            myScore:(mySets||[]).map(s=>s.mine).join(' '),
+            oppScore:(oppSets||[]).map(s=>s.mine).join(' ')};
+        } else if(lv.winner){
           const won=lv.winner===playerName;
-          const wIsP1=lv.winner===(isP1?playerName:opp);
           const mySets=isP1?lv.p1Sets:lv.p2Sets;
           const oppSets=isP1?lv.p2Sets:lv.p1Sets;
-          const myScore=(mySets||[]).map(s=>s.mine).join(' ');
-          const oppScore=(oppSets||[]).map(s=>s.mine).join(' ');
-          lastMatch={id:m.id,opponent:opp,won,myScore,oppScore};
-        } else if(!lv.winner&&!lv.live&&opp!=='TBD'){
-          // Scheduled upcoming match
-          nextMatch={id:m.id,opponent:opp,scheduledTime:lv.scheduledTime||null};
-          break;
+          lastMatch={id:m.id,opponent:opp,won,
+            myScore:(mySets||[]).map(s=>s.mine).join(' '),
+            oppScore:(oppSets||[]).map(s=>s.mine).join(' ')};
+        } else if(!lv.winner&&!lv.live){
+          if(!nextMatch)nextMatch={id:m.id,opponent:opp,scheduledTime:lv.scheduledTime||null};
         }
       }
       if(isLive)break;
     }
-    const isAlive=isLive||(lastMatch?.won!==false&&nextMatch!==null)||
-      (!lastMatch&&!nextMatch)||// not yet played
-      (lastMatch?.won===true&&!nextMatch); // won last but no next scheduled yet
-    return{lastMatch,nextMatch,isAlive:isLive||lastMatch?.live||
-      lastMatch?.won!==false||(lastMatch===null),isLive};
+    const isAlive=isLive||lastMatch?.live||lastMatch?.won!==false||lastMatch===null;
+    return{lastMatch,nextMatch,isAlive,isLive};
   }
 
-  // Build player cards
-  const cards=SEEDED_PLAYERS.map(({s,n})=>{
-    const st=getPlayerStatus(n);
-    const photo=getPlayerPhoto(n);
-    const flag=getFlag(n);
-    const initials=getInitials(n);
+  function buildCard(seed,playerName){
+    const st=getPlayerStatus(playerName);
+    const {lastMatch:lm,nextMatch:nm,isAlive,isLive}=st;
+    const photo=getPlayerPhoto(playerName);
+    const flag=getFlag(playerName);
+    const initials=getInitials(playerName);
+    const matchId=lm?.id||nm?.id||'';
+
+    // Photo element
     const photoEl=photo
-      ?`<img style="width:28px;height:28px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0;border:1.5px solid rgba(255,255,255,.15)" src="${photo}" alt="${n}" onerror="this.style.display='none'">`
-      :`<div style="width:28px;height:28px;border-radius:50%;background:#2a2218;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#a09080;flex-shrink:0;font-family:var(--font-d)">${initials}</div>`;
+      ?`<img class="player-card-photo" src="${photo}" alt="${playerName}" onerror="this.outerHTML='<div class=player-card-photo-init>${initials}</div>'">`
+      :`<div class="player-card-photo-init">${initials}</div>`;
 
-    const lm=st.lastMatch;
-    const nm=st.nextMatch;
-    const alive=st.isAlive;
-    const live=st.isLive;
+    // Card state class
+    const cardCls=isLive?'player-card live':isAlive?'player-card alive':'player-card out';
+    const liveDot=isLive?'<div class="player-card-live-dot"></div>':'';
+    const click=matchId?`onclick="jumpToMatch('${matchId}')"`:''
 
-    // Status line
-    let statusHtml='';
-    if(live&&lm){
-      // Currently playing
+    // Row 1: photo + flag + name + seed
+    const topRow=`<div class="player-card-top">
+      ${photoEl}
+      <span class="player-card-flag">${flag}</span>
+      <span class="player-card-name">${playerName}</span>
+      <span class="player-card-seed">${seed}</span>
+    </div>`;
+
+    // Row 2: last result with score
+    let resultRow='';
+    if(isLive&&lm){
       const oppFlag=getFlag(lm.opponent);
-      statusHtml=`<span class="tk-beat">●</span><span class="tk-opp-flag">${oppFlag}</span><span class="tk-opp">${lm.opponent}</span><span class="tk-score-sm">${lm.myScore||''}${lm.oppScore?' · '+lm.oppScore:''}</span>`;
+      resultRow=`<div class="player-card-result">
+        <span class="tk-live-lbl">● LIVE</span>
+        <span class="tk-opp-flag">${oppFlag}</span>
+        <span class="tk-result-opp">${lm.opponent}</span>
+        <span class="tk-result-score">${lm.myScore||'0'}·${lm.oppScore||'0'}</span>
+      </div>`;
     } else if(lm&&lm.won===true){
-      // Won last match — show who they beat + score
       const oppFlag=getFlag(lm.opponent);
-      const scoreStr=lm.myScore?` ${lm.myScore}`:'';
-      if(nm&&nm.opponent!=='TBD'){
-        // Next match scheduled
-        const nFlag=getFlag(nm.opponent);
-        const timeStr=nm.scheduledTime?formatMatchTime(nm.scheduledTime):'';
-        statusHtml=`<span class="tk-beat">d.</span><span class="tk-opp-flag">${oppFlag}</span><span class="tk-opp">${lm.opponent}</span>&nbsp;<span class="tk-vs">·</span>&nbsp;<span class="tk-vs">vs</span><span class="tk-opp-flag">${nFlag}</span><span class="tk-opp">${nm.opponent}</span>${timeStr?`<span class="tk-time">${timeStr}</span>`:''}`;
-      } else {
-        // Won, no next opponent known yet
-        statusHtml=`<span class="tk-beat">d.</span><span class="tk-opp-flag">${oppFlag}</span><span class="tk-opp">${lm.opponent}${scoreStr}</span>`;
-      }
+      const scoreStr=lm.myScore&&lm.oppScore?` ${lm.myScore}–${lm.oppScore}`:'';
+      resultRow=`<div class="player-card-result">
+        <span class="tk-beat-lbl">WON</span>
+        <span class="tk-opp-flag">${oppFlag}</span>
+        <span class="tk-result-opp">${lm.opponent}</span>
+        <span class="tk-result-score">${scoreStr}</span>
+      </div>`;
     } else if(lm&&lm.won===false){
-      // Eliminated
       const oppFlag=getFlag(lm.opponent);
-      statusHtml=`<span class="tk-lost">lost to</span><span class="tk-opp-flag">${oppFlag}</span><span class="tk-opp">${lm.opponent}</span>`;
-    } else if(nm){
-      // No matches played yet, first match scheduled
-      const nFlag=getFlag(nm.opponent);
-      const timeStr=nm.scheduledTime?formatMatchTime(nm.scheduledTime):'';
-      statusHtml=`<span class="tk-vs">vs</span><span class="tk-opp-flag">${nFlag}</span><span class="tk-opp">${nm.opponent}</span>${timeStr?`<span class="tk-time">${timeStr}</span>`:''}`;
+      const scoreStr=lm.oppScore&&lm.myScore?` ${lm.myScore}–${lm.oppScore}`:'';
+      resultRow=`<div class="player-card-result">
+        <span class="tk-lost-lbl">OUT</span>
+        <span class="tk-opp-flag">${oppFlag}</span>
+        <span class="tk-result-opp">${lm.opponent}</span>
+        <span class="tk-result-score">${scoreStr}</span>
+      </div>`;
     } else {
-      statusHtml=`<span class="tk-vs">Upcoming</span>`;
+      resultRow=`<div class="player-card-result">
+        <span class="tk-next-lbl">R1</span>
+        <span class="tk-result-opp">Not yet played</span>
+      </div>`;
     }
 
-    const cardCls=live?'player-card live':alive?'player-card alive':'player-card out';
-    const liveDot=live?'<div class="player-card-live-dot"></div>':'';
-    const matchId=lm?.id||nm?.id||'';
-    const clickFn=matchId?`onclick="jumpToMatch('${matchId}')"`:''
+    // Row 3: next match
+    let nextRow='';
+    if(!isLive&&isAlive&&nm&&nm.opponent&&nm.opponent!=='TBD'){
+      const nFlag=getFlag(nm.opponent);
+      const timeStr=nm.scheduledTime?formatMatchTime(nm.scheduledTime):'';
+      nextRow=`<div class="player-card-next">
+        <span class="tk-next-lbl">NEXT</span>
+        <span class="tk-opp-flag">${nFlag}</span>
+        <span class="tk-next-opp">${nm.opponent}</span>
+        ${timeStr?`<span class="tk-next-time">${timeStr}</span>`:''}
+      </div>`;
+    } else if(!isLive&&isAlive&&!nm){
+      nextRow=`<div class="player-card-next"><span class="tk-next-lbl">NEXT</span><span class="tk-next-opp">TBD</span></div>`;
+    }
 
-    return `<div class="${cardCls}" ${clickFn}>
-      ${liveDot}
-      <div class="player-card-top">
-        ${photoEl}
-        <span class="player-card-flag">${flag}</span>
-        <span class="player-card-name">${n}</span>
-        <span class="player-card-seed">${s}</span>
-      </div>
-      <div class="player-card-status">${statusHtml}</div>
-    </div>`;
-  }).join('');
+    return `<div class="${cardCls}" ${click}>${liveDot}${topRow}${resultRow}${nextRow}</div>`;
+  }
 
-  const anyLive=SEEDED_PLAYERS.some(({n})=>getPlayerStatus(n).isLive);
+  // Build 20 cards split into two rows of 10
+  const top10=SEEDED_PLAYERS.slice(0,10);
+  const bot10=SEEDED_PLAYERS.slice(10,20);
+
+  const row1=top10.map(({s,n})=>buildCard(s,n)).join('');
+  const row2=bot10.map(({s,n})=>buildCard(s,n)).join('');
 
   const wrap=document.createElement('div');
   wrap.id='ticker-wrap';
   wrap.className='ticker-wrap';
-  wrap.innerHTML=`<div class="tracker-row">
-    <div class="tracker-label">
-      ${anyLive?'<span class="tk-dot"></span>':''}
-      <span class="tk-section-name">Top 20</span>
-    </div>
-    <div class="tracker-cards">${cards}</div>
-  </div>`;
+  wrap.innerHTML=`
+    <div class="tracker-grid">${row1}</div>
+    <div class="tracker-grid">${row2}</div>`;
   document.body.appendChild(wrap);
 
   const root=document.getElementById('root');
   if(root){
     root.classList.add('has-ticker-1');
-    root.style.marginTop='182px';
+    const h=wrap.getBoundingClientRect().height||172;
+    root.style.marginTop=(100+h)+'px';
   }
-}
-
-function formatMatchTime(iso){
-  if(!iso)return'';
-  try{
-    const d=new Date(iso);
-    const now=new Date();
-    const diff=(d-now)/1000/3600;
-    if(diff<0)return''; // past
-    if(diff<24){
-      return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    }
-    return d.toLocaleDateString([],{month:'short',day:'numeric'});
-  }catch{return'';}
 }
 
 // ── TIEBREAKER ────────────────────────────────────────────────────────────────
