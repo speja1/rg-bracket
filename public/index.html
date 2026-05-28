@@ -1061,16 +1061,18 @@ async function onReady(){
   updateChip();showLoading('Loading bracket…');
   await Promise.all([loadPicks(),fs.all('brackets').then(a=>{S.all=a;}),loadLive(),loadOdds()]);
   buildDisplay();
-  // Run Monte Carlo simulation
-  S.simResults = runMonteCarloForAll();
-  showApp();
+  showApp(); // render bracket immediately — don't wait for Monte Carlo
+  // Run Monte Carlo in background after render
+  setTimeout(()=>{
+    S.simResults=runMonteCarloForAll();
+  },100);
   async function poll(){
     const live=Object.values(S.live).some(m=>m.live);
     if(live)await syncFromServer();else await loadLive();
     buildDisplay();
-    S.simResults=runMonteCarloForAll();
     if(S.tab==='bracket')renderBracket();
     if(S.tab==='lb')renderLB();
+    setTimeout(()=>{S.simResults=runMonteCarloForAll();},50);
     setTimeout(poll,live?30000:3*60*1000);
   }
   setTimeout(poll,Object.values(S.live).some(m=>m.live)?30000:3*60*1000);
@@ -1435,7 +1437,7 @@ function normalizeOdds(americanA, americanB){
 }
 
 // ── MONTE CARLO SIMULATION ────────────────────────────────────────────────
-const N_SIMS = 1000;
+const N_SIMS = 200; // reduced from 1000 — fast enough, still statistically sound
 // RND_PTS defined in global scope
 
 function runMonteCarlo(rounds, allPicks, live, oddsData){
@@ -2374,6 +2376,15 @@ function jumpToMatch(matchId){
     },100);
   });
 }
+
+// ── PLAYER TRACKER BAR ──────────────────────────────────────────────────────
+const SEEDED_PLAYERS=[
+  {s:1,n:'Sinner J.'},{s:2,n:'Zverev A.'},{s:3,n:'Djokovic N.'},{s:4,n:'Auger-Aliassime F.'},
+  {s:5,n:'Shelton B.'},{s:6,n:'Medvedev D.'},{s:7,n:'De Minaur A.'},{s:8,n:'Ruud C.'},
+  {s:9,n:'Bublik A.'},{s:10,n:'Cobolli F.'},{s:11,n:'Rublev A.'},{s:12,n:'Khachanov K.'},
+  {s:13,n:'Mensik J.'},{s:14,n:'Darderi L.'},{s:15,n:'Tien L.'},{s:16,n:'Vacherot V.'},
+  {s:17,n:'Fritz T.'},{s:18,n:'Paul T.'},{s:19,n:'Tiafoe F.'},{s:20,n:'Norrie C.'},
+];
 
 function renderTicker(){
   const old=document.getElementById('ticker-wrap');
