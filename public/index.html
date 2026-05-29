@@ -173,44 +173,92 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .btn.ghost{background:transparent;border-color:transparent;color:var(--ink-m)}
 .btn.ghost:hover{background:var(--sand-l);border-color:var(--sand-d)}
 .admin-sep{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--sand)}
-/* ── BRACKET CHROME ── */
-.bkt-topbar{display:flex;align-items:center;justify-content:space-between;
-  padding:.7rem 1.5rem;background:var(--white);border-bottom:1px solid var(--sand);
-  gap:1rem;flex-wrap:wrap;position:sticky;top:100px;z-index:190;
-  box-shadow:0 2px 12px rgba(22,12,6,.05)}
-.bkt-user{font-family:var(--font-d);font-size:20px;font-weight:700;font-style:italic;color:var(--ink)}
-.bkt-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.score-pill{background:var(--clay-ghost);border:1px solid var(--clay-p);
-  border-radius:var(--r-pill);padding:5px 14px;font-size:11px;font-weight:700;color:var(--clay-d)}
+/* ── BRACKET CHROME — unified header ── */
+/* Topbar: name left, stats + actions right — bigger, more presence */
+.bkt-topbar{
+  padding:1rem 1.75rem .9rem;
+  background:linear-gradient(180deg,#fdf6f2 0%,var(--white) 100%);
+  border-bottom:2px solid var(--sand);
+  gap:.75rem;flex-wrap:wrap;position:sticky;top:100px;z-index:190;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  box-shadow:0 4px 20px rgba(22,12,6,.06)}
+.bkt-user{
+  font-family:var(--font-d);
+  font-size:28px;
+  font-weight:900;
+  font-style:italic;
+  color:var(--ink);
+  letter-spacing:-.5px;
+  line-height:1}
+.bkt-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* Score pills — bigger, more visual weight */
+.score-pill{
+  background:var(--clay-ghost);border:1.5px solid var(--clay-p);
+  border-radius:var(--r-pill);padding:7px 16px;
+  font-size:13px;font-weight:700;color:var(--clay-d)}
 .score-pill.ok{background:var(--court-pale);border-color:#b4ddb4;color:var(--court)}
 .score-pill.grey{background:var(--sand);border-color:var(--sand-d);color:var(--ink-m)}
-.viewing-bar{padding:.5rem 1.5rem;background:var(--sand);border-bottom:2px solid var(--clay);font-size:12px;color:var(--ink-m);display:flex;align-items:center;gap:1rem}
-.legend-bar{display:flex;align-items:center;gap:1rem;padding:.5rem 1.5rem;
-  background:var(--sand-l);border-bottom:1px solid var(--sand);flex-wrap:wrap}
-.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-m)}
-.leg-sw{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+
+.viewing-bar{padding:.6rem 1.75rem;background:var(--sand);border-bottom:2px solid var(--clay);
+  font-size:13px;color:var(--ink-m);display:flex;align-items:center;gap:1rem}
+
+/* Legend bar — integrated, not a separate box */
+.legend-bar{
+  display:flex;align-items:center;gap:1.25rem;
+  padding:.55rem 1.75rem;
+  background:var(--sand-l);
+  border-bottom:1px solid var(--sand);
+  flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-m);font-weight:500}
+.leg-sw{width:12px;height:12px;border-radius:3px;flex-shrink:0}
 .live-badge{background:#dcfce7;border:1px solid #86efac;border-radius:var(--r-pill);
-  padding:3px 10px;font-size:10px;font-weight:700;color:#15803d;display:flex;align-items:center;gap:4px}
+  padding:4px 12px;font-size:11px;font-weight:700;color:#15803d;
+  display:flex;align-items:center;gap:5px}
 .live-dot{width:6px;height:6px;border-radius:50%;background:#16a34a;animation:lp 1.5s ease-in-out infinite}
 @keyframes lp{0%,100%{opacity:1}50%{opacity:.2}}
 .sync-note{font-size:11px;color:var(--ink-l)}
 
-/* ── STEPPER ── */
-.stepper{display:flex;align-items:center;overflow-x:auto;padding:.6rem 1.5rem;
-  background:var(--white);border-bottom:1px solid var(--sand);
-  position:sticky;top:100px;z-index:191;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.step{display:flex;align-items:center;flex-shrink:0}
-.step-btn{display:flex;flex-direction:column;align-items:center;gap:4px;
-  padding:.35rem .9rem;border:none;background:none;cursor:pointer;
-  border-bottom:2px solid transparent;color:var(--ink-l);transition:.2s;font-family:var(--font-b)}
-.step-pip{width:24px;height:24px;border-radius:50%;background:var(--sand);
-  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;
-  color:var(--ink-l);transition:.2s;box-shadow:0 1px 4px rgba(22,12,6,.08)}
-.step-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
-.step-btn.done{color:var(--court)}.step-btn.done .step-pip{background:var(--court);color:#fff;box-shadow:0 2px 8px rgba(30,92,33,.25)}
+/* ── STEPPER — big, proud, navigational ── */
+.stepper{
+  display:flex;align-items:stretch;
+  padding:0 1.75rem;
+  background:var(--white);
+  border-bottom:2px solid var(--sand);
+  position:sticky;top:100px;z-index:191;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+  gap:0;overflow-x:auto}
+.step{display:flex;align-items:stretch;flex-shrink:0}
+.step-btn{
+  display:flex;flex-direction:row;align-items:center;gap:14px;
+  padding:1rem 1.5rem;
+  border:none;background:none;cursor:pointer;
+  border-bottom:3px solid transparent;
+  color:var(--ink-l);transition:.2s;font-family:var(--font-b);
+  position:relative}
+.step-btn:hover{background:var(--sand-l);color:var(--ink)}
+.step-pip{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--sand);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;
+  color:var(--ink-l);transition:.2s;
+  flex-shrink:0;
+  box-shadow:0 1px 4px rgba(22,12,6,.1)}
+.step-text{display:flex;flex-direction:column;align-items:flex-start;gap:1px}
+.step-lbl{font-size:13px;font-weight:700;letter-spacing:.3px;text-transform:none;line-height:1.2}
+.step-sublbl{font-size:10px;color:var(--ink-l);font-weight:500;letter-spacing:.5px}
+.step-btn.done{color:var(--court)}
+.step-btn.done .step-pip{background:var(--court);color:#fff;box-shadow:0 2px 8px rgba(30,92,33,.25)}
+.step-btn.done .step-sublbl{color:#7fbf7a}
 .step-btn.active{color:var(--clay);border-bottom-color:var(--clay)}
-.step-btn.active .step-pip{background:var(--clay);color:#fff;box-shadow:0 2px 8px rgba(184,64,48,.3)}
-.step-arr{color:var(--sand-d);font-size:11px;padding:0 3px;flex-shrink:0}
+.step-btn.active .step-pip{background:var(--clay);color:#fff;box-shadow:0 3px 12px rgba(184,64,48,.35)}
+.step-btn.active .step-lbl{font-weight:800}
+.step-btn.active .step-sublbl{color:var(--clay-l)}
+.step-arr{color:var(--sand-d);font-size:18px;padding:0 4px;
+  display:flex;align-items:center;align-self:center;flex-shrink:0}
 
 /* ── TWO COLUMNS (bracket — unchanged geometry) ── */
 .bkt-viewport{overflow:hidden;position:relative}
@@ -477,22 +525,32 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   .legend-bar::-webkit-scrollbar{display:none}
   .leg{font-size:10px;white-space:nowrap}
 }
-.bkt-nav{position:sticky;bottom:0;z-index:200;background:rgba(255,255,255,.96);
-  backdrop-filter:blur(12px);border-top:1px solid var(--sand);
-  box-shadow:0 -6px 24px rgba(22,12,6,.08);padding:.9rem 1.5rem;
+.bkt-nav{position:sticky;bottom:0;z-index:200;
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(16px);
+  border-top:2px solid var(--sand);
+  box-shadow:0 -8px 32px rgba(22,12,6,.1);
+  padding:1rem 2rem;
   display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.nav-progress{display:flex;flex-direction:column;align-items:center;gap:5px}
-.nav-prog-text{font-size:11px;color:var(--ink-l)}
-.nav-prog-bar{width:160px;height:5px;background:var(--sand);border-radius:var(--r-pill);overflow:hidden}
+.nav-progress{display:flex;flex-direction:column;align-items:center;gap:6px}
+.nav-prog-text{font-size:13px;font-weight:600;color:var(--ink-m)}
+.nav-prog-bar{width:200px;height:6px;background:var(--sand);border-radius:var(--r-pill);overflow:hidden}
 .nav-prog-fill{height:100%;background:linear-gradient(90deg,var(--clay-l),var(--clay));border-radius:var(--r-pill);transition:width .4s}
-.nav-btn{display:flex;align-items:center;gap:8px;padding:11px 22px;
-  border:1.5px solid var(--sand-d);border-radius:var(--r-pill);font-size:13px;font-weight:600;
-  cursor:pointer;background:var(--white);color:var(--ink);transition:.2s;font-family:var(--font-b)}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:13px 26px;
+  border:1.5px solid var(--sand-d);border-radius:var(--r-pill);
+  font-size:14px;font-weight:600;
+  cursor:pointer;background:var(--white);color:var(--ink);
+  transition:.2s;font-family:var(--font-b)}
 .nav-btn:hover:not(:disabled){background:var(--sand-l);transform:translateY(-1px);box-shadow:var(--sh)}
 .nav-btn:disabled{opacity:.35;cursor:default;transform:none}
-.nav-btn.primary{background:linear-gradient(135deg,var(--clay) 0%,#a83828 100%);
-  color:#fff;border-color:transparent;padding:12px 28px;font-size:14px;box-shadow:var(--sh-warm)}
-.nav-btn.primary:hover:not(:disabled){background:linear-gradient(135deg,#c44535 0%,var(--clay-d) 100%);box-shadow:0 6px 24px rgba(184,64,48,.3)}
+.nav-btn.primary{
+  background:linear-gradient(135deg,var(--clay) 0%,#a83828 100%);
+  color:#fff;border-color:transparent;
+  padding:14px 34px;font-size:15px;font-weight:700;
+  box-shadow:var(--sh-warm)}
+.nav-btn.primary:hover:not(:disabled){
+  background:linear-gradient(135deg,#c44535 0%,var(--clay-d) 100%);
+  box-shadow:0 8px 28px rgba(184,64,48,.35);transform:translateY(-2px)}
 .nav-btn-inner{display:flex;flex-direction:column;gap:1px}
 .nav-btn-sub{font-size:10px;opacity:.65;font-weight:400}
 
@@ -1634,16 +1692,21 @@ function renderBracket(){
   // Screen 1: R16 + QF + SF + Final (4 columns, normal→large, all quadrants)
   const quadScreens=[[0,1,2],[3,4,5,6]];
   const qsi=Math.min(S.quadrantRndIdx,quadScreens.length-1);
-  const stepLabels=[['R128','R64','R32'],['R16','QF','SF','Final']];
-  const stepHTML=stepLabels.map((lbl,i)=>{
-    const isDone=i<qsi;
-    const isCurr=i===qsi;
+  const stepMeta=[
+    {label:'Early Rounds',sub:'R128 · R64 · R32'},
+    {label:'Late Rounds',sub:'R16 · QF · SF · Final'},
+  ];
+  const stepHTML=stepMeta.map(({label,sub},i)=>{
+    const isDone=i<qsi,isCurr=i===qsi;
     return `<div class="step">
       <button class="step-btn ${isDone?'done':isCurr?'active':''}" onclick="jumpToQRnd(${i})">
         <div class="step-pip">${isDone?'✓':i+1}</div>
-        <div class="step-lbl">${lbl.join('→')}</div>
+        <div class="step-text">
+          <div class="step-lbl">${label}</div>
+          <div class="step-sublbl">${sub}</div>
+        </div>
       </button>
-      ${i<stepLabels.length-1?'<div class="step-arr">›</div>':''}
+      ${i<stepMeta.length-1?'<div class="step-arr">›</div>':''}
     </div>`;
   }).join('');
   html+=`<div class="stepper" id="stepper">${stepHTML}</div>`;
