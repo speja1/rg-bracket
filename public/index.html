@@ -896,9 +896,7 @@ function buildDisplay(){
     const completed=!!(S.live[m.id]?.completed||S.live[m.id]?.state==='post');
     if(!pick||!completed||!winner||pick===winner)return; // only wrong picks in completed matches
 
-    // Cascade forward: for every future round where this player appears in a slot
-    // (either because the real player advanced, or because user's pick was propagated)
-    // mark that slot with a deadPick so it renders as ~~pick~~ → real player
+    // Cascade forward through all future rounds where user picked this eliminated player
     let matchIdx=mi;
     for(let futureRi=ri+1;futureRi<S.rounds.length;futureRi++){
       const slotIdx=Math.floor(matchIdx/2);
@@ -906,13 +904,12 @@ function buildDisplay(){
       if(!nx)break;
       const slotSide=matchIdx%2===0?'p1':'p2';
       const dpKey=slotSide==='p1'?'deadPick1':'deadPick2';
-      // Only mark if this slot contains our dead player (or is TBD and we picked here)
-      const slotPlayer=nx[slotSide]?.n;
+      // Only cascade if user explicitly picked this player in this future match
       const userPickedHere=activePicks[nx.id]===pick;
-      if(slotPlayer===pick||slotPlayer==='TBD'||userPickedHere){
+      if(userPickedHere){
         nx[dpKey]={n:pick,s:seedMap[pick]||null};
       } else {
-        break; // real player has already advanced here, stop cascading
+        break; // user didn't pick them here — stop cascading
       }
       matchIdx=slotIdx;
     }
