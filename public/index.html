@@ -893,12 +893,18 @@ function buildDisplay(){
   // Pass 3: dead picks — two simple rules
   //
   // First build set of all players the user picked who lost their match
-  const eliminatedPicks=new Set();
+  // Also track: for each eliminated player, which match index they lost in each round
+  const eliminatedPicks=new Set(); // player names knocked out
+  // matchIdx[pick] = {ri, mi} of the match where they lost
+  const lossLocation=new Map();
   S.rounds.forEach((rnd,ri)=>rnd.matches.forEach((m,mi)=>{
     const pick=activePicks[m.id];
     const winner=S.live[m.id]?.winner;
     const completed=!!(S.live[m.id]?.completed||S.live[m.id]?.state==='post');
-    if(pick&&completed&&winner&&pick!==winner) eliminatedPicks.add(pick);
+    if(pick&&completed&&winner&&pick!==winner){
+      eliminatedPicks.add(pick);
+      if(!lossLocation.has(pick)) lossLocation.set(pick,{ri,mi});
+    }
   }));
 
   S.rounds.forEach((rnd,ri)=>rnd.matches.forEach((m,mi)=>{
@@ -907,7 +913,6 @@ function buildDisplay(){
     const completed=!!(S.live[m.id]?.completed||S.live[m.id]?.state==='post');
 
     // Rule A: completed match where pick lost → mark the NEXT round slot
-    // This gives us ~~loser~~ → [real winner] in the next round
     if(pick&&completed&&winner&&pick!==winner){
       const nx=S.rounds[ri+1]?.matches[Math.floor(mi/2)];
       if(nx){
@@ -917,10 +922,35 @@ function buildDisplay(){
     }
 
     // Rule B: future (not completed) match where user picked an already-eliminated player
-    // → mark THIS match's slot as dead, giving ~~loser~~ → TBD
+    // → mark THIS match's correct slot as dead (~~name~~ → TBD)
+    // Determine the slot by tracing the pick's bracket position from where they lost
     if(pick&&!completed&&eliminatedPicks.has(pick)){
-      if(m.p1?.n===pick||m.p1?.n==='TBD') m.deadPick1={n:pick,s:seedMap[pick]||null};
-      if(m.p2?.n===pick||m.p2?.n==='TBD') m.deadPick2={n:pick,s:seedMap[pick]||null};
+      const loss=lossLocation.get(pick);
+      if(loss){
+        // Trace which slot this pick flows into in the current round (ri)
+        // Starting from where they lost (loss.ri, loss.mi), follow the bracket path
+        let slotMi=loss.mi;
+        for(let r=loss.ri+1;r<=ri;r++){
+          slotMi=Math.floor(slotMi/2);
+        }
+        // slotMi is the match index in round ri where this pick would have gone
+        // But we need to know which side (p1 or p2) within that match
+        // Determine side by tracing parity through rounds
+        let side=loss.mi; // start from original match index
+        for(let r=loss.ri+1;r<=ri;r++){
+          side=Math.floor(side/2); // track which match
+        }
+        // The side within the final match: trace parity separately
+        let parity=loss.mi;
+        for(let r=loss.ri+1;r<ri;r++){
+          parity=Math.floor(parity/2);
+        }
+        const isP1=(ri===loss.ri+1)?(loss.mi%2===0):(parity%2===0);
+        if(slotMi===mi){ // confirm this is the right match
+          if(isP1) m.deadPick1={n:pick,s:seedMap[pick]||null};
+          else m.deadPick2={n:pick,s:seedMap[pick]||null};
+        }
+      }
     }
   }));
 }
