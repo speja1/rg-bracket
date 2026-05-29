@@ -23,43 +23,42 @@
 body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden}
 
 /* ── HEADER ── */
-.hdr{position:fixed;top:0;left:0;right:0;z-index:300;height:60px;
-  background:linear-gradient(135deg,var(--clay) 0%,#c4503e 50%,var(--clay-d) 100%);
-  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;
-  box-shadow:0 4px 24px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.08) inset}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:300;height:120px;
+  background:linear-gradient(150deg,var(--clay) 0%,#c4503e 45%,var(--clay-d) 100%);
+  display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;
+  box-shadow:0 4px 32px rgba(0,0,0,.32),0 1px 0 rgba(255,255,255,.08) inset}
 .hdr::after{content:'';position:absolute;inset:0;pointer-events:none;
   background:repeating-linear-gradient(-55deg,transparent,transparent 18px,rgba(255,255,255,.025) 18px,rgba(255,255,255,.025) 19px)}
-/* Subtle curved bottom edge via box-shadow */
 .hdr::before{content:'';position:absolute;bottom:-8px;left:0;right:0;height:16px;
   background:var(--clay-d);border-radius:0 0 50% 50%/0 0 100% 100%;
   transform:scaleX(1.02);opacity:.15;pointer-events:none}
 .hdr-brand{position:relative}
-.hdr-eyebrow{font-size:8px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:600;margin-bottom:2px}
-.hdr-title{font-family:var(--font-d);font-size:18px;font-weight:700;color:#fff;font-style:italic;line-height:1;
-  text-shadow:0 1px 8px rgba(0,0,0,.2)}
+.hdr-eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.45);font-weight:700;margin-bottom:6px}
+.hdr-title{font-family:var(--font-d);font-size:42px;font-weight:900;color:#fff;font-style:italic;line-height:1;
+  text-shadow:0 2px 16px rgba(0,0,0,.25)}
 .hdr-right{display:flex;align-items:center;gap:12px;position:relative}
 .user-chip{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);
-  border-radius:var(--r-pill);padding:6px 16px 6px 12px;font-size:12px;cursor:pointer;
-  color:#fff;display:flex;align-items:center;gap:7px;font-weight:500;
+  border-radius:var(--r-pill);padding:10px 20px 10px 14px;font-size:14px;cursor:pointer;
+  color:#fff;display:flex;align-items:center;gap:8px;font-weight:600;
   transition:.22s;backdrop-filter:blur(8px)}
 .user-chip:hover{background:rgba(255,255,255,.24);transform:translateY(-1px)}
-.user-avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.user-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0}
 
 /* ── NAV TABS ── */
-.nav{position:fixed;top:60px;left:0;right:0;z-index:299;height:40px;
+.nav{position:fixed;top:120px;left:0;right:0;z-index:299;height:48px;
   background:var(--clay-d);border-bottom:1px solid rgba(0,0,0,.18);display:none;align-items:stretch}
 .nav.visible{display:flex}
-.nav-inner{display:flex;align-items:stretch;overflow-x:auto;gap:2px;padding:0 6px}
-.tab{padding:0 1.2rem;font-size:9.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
-  cursor:pointer;color:rgba(255,255,255,.38);border-bottom:2px solid transparent;
+.nav-inner{display:flex;align-items:stretch;overflow-x:auto;gap:2px;padding:0 10px}
+.tab{padding:0 1.6rem;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  cursor:pointer;color:rgba(255,255,255,.4);border-bottom:3px solid transparent;
   transition:.18s;white-space:nowrap;display:flex;align-items:center;border-radius:6px 6px 0 0}
-.tab.active{color:#fff;border-bottom-color:rgba(255,255,255,.85);background:rgba(255,255,255,.06)}
-.tab:hover:not(.active){color:rgba(255,255,255,.72);background:rgba(255,255,255,.04)}
+.tab.active{color:#fff;border-bottom-color:rgba(255,255,255,.9);background:rgba(255,255,255,.07)}
+.tab:hover:not(.active){color:rgba(255,255,255,.75);background:rgba(255,255,255,.05)}
 
-#root{margin-top:100px;min-height:calc(100vh - 100px)}
+#root{margin-top:168px;min-height:calc(100vh - 168px)}
 
 /* ── TOP 20 TRACKER ── */
-#tracker{position:fixed;top:100px;left:0;right:0;z-index:298;
+#tracker{position:fixed;top:168px;left:0;right:0;z-index:298;
   background:#13100d;border-bottom:2px solid #2a2218}
 #tracker .tr-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;padding:6px 10px}
 #tracker .tr-grid+.tr-grid{padding-top:0;padding-bottom:6px}
@@ -179,7 +178,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   padding:1rem 1.75rem .9rem;
   background:linear-gradient(180deg,#fdf6f2 0%,var(--white) 100%);
   border-bottom:2px solid var(--sand);
-  gap:.75rem;flex-wrap:wrap;position:sticky;top:100px;z-index:190;
+  gap:.75rem;flex-wrap:wrap;position:sticky;top:168px;z-index:190;
   display:grid;
   grid-template-columns:1fr auto;
   align-items:center;
@@ -199,8 +198,12 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .score-pill.ok{background:var(--court-pale);border-color:#b4ddb4;color:var(--court)}
 .score-pill.grey{background:var(--sand);border-color:var(--sand-d);color:var(--ink-m)}
 
-.viewing-bar{padding:.6rem 1.75rem;background:var(--sand);border-bottom:2px solid var(--clay);
-  font-size:13px;color:var(--ink-m);display:flex;align-items:center;gap:1rem}
+.bkt-user-viewing{font-family:var(--font-b);font-size:13px;font-weight:600;
+  font-style:normal;color:var(--clay);letter-spacing:.5px;text-transform:uppercase;
+  margin-right:4px}
+.viewing-bar{padding:.4rem 1.75rem;background:var(--clay-ghost);
+  border-bottom:1px solid var(--clay-p);font-size:12px;
+  display:flex;align-items:center;justify-content:flex-end}
 
 /* Legend bar — integrated, not a separate box */
 .legend-bar{
@@ -224,7 +227,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   padding:0 1.75rem;
   background:var(--white);
   border-bottom:2px solid var(--sand);
-  position:sticky;top:100px;z-index:191;
+  position:sticky;top:168px;z-index:191;
   box-shadow:0 4px 12px rgba(0,0,0,.05);
   gap:0;overflow-x:auto}
 .step{display:flex;align-items:stretch;flex-shrink:0}
@@ -425,30 +428,28 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 
 /* ── MOBILE RESPONSIVE ── */
 @media (max-width: 600px) {
-  /* Header compact */
-  .hdr{height:50px;padding:0 1rem}
+  /* Header compact on mobile */
+  .hdr{height:70px;padding:0 1rem}
   .hdr-eyebrow{display:none}
-  .hdr-title{font-size:15px}
-  .user-chip{padding:5px 10px 5px 8px;font-size:11px}
-
-  /* Nav tabs */
-  .nav{top:50px;height:38px}
-  .tab{padding:0 .9rem;font-size:8.5px;letter-spacing:1px}
-
+  .hdr-title{font-size:24px}
+  .user-chip{padding:7px 12px;font-size:12px}
+  .nav{top:70px;height:42px}
+  .tab{padding:0 1rem;font-size:9px;letter-spacing:1px}
   /* Root offset */
-  #root{margin-top:88px;min-height:calc(100vh - 88px)}
+  #root{margin-top:112px;min-height:calc(100vh - 112px)}
+  #tracker{top:112px}
   /* Tracker on mobile: 4 per row */
-  #tracker{top:88px}
+  #tracker{top:112px}
   #tracker .tr-grid{grid-template-columns:repeat(4,1fr);gap:3px;padding:4px 5px}
   #tracker .tr-grid+.tr-grid{padding-top:0}
 
   /* Bracket topbar — stack on mobile */
-  .bkt-topbar{flex-direction:column;align-items:flex-start;gap:.5rem;padding:.6rem 1rem;top:88px}
+  .bkt-topbar{flex-direction:column;align-items:flex-start;gap:.5rem;padding:.6rem 1rem;top:112px}
   .bkt-actions{width:100%;flex-wrap:wrap;gap:6px}
   .bkt-user{font-size:17px}
 
   /* Stepper — smaller */
-  .stepper{padding:.4rem .75rem;top:88px}
+  .stepper{padding:.4rem .75rem;top:112px}
   .step-btn{padding:.25rem .5rem}
   .step-pip{width:20px;height:20px;font-size:8px}
   .step-lbl{font-size:7.5px}
@@ -1180,8 +1181,8 @@ function showUserMenu(){
 }
 function showApp(){
   document.getElementById('nav').classList.add('visible');
-  const tabs=['bracket','lb','how',...(S.isAdmin?['admin']:[])];
-  const labels=['My Bracket','Leaderboard','How to Score',...(S.isAdmin?['Admin']:[])];
+  const tabs=['bracket','lb',...(S.isAdmin?['admin']:[])];
+  const labels=['My Bracket','Leaderboard',...(S.isAdmin?['Admin']:[])];
   const hash=location.hash.replace('#','');
   if(hash&&tabs.includes(hash)&&S.tab==='bracket')S.tab=hash;
   document.getElementById('tabs-inner').innerHTML=tabs.map((t,i)=>`<div class="tab ${S.tab===t?'active':''}" id="tab-${t}" onclick="setTab('${t}')">${labels[i]}</div>`).join('');
@@ -1209,7 +1210,7 @@ function setTab(t){
 // Handle browser back/forward
 window.addEventListener('popstate',()=>{
   const hash=location.hash.replace('#','');
-  const tabs=['bracket','lb','how','admin'];
+  const tabs=['bracket','lb','admin'];
   if(hash&&tabs.includes(hash)&&S.uid){
     S.tab=hash;
     document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${hash}`));
@@ -1657,17 +1658,19 @@ function renderBracket(){
 
   let html=`<div id="bkt-root"${S.bracketLocked&&!S.viewingUid?' class="bracket-locked-mode"':''}>`;
 
-  if(S.viewingUid) html+=`<div class="viewing-bar"><span>👁 Viewing <strong>${S.viewingName}</strong></span><button class="btn sm ghost" onclick="S.viewingUid=null;S.viewingName=null;renderBracket()" style="margin-left:auto">← Mine</button></div>`;
+  if(S.viewingUid) html+=`<div class="viewing-bar"><button class="btn sm ghost" onclick="S.viewingUid=null;S.viewingName=null;renderBracket()" style="margin-left:auto">← Mine</button></div>`;
 
-  // Bracket topbar — lock indicator inline, no redundant banner
   const lockedBadge=S.bracketLocked&&!S.viewingUid?`<span class="score-pill" style="background:#dcfce7;border-color:#86efac;color:#15803d">🏆 Submitted</span>`:'';
   const actionBtns=S.viewingUid?''
     :S.bracketLocked
       ?`<button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker">${S.tiebreaker?`🎯 ${S.tiebreaker}g`:'🎯 TB'}</button>`
       :`<button class="btn sm primary" onclick="savePicks()">Save</button><button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker: guess total games in the Final">${S.tiebreaker?`🎯 ${S.tiebreaker} games`:'🎯 Tiebreaker'}</button>`;
 
+  const viewingLabel=S.viewingUid?`<span class="bkt-user-viewing">Viewing</span>`:'';
+  const displayName=S.viewingUid?S.viewingName:S.userName;
+
   html+=`<div class="bkt-topbar">
-    <div class="bkt-user">${S.viewingUid?S.viewingName:S.userName}${hasRes?` <span class="bkt-user-stats">${pts} pts · ${correct} correct</span>`:''}</div>
+    <div class="bkt-user">${viewingLabel}${displayName}${hasRes?` <span class="bkt-user-stats">${pts} pts · ${correct} correct</span>`:''}</div>
     <div class="bkt-actions">
       ${lockedBadge}
       ${actionBtns}
@@ -3036,8 +3039,7 @@ function renderTracker(){
   if(root){
     requestAnimationFrame(()=>{
       const trackerBottom=el.getBoundingClientRect().bottom;
-      root.style.marginTop=trackerBottom+'px';
-    });
+      root.style.marginTop=trackerBottom+'px';    });
   }
 }
 
@@ -3045,7 +3047,7 @@ function removeTracker(){
   const el=document.getElementById('tracker');
   if(el)el.remove();
   const root=document.getElementById('root');
-  if(root)root.style.marginTop='100px';
+  if(root)root.style.marginTop='168px';
 }
 
 init();
