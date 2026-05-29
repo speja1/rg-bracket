@@ -58,8 +58,9 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 #root{margin-top:168px;min-height:calc(100vh - 168px)}
 
 /* ── TOP 20 TRACKER ── */
-#tracker{position:sticky;top:168px;left:0;right:0;z-index:298;
-  background:#13100d;border-bottom:2px solid #2a2218}
+/* tracker-wrap sits between nav and root in normal page flow */
+#tracker-wrap{position:sticky;top:168px;z-index:298;left:0;right:0}
+#tracker{background:#13100d;border-bottom:2px solid #2a2218}
 #tracker .tr-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;padding:6px 10px}
 #tracker .tr-grid+.tr-grid{padding-top:0;padding-bottom:6px}
 /* card */
@@ -728,6 +729,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   <div class="hdr-right"><div id="user-chip-wrap"></div></div>
 </div>
 <div class="nav" id="nav"><div class="nav-inner" id="tabs-inner"></div></div>
+<div id="tracker-wrap"></div>
 <div id="root"></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1216,12 +1218,13 @@ function setTab(t){
   if(t!=='bracket'){
     const m=document.getElementById('minimap-nav');if(m)m.remove();
     // Hide tracker on non-bracket tabs
-    const tr=document.getElementById('tracker');
-    if(tr)tr.style.display='none';
+    const wrap=document.getElementById('tracker-wrap');
+    if(wrap)wrap.style.display='none';
   } else {
     // Show tracker when returning to bracket
-    const tr=document.getElementById('tracker');
-    if(tr){tr.style.display='';renderTracker();}
+    const wrap=document.getElementById('tracker-wrap');
+    if(wrap)wrap.style.display='';
+    renderTracker();
   }
   renderTab();
 }
@@ -3069,21 +3072,21 @@ function renderTracker(){
   const top10=cards.slice(0,10).join('');
   const bot10=cards.slice(10,20).join('');
 
-  // Insert tracker inside #root at the top so it's in page flow (sticky scrolls away)
-  const root=document.getElementById('root');
+  // Render into the persistent tracker-wrap div (sibling of #root, never wiped)
+  const wrap=document.getElementById('tracker-wrap');
+  if(!wrap)return;
   let el=document.getElementById('tracker');
   if(!el){
     el=document.createElement('div');
     el.id='tracker';
-    if(root)root.insertBefore(el,root.firstChild);
-    else document.body.appendChild(el);
+    wrap.appendChild(el);
   }
   el.innerHTML=`<div class="tr-grid">${top10}</div><div class="tr-grid">${bot10}</div>`;
 }
 
 function removeTracker(){
-  const el=document.getElementById('tracker');
-  if(el)el.remove();
+  const wrap=document.getElementById('tracker-wrap');
+  if(wrap)wrap.style.display='none';
 }
 
 init();
