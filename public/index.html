@@ -1882,7 +1882,8 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       // Dead pick: user picked someone who lost a prior round
       // Show even when current slot is TBD (winner not yet advanced)
       const dp=pi===0?m.deadPick1:m.deadPick2;
-      const hasDeadPick=!!(dp); // show whenever dead pick exists, regardless of tbd
+      // Don't show dead pick if it's the same player as the real winner (they legitimately advanced)
+      const hasDeadPick=!!(dp&&dp.n!==pl.n);
 
       // If TBD and no dead pick — normal TBD row
       if(tbd&&!dp){
