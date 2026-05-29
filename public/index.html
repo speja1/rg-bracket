@@ -888,30 +888,37 @@ function buildDisplay(){
       else{if(nx.p2.n==='TBD')nx.p2={n:pick,s:seedMap[pick]||null};}
     }));
   }
-  // Pass 3: cascade dead picks — user picked someone who lost, mark ALL future slots
-  // where they picked that player, showing ~~wrong pick~~ → real player (or TBD)
+  // Pass 3: dead picks — two simple rules
+  //
+  // First build set of all players the user picked who lost their match
+  const eliminatedPicks=new Set();
   S.rounds.forEach((rnd,ri)=>rnd.matches.forEach((m,mi)=>{
     const pick=activePicks[m.id];
     const winner=S.live[m.id]?.winner;
     const completed=!!(S.live[m.id]?.completed||S.live[m.id]?.state==='post');
-    if(!pick||!completed||!winner||pick===winner)return; // only wrong picks in completed matches
+    if(pick&&completed&&winner&&pick!==winner) eliminatedPicks.add(pick);
+  }));
 
-    // Cascade forward through all future rounds where user picked this eliminated player
-    let matchIdx=mi;
-    for(let futureRi=ri+1;futureRi<S.rounds.length;futureRi++){
-      const slotIdx=Math.floor(matchIdx/2);
-      const nx=S.rounds[futureRi]?.matches[slotIdx];
-      if(!nx)break;
-      const slotSide=matchIdx%2===0?'p1':'p2';
-      const dpKey=slotSide==='p1'?'deadPick1':'deadPick2';
-      // Only cascade if user explicitly picked this player in this future match
-      const userPickedHere=activePicks[nx.id]===pick;
-      if(userPickedHere){
-        nx[dpKey]={n:pick,s:seedMap[pick]||null};
-      } else {
-        break; // user didn't pick them here — stop cascading
+  S.rounds.forEach((rnd,ri)=>rnd.matches.forEach((m,mi)=>{
+    const pick=activePicks[m.id];
+    const winner=S.live[m.id]?.winner;
+    const completed=!!(S.live[m.id]?.completed||S.live[m.id]?.state==='post');
+
+    // Rule A: completed match where pick lost → mark the NEXT round slot
+    // This gives us ~~loser~~ → [real winner] in the next round
+    if(pick&&completed&&winner&&pick!==winner){
+      const nx=S.rounds[ri+1]?.matches[Math.floor(mi/2)];
+      if(nx){
+        if(mi%2===0) nx.deadPick1={n:pick,s:seedMap[pick]||null};
+        else nx.deadPick2={n:pick,s:seedMap[pick]||null};
       }
-      matchIdx=slotIdx;
+    }
+
+    // Rule B: future (not completed) match where user picked an already-eliminated player
+    // → mark THIS match's slot as dead, giving ~~loser~~ → TBD
+    if(pick&&!completed&&eliminatedPicks.has(pick)){
+      if(m.p1?.n===pick||m.p1?.n==='TBD') m.deadPick1={n:pick,s:seedMap[pick]||null};
+      if(m.p2?.n===pick||m.p2?.n==='TBD') m.deadPick2={n:pick,s:seedMap[pick]||null};
     }
   }));
 }
