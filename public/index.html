@@ -58,7 +58,7 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 #root{margin-top:168px;min-height:calc(100vh - 168px)}
 
 /* ── TOP 20 TRACKER ── */
-#tracker{position:fixed;top:168px;left:0;right:0;z-index:298;
+#tracker{position:sticky;top:168px;left:0;right:0;z-index:298;
   background:#13100d;border-bottom:2px solid #2a2218}
 #tracker .tr-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;padding:6px 10px}
 #tracker .tr-grid+.tr-grid{padding-top:0;padding-bottom:6px}
@@ -439,7 +439,6 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   #root{margin-top:112px;min-height:calc(100vh - 112px)}
   #tracker{top:112px}
   /* Tracker on mobile: 4 per row */
-  #tracker{top:112px}
   #tracker .tr-grid{grid-template-columns:repeat(4,1fr);gap:3px;padding:4px 5px}
   #tracker .tr-grid+.tr-grid{padding-top:0}
 
@@ -889,17 +888,34 @@ function buildDisplay(){
       else{if(nx.p2.n==='TBD')nx.p2={n:pick,s:seedMap[pick]||null};}
     }));
   }
-  // Pass 3: mark dead picks — user picked someone who lost, show in next round slot
+  // Pass 3: cascade dead picks — user picked someone who lost, mark ALL future slots
+  // where they picked that player, showing ~~wrong pick~~ → real player (or TBD)
   S.rounds.forEach((rnd,ri)=>rnd.matches.forEach((m,mi)=>{
     const pick=activePicks[m.id];
     const winner=S.live[m.id]?.winner;
     const completed=!!(S.live[m.id]?.completed||S.live[m.id]?.state==='post');
-    if(!pick||!completed||!winner||pick===winner)return; // only wrong picks
-    const nx=S.rounds[ri+1]?.matches[Math.floor(mi/2)];
-    if(!nx)return;
-    // Store dead pick alongside the real winner
-    if(mi%2===0)nx.deadPick1={n:pick,s:seedMap[pick]||null};
-    else nx.deadPick2={n:pick,s:seedMap[pick]||null};
+    if(!pick||!completed||!winner||pick===winner)return; // only wrong picks in completed matches
+
+    // Cascade forward: for every future round where this player appears in a slot
+    // (either because the real player advanced, or because user's pick was propagated)
+    // mark that slot with a deadPick so it renders as ~~pick~~ → real player
+    let matchIdx=mi;
+    for(let futureRi=ri+1;futureRi<S.rounds.length;futureRi++){
+      const slotIdx=Math.floor(matchIdx/2);
+      const nx=S.rounds[futureRi]?.matches[slotIdx];
+      if(!nx)break;
+      const slotSide=matchIdx%2===0?'p1':'p2';
+      const dpKey=slotSide==='p1'?'deadPick1':'deadPick2';
+      // Only mark if this slot contains our dead player (or is TBD and we picked here)
+      const slotPlayer=nx[slotSide]?.n;
+      const userPickedHere=activePicks[nx.id]===pick;
+      if(slotPlayer===pick||slotPlayer==='TBD'||userPickedHere){
+        nx[dpKey]={n:pick,s:seedMap[pick]||null};
+      } else {
+        break; // real player has already advanced here, stop cascading
+      }
+      matchIdx=slotIdx;
+    }
   }));
 }
 function buildTree(r1){
@@ -1195,11 +1211,9 @@ function setTab(t){
   document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${t}`));
   if(t!=='bracket'){
     const m=document.getElementById('minimap-nav');if(m)m.remove();
-    // Hide tracker on non-bracket tabs, restore root margin
+    // Hide tracker on non-bracket tabs
     const tr=document.getElementById('tracker');
     if(tr)tr.style.display='none';
-    const root=document.getElementById('root');
-    if(root)root.style.marginTop='100px';
   } else {
     // Show tracker when returning to bracket
     const tr=document.getElementById('tracker');
@@ -1937,7 +1951,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
         const dpFlag=getFlag(dp.n);
         const dpSeed=dp.s?`<span class="mc-name-seed">(${dp.s})</span>`:'';
         if(tbd){
-          // Winner not yet known — just show dead pick crossed out, no arrow
+          // Winner not yet known — show ~~pick~~ → TBD (consistent with known-winner format)
           const dpInitials=getInitials(dp.n);
           const dpPhoto=getPlayerPhoto(dp.n);
           const dpPhotoEl=dpPhoto
@@ -1945,9 +1959,13 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
             :`<div class="mc-photo-init">${dpInitials}</div>`;
           h+=`<div class="mc-player wrong locked">
             ${dpPhotoEl}<div class="mc-flag">${dpFlag}</div>
-            <div class="mc-name">${dp.n}${dpSeed}</div>
+            <div class="mc-name-inline">
+              <span class="mc-dead-name">${dp.n}${dpSeed}</span>
+              <span class="mc-dead-arrow">→</span>
+              <span class="mc-name-text" style="color:var(--ink-l);font-style:italic;font-weight:400">TBD</span>
+            </div>
             <div class="mc-score-empty"></div>
-            <div class="mc-icon x">✗</div>
+            <div class="mc-icon"></div>
           </div>`;
         } else {
           // Winner known — show dead pick → real player inline
@@ -3046,29 +3064,21 @@ function renderTracker(){
   const top10=cards.slice(0,10).join('');
   const bot10=cards.slice(10,20).join('');
 
-  // Create or update tracker element
+  // Insert tracker inside #root at the top so it's in page flow (sticky scrolls away)
+  const root=document.getElementById('root');
   let el=document.getElementById('tracker');
   if(!el){
     el=document.createElement('div');
     el.id='tracker';
-    document.body.appendChild(el);
+    if(root)root.insertBefore(el,root.firstChild);
+    else document.body.appendChild(el);
   }
   el.innerHTML=`<div class="tr-grid">${top10}</div><div class="tr-grid">${bot10}</div>`;
-
-  // Set root margin to tracker bottom
-  const root=document.getElementById('root');
-  if(root){
-    requestAnimationFrame(()=>{
-      const trackerBottom=el.getBoundingClientRect().bottom;
-      root.style.marginTop=trackerBottom+'px';    });
-  }
 }
 
 function removeTracker(){
   const el=document.getElementById('tracker');
   if(el)el.remove();
-  const root=document.getElementById('root');
-  if(root)root.style.marginTop='168px';
 }
 
 init();
