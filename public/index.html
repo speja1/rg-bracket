@@ -1868,10 +1868,16 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const sets=fmtSets(pi===0?lv.p1Sets:lv.p2Sets);
       const showSets=(done||isLiveM)&&sets;
 
-      // Dead pick: user picked someone who lost a prior round — dp is set by buildDisplay
-      // Show whenever dp exists for this slot (p1 slot has deadPick1, p2 slot has deadPick2)
+      // Dead pick: user picked someone who lost a prior round
+      // Show even when current slot is TBD (winner not yet advanced)
       const dp=pi===0?m.deadPick1:m.deadPick2;
-      const hasDeadPick=!!(dp&&!tbd);
+      const hasDeadPick=!!(dp); // show whenever dead pick exists, regardless of tbd
+
+      // If TBD and no dead pick — normal TBD row
+      if(tbd&&!dp){
+        h+=`<div class="mc-player tbd locked"><div class="mc-photo-init" style="opacity:.4">?</div><div class="mc-flag"></div><div class="mc-name">TBD</div><div class="mc-score-empty"></div><div class="mc-icon"></div></div>`;
+        return; // skip rest for this player (inside forEach)
+      }
 
       let rowCls='mc-player';
       if(tbd)rowCls+=' tbd locked';
@@ -1928,18 +1934,33 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       }
 
       if(hasDeadPick){
-        // Single row: wrong pick (crossed out) → real player inline
         const dpFlag=getFlag(dp.n);
         const dpSeed=dp.s?`<span class="mc-name-seed">(${dp.s})</span>`:'';
-        h+=`<div class="${rowCls}" ${click}>
-          ${photoEl}${flagEl}${srvEl}
-          <div class="mc-name-inline">
-            <span class="mc-dead-name">${dpFlag} ${dp.n}${dpSeed}</span>
-            <span class="mc-dead-arrow">→</span>
-            <span class="mc-name-text">${pl.n}${seedSpan}</span>
-          </div>
-          ${rightSlot}${iconEl}
-        </div>`;
+        if(tbd){
+          // Winner not yet known — just show dead pick crossed out, no arrow
+          const dpInitials=getInitials(dp.n);
+          const dpPhoto=getPlayerPhoto(dp.n);
+          const dpPhotoEl=dpPhoto
+            ?`<img class="mc-photo" src="${dpPhoto}" alt="${dp.n}" onerror="this.style.display='none';this.parentElement.querySelector('.mc-photo-init').style.display='flex'"><div class="mc-photo-init" style="display:none">${dpInitials}</div>`
+            :`<div class="mc-photo-init">${dpInitials}</div>`;
+          h+=`<div class="mc-player wrong locked">
+            ${dpPhotoEl}<div class="mc-flag">${dpFlag}</div>
+            <div class="mc-name">${dp.n}${dpSeed}</div>
+            <div class="mc-score-empty"></div>
+            <div class="mc-icon x">✗</div>
+          </div>`;
+        } else {
+          // Winner known — show dead pick → real player inline
+          h+=`<div class="${rowCls}" ${click}>
+            ${photoEl}${flagEl}${srvEl}
+            <div class="mc-name-inline">
+              <span class="mc-dead-name">${dpFlag} ${dp.n}${dpSeed}</span>
+              <span class="mc-dead-arrow">→</span>
+              <span class="mc-name-text">${pl.n}${seedSpan}</span>
+            </div>
+            ${rightSlot}${iconEl}
+          </div>`;
+        }
       } else {
         h+=`<div class="${rowCls}" ${click}>${photoEl}${flagEl}${srvEl}<div class="mc-name">${tbd?'TBD':pl.n}${tbd?'':seedSpan}</div>${rightSlot}${iconEl}</div>`;
       }
