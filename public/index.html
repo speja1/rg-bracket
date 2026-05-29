@@ -184,14 +184,11 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
   grid-template-columns:1fr auto;
   align-items:center;
   box-shadow:0 4px 20px rgba(22,12,6,.06)}
-.bkt-user{
-  font-family:var(--font-d);
-  font-size:28px;
-  font-weight:900;
-  font-style:italic;
-  color:var(--ink);
-  letter-spacing:-.5px;
-  line-height:1}
+.bkt-user{font-family:var(--font-d);font-size:28px;font-weight:900;font-style:italic;
+  color:var(--ink);letter-spacing:-.5px;line-height:1;
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.bkt-user-stats{font-family:var(--font-b);font-size:14px;font-weight:600;
+  font-style:normal;color:var(--ink-m);letter-spacing:0}
 .bkt-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 
 /* Score pills — bigger, more visual weight */
@@ -1666,25 +1663,14 @@ function renderBracket(){
   const lockedBadge=S.bracketLocked&&!S.viewingUid?`<span class="score-pill" style="background:#dcfce7;border-color:#86efac;color:#15803d">🏆 Submitted</span>`:'';
   const actionBtns=S.viewingUid?''
     :S.bracketLocked
-      ?`<button class="btn sm" onclick="doShare()">Share</button><button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker">${S.tiebreaker?`🎯 ${S.tiebreaker}g`:'🎯 TB'}</button>`
-      :`<button class="btn sm primary" onclick="savePicks()">Save</button><button class="btn sm" onclick="doShare()">Share</button><button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker: guess total games in the Final">${S.tiebreaker?`🎯 ${S.tiebreaker} games`:'🎯 Tiebreaker'}</button>`;
+      ?`<button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker">${S.tiebreaker?`🎯 ${S.tiebreaker}g`:'🎯 TB'}</button>`
+      :`<button class="btn sm primary" onclick="savePicks()">Save</button><button class="btn sm" onclick="openTiebreaker()" title="Tiebreaker: guess total games in the Final">${S.tiebreaker?`🎯 ${S.tiebreaker} games`:'🎯 Tiebreaker'}</button>`;
 
   html+=`<div class="bkt-topbar">
-    <div class="bkt-user">${S.viewingUid?S.viewingName:S.userName}</div>
+    <div class="bkt-user">${S.viewingUid?S.viewingName:S.userName}${hasRes?` <span class="bkt-user-stats">${pts} pts · ${correct} correct</span>`:''}</div>
     <div class="bkt-actions">
       ${lockedBadge}
-      ${hasRes?`<span class="score-pill">${pts} pts</span><span class="score-pill ok">${correct} correct</span><span class="score-pill grey">${total} picks</span>`:''}
       ${actionBtns}
-    </div>
-  </div>
-  <div class="legend-bar">
-    <div class="leg"><div class="leg-sw" style="background:var(--clay-ghost);border:2px solid var(--clay-l)"></div>Your pick</div>
-    <div class="leg"><div class="leg-sw" style="background:var(--court)"></div>Official result</div>
-    <div class="leg"><div class="leg-sw" style="background:var(--court-pale);border:2px solid var(--court-mid)"></div>Correct ✓</div>
-    <div class="leg"><div class="leg-sw" style="background:#fee2e2;border:2px solid #fca5a5"></div>Wrong ✗</div>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-      ${hasLive?'<div class="live-badge"><div class="live-dot"></div>Live</div>':''}
-      <span class="sync-note">Syncs every 3 min</span>
     </div>
   </div>`;
 
@@ -1758,14 +1744,13 @@ function renderBracket(){
   requestAnimationFrame(()=>{
     if(qsi===0){
       const q=QUADRANTS[S.quadrant];
-      // left→mid: R128(left) feeds R64(mid)
       drawConnectorsFiltered(0,1,vp,q,'left','mid');
-      // mid→right: R64(mid) feeds R32(right)
       drawConnectorsFiltered(1,2,vp,q,'mid','right');
     } else {
-      drawConnectors(3,4,vp);
-      drawConnectors(4,5,vp);
-      drawConnectors(5,6,vp);
+      // Screen 1: R16(left)→QF(mid)→SF(mid2)→Final(right)
+      drawConnectorsFiltered(3,4,vp,null,'left','mid');
+      drawConnectorsFiltered(4,5,vp,null,'mid','mid2');
+      drawConnectorsFiltered(5,6,vp,null,'mid2','right');
     }
   });
 }
