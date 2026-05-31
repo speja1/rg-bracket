@@ -1942,8 +1942,8 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
 
       let rowCls='mc-player';
       if(tbd)rowCls+=' tbd locked';
-      else if(hasDeadPick&&isW&&done)rowCls+=' winner locked';
-      else if(hasDeadPick)rowCls+=' locked'; // real player shown but match not yet done
+      else if(hasDeadPick&&done)rowCls+=' wrong locked'; // dead pick rows always pink — user got it wrong
+      else if(hasDeadPick)rowCls+=' wrong locked'; // match not yet done but pick is dead
       else if(isW&&done)rowCls+=' winner locked';
       else if(isCorr)rowCls+=' correct locked';
       else if(isWrong)rowCls+=' wrong locked';
@@ -1960,7 +1960,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       const espnUrl=!tbd?((pi===0?lv.p1Photo:lv.p2Photo)||null):null;
       const photoUrl=espnUrl||(!tbd?getPlayerPhoto(pl.n):null)||null;
       const initials=getInitials(pl.n);
-      const isWinnerRow=hasDeadPick||(isW&&done);
+      const isWinnerRow=!hasDeadPick&&isW&&done;
       const initCls=isWinnerRow?'mc-photo-init mc-photo-init-w':'mc-photo-init';
       const photoEl=photoUrl
         ?`<img class="mc-photo" src="${photoUrl}" alt="${pl.n}" onerror="this.style.display='none';this.parentElement.querySelector('.mc-photo-init').style.display='flex'">`+
@@ -1971,6 +1971,7 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
       else if(isWrong)iconEl='<div class="mc-icon x">✗</div>';
       else if(isMy&&!done)iconEl='<div class="mc-icon chk">✓</div>';
       else if(hasDeadPick&&isW&&done)iconEl='<div class="mc-icon ok">✓</div>';
+      else if(hasDeadPick&&!isW&&done)iconEl='<div class="mc-icon x">✗</div>';
 
       // Get odds for this player
       let oddsEl='';
