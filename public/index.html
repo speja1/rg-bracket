@@ -386,6 +386,15 @@ body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-heig
 .mc-player.winner .mc-name-text .mc-name-seed{color:rgba(255,255,255,.5)}
 .mc-player.winner .mc-dead-name{color:rgba(255,255,255,.4)}
 .mc-player.winner .mc-dead-arrow{color:rgba(255,255,255,.3)}
+/* Stacked dead pick — ~~loser~~ → on top, winner name below */
+.mc-name-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.mc-dead-row{display:flex;align-items:center;gap:5px}
+.mc-winner-row{display:flex;align-items:center;font-size:15px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-player.winner .mc-winner-row{color:#fff;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.25)}
+.col-sm .mc-name-stack .mc-winner-row{font-size:12px}
+.col-sm .mc-name-stack .mc-dead-row .mc-dead-name{font-size:10px}
+.col-xl .mc-name-stack .mc-winner-row{font-size:18px}
 
 /* col-sm: compact for R128/R64/R32 on 3-column screen */
 .col-sm .mc-player{padding:.45rem .7rem;min-height:48px;gap:.5rem}
@@ -2006,13 +2015,15 @@ function renderCard(m,mi,roundKey,vp,side,rndIdx){
             <div class="mc-icon"></div>
           </div>`;
         } else {
-          // Winner known — show dead pick → real player inline
+          // Winner known — two-line stacked: ~~dead pick~~ → on top, real winner below
           h+=`<div class="${rowCls}" ${click}>
             ${photoEl}${flagEl}${srvEl}
-            <div class="mc-name-inline">
-              <span class="mc-dead-name">${dpFlag} ${dp.n}${dpSeed}</span>
-              <span class="mc-dead-arrow">→</span>
-              <span class="mc-name-text">${pl.n}${seedSpan}</span>
+            <div class="mc-name-stack">
+              <div class="mc-dead-row">
+                <span class="mc-dead-name">${dpFlag} ${dp.n}${dpSeed}</span>
+                <span class="mc-dead-arrow">→</span>
+              </div>
+              <div class="mc-winner-row">${pl.n}${seedSpan}</div>
             </div>
             ${rightSlot}${iconEl}
           </div>`;
